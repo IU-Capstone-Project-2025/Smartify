@@ -40,7 +40,7 @@ type Profession struct {
 }
 
 type Questionnaire struct {
-	UserID           string          `json:"user_id" bson:"user_id"`
+	UserID           int             `json:"user_id" bson:"user_id"`
 	Class            string          `json:"class" bson:"class"`
 	Region           string          `json:"region" bson:"region"`
 	AvgGrade         string          `json:"avg_grade" bson:"avg_grade"`
@@ -115,7 +115,7 @@ func AddUniversity(data map[string]interface{}) error {
 		}
 	}
 	if uni.Name == "" || uni.Country == "" {
-		return fmt.Errorf("Name or Country are empty")
+		return fmt.Errorf("name or country are empty")
 	}
 	data["timestamp"] = time.Now()
 	_, err := collection.InsertOne(ctx, data)
@@ -166,7 +166,7 @@ func AddQuestionnaire(questionnaire Questionnaire) error {
 	}
 
 	var existing Profession
-	err := collection.FindOne(ctx, bson.M{"userid": questionnaire.UserID}).Decode(&existing)
+	err := collection.FindOne(ctx, bson.M{"user_id": questionnaire.UserID}).Decode(&existing)
 
 	if err == mongo.ErrNoDocuments {
 		_, err1 := collection.InsertOne(ctx, questionnaire)

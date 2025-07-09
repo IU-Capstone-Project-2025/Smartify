@@ -151,15 +151,15 @@ class _DashboardPageState extends State<DashboardPage> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: _TopicCard(
-                              title: 'Карьерные\nПредложения',
-                              subtitle: 'Выбери то, что подходит тебе',
+                              title: 'Подготовка\nк ЕГЭ',
+                              subtitle: 'Отслеживайте\nсвой прогресс',
                               assetImage: 'career.png',
                               onPressed: () {
                                   Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const ProfessionsPage(),
+                                        const ProgressPage(),
                                   ),
                                 );
                               },
@@ -170,14 +170,14 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                       const SizedBox(height: 12),
                       _WideButton(
-                        title: 'Подготовка к ЕГЭ',
-                        subtitle: 'Более ста заданий · 10–60 мин.',
+                        title: 'Карьерные Предложения',
+                        subtitle: 'Огромная база карьер',
                         onPressed: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const ProgressPage(),
+                                        const ProfessionsPage(),
                                   ),
                                 );
                               },

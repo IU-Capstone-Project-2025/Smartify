@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartify/pages/welcome/welcome_page.dart';
+import 'package:smartify/pages/api_server/api_token.dart';
+import 'package:smartify/pages/api_server/api_save_data.dart';
 
 class SettingsSheet extends StatelessWidget {
   const SettingsSheet({super.key});
@@ -42,7 +44,16 @@ class SettingsSheet extends StatelessWidget {
                 radius: 24,
                 backgroundImage: AssetImage('assets/user_avatar.jpg'),
               ),
-              title: const Text('kanekakuk@gmail.com'),
+              title:
+              FutureBuilder(
+                future: ManageData.getDataAsync('email'),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+                  return Text(snapshot.data ?? "example@example.com");
+                },
+              ),
               trailing: const Icon(Icons.edit, color: Color(0xFF54D0C0)),
               onTap: () {},
             ),
@@ -71,6 +82,7 @@ class SettingsSheet extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
+                          _logOutFromAccount();
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -125,5 +137,15 @@ class SettingsSheet extends StatelessWidget {
         onTap: () {},
       ),
     );
+  }
+
+  Future<bool> _logOutFromAccount() async {
+    try {
+      await AuthService.deleteTokens();
+      await ManageData.removeAllData();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

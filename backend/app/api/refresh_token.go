@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/auth"
@@ -18,6 +19,7 @@ type TokenResponse struct {
 }
 
 func RefreshHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("New refresh request!")
 	w.Header().Set("Content-Type", "application/json")
 
 	var req RefreshRequest
@@ -31,6 +33,7 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 
 	claims, err := auth.ParseToken(req.RefreshToken)
 	if err != nil {
+		log.Println("Invalid refresh token type 1!")
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{
 			"error": "Invalid refresh token",
@@ -40,6 +43,7 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 
 	valid, userID, err := database.IsRefreshTokenValid(req.RefreshToken, db)
 	if err != nil || !valid || claims.UserID != userID {
+		log.Println("Invalid refresh token type 2!")
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{
 			"error": "Refresh token expired or invalid",
@@ -67,4 +71,13 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	})
 
 	return
+}
+
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		RefreshToken string `json:"refresh_token"`
+	}
+	json.NewDecoder(r.Body).Decode(&req)
+	database.DeleteRefreshToken(req.RefreshToken, db)
+	w.WriteHeader(http.StatusOK)
 }

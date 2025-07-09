@@ -1,0 +1,133 @@
+name: Smartify CI/CD
+
+#Hi
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: [self-hosted]
+
+    env:
+      URI: http://localhost:8080/api
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Debug - Show current working directory and list files
+        run: |
+          echo "Текущая рабочая директория: $(pwd)"
+          echo "Список файлов в текущей директории:"
+          ls -la # Это покажет, присутствуют ли docker-compose.yml и docker-compose.override.yml
+
+      - name: Debug - Show Docker Compose files on runner
+        run: |
+          echo "--- Содержимое docker-compose.yml ---"
+          cat docker-compose.yml || echo "Файл docker-compose.yml не найден или недоступен для чтения."
+          echo "--- Содержимое docker-compose.override.yml ---"
+          cat docker-compose.override.yml || echo "Файл docker-compose.override.yml не найден или недоступен для чтения."
+
+      - name: Build and start services
+        run: |
+          export COMPOSE_PROJECT_NAME=smartify_test
+          docker-compose -f docker-compose.override.yml down --rmi all --volumes --remove-orphans || true
+          docker-compose pull || true
+          docker-compose -f docker-compose.override.yml build &&
+          docker-compose -f docker-compose.override.yml up -d
+
+      - name: Wait for services to be healthy
+        run: |
+          echo "Waiting for backend to be healthy..."
+          echo "URI is: ${URI}"
+          for i in {1..20}; do
+            sleep 1
+          done
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${URI}/hello)
+          if [ "$STATUS" -eq 200 ]; then
+            echo "✅ Backend is up!"
+            exit 0
+          fi
+          echo "❌ Backend did not start"
+          docker-compose logs
+          exit 1
+
+      - name: Check maildog
+        run: |
+          echo "Waiting for maildog to be healthy..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8025/api/v2/messages)
+          if [ "$STATUS" -eq 200 ]; then
+            echo "✅ maildog is up!"
+            exit 0
+          fi
+          echo "❌ maildog did not start"
+          docker-compose logs
+          exit 1
+
+      - name: Run integration tests
+        run: |
+          chmod +x backend/tests/registration_test.sh
+          backend/tests/registration_test.sh
+          chmod +x backend/tests/login_test.sh
+          backend/tests/login_test.sh
+
+      - name: Stop containers
+        if: always()
+        run: |
+          export COMPOSE_PROJECT_NAME=smartify_test 
+          docker-compose -f docker-compose.override.yml down --rmi all --volumes --remove-orphans || true
+          docker-compose down
+        
+
+
+  build_and_deploy:
+    needs: test
+    runs-on: [self-hosted]
+
+    env:
+      REMOTE_HOST: 213.226.112.206
+      REMOTE_USER: ghrunner
+      APP_DIR: /pro/smartify
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH client
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $REMOTE_HOST >> ~/.ssh/known_hosts
+
+      - name: Copy application files to remote server
+        run: |
+          ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p ${APP_DIR}"
+          scp -r .env.production $REMOTE_USER@$REMOTE_HOST:${APP_DIR}
+          scp -r docker-compose.yml $REMOTE_USER@$REMOTE_HOST:${APP_DIR}
+          scp -r backend/ $REMOTE_USER@$REMOTE_HOST:${APP_DIR}
+          scp -r database/ $REMOTE_USER@$REMOTE_HOST:${APP_DIR}
+          scp -r ml/ $REMOTE_USER@$REMOTE_HOST:${APP_DIR}
+          scp -r frontend/ $REMOTE_USER@$REMOTE_HOST:${APP_DIR}
+
+      - name: Build and deploy Docker containers on remote server
+        run: |
+          ssh $REMOTE_USER@$REMOTE_HOST "
+            export COMPOSE_PROJECT_NAME=smartify_prod
+            cd ${APP_DIR} &&
+            docker-compose build &&
+            docker-compose up -d
+          "
+          echo "Deployment completed on $REMOTE_HOST"
+
+      - name: Clean up SSH key
+        if: always()
+        run: rm -f ~/.ssh/id_rsa

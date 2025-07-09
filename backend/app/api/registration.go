@@ -12,6 +12,7 @@ import (
 
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/api_email"
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/database"
+	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/auth"
 )
 
 var db *sql.DB
@@ -190,10 +191,48 @@ func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	delete(temporary_users, user_request.Email)
+
+	// Находим пользовтеля в db, чтобы получить его id
+	err = database.FindUserByEmail(user_request.Email, &user, db)
+	if err != nil {
+		log.Printf("Error with database")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "Cannot create user... error with database",
+		})
+		return
+	}
+
+	// Генерируем accessToken и refreshToken
+	accessToken, refreshToken, err := auth.GenerateTokens(user.ID)
+	if err != nil {
+		log.Printf("Cannot generate tokens: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "Error generating tokens",
+		})
+		return
+	}
+
+	// Сохраняем refreshToken
+	err = database.StoreRefreshToken(user.ID, refreshToken, db)
+	if err != nil {
+		log.Printf("Cannot store refresh token: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "Error saving refresh token",
+		})
+		return
+	}
+
+	resp := map[string]string{
+		"access_token":  accessToken,
+		"refresh_token": refreshToken,
+	}
+
+	// Send successful answer
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"code": http.StatusOK,
-	})
+	json.NewEncoder(w).Encode(resp)
 }
 
 // Функция для генерации 5-значного числа (с ведущими нулями в том числе)

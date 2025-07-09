@@ -4,13 +4,22 @@ import 'package:smartify/pages/tracker/main_tracker_page.dart';
 import 'package:smartify/pages/universities/main_university_page.dart';
 import 'package:smartify/pages/welcome/welcome_page.dart';
 import 'package:smartify/pages/nav/nav_page.dart';
+import 'package:smartify/pages/recommendations/recommendation_screen.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  /**/
+  // ВРЕМЕННАЯ ОЧИСТКА — удалит все сохранённые токены!
+  //const storage = FlutterSecureStorage();
+  //await storage.deleteAll();
+  
+  // Проверка аутентификации
+  final isAuthenticated = await AuthService.isAuthenticated();
+  runApp(MyApp(widget: isAuthenticated ? const DashboardPage() : const WelcomePage()));
 }
-
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Widget widget;  
+  const MyApp({super.key, required this.widget});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,9 +27,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const WelcomePage(),
+      home: widget,
       //home: const DashboardPage(),
-
     );
   }
 }

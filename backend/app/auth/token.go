@@ -9,12 +9,13 @@ import (
 
 var (
 	jwtKey          = []byte(os.Getenv("JWT_SECRET"))
-	accessTokenTTL  = time.Minute * 15
+	accessTokenTTL  = time.Minute * 1
 	refreshTokenTTL = time.Hour * 24 * 7
 )
 
 type Claims struct {
-	UserID int `json:"user_id"`
+	UserID int    `json:"user_id"`
+	Type   string `json:"type"`
 	jwt.RegisteredClaims
 }
 
@@ -23,6 +24,7 @@ func GenerateTokens(userID int) (accessToken string, refreshToken string, err er
 
 	accessClaims := &Claims{
 		UserID: userID,
+		Type:   "access",
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(now.Add(accessTokenTTL)),
 			IssuedAt:  jwt.NewNumericDate(now),
@@ -31,6 +33,7 @@ func GenerateTokens(userID int) (accessToken string, refreshToken string, err er
 
 	refreshClaims := &Claims{
 		UserID: userID,
+		Type:   "refresh",
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(now.Add(refreshTokenTTL)),
 			IssuedAt:  jwt.NewNumericDate(now),

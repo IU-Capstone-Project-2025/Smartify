@@ -257,6 +257,7 @@ func StoreRefreshToken(userID int, token string, database *sql.DB) error {
          VALUES ($1, $2, NOW() + INTERVAL '7 days')`,
 		userID, token,
 	)
+	log.Println("Saved refresh token")
 	return err
 }
 

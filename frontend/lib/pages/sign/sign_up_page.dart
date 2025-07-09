@@ -374,7 +374,7 @@ Widget _buildPasswordStep() {
                 setState(() => currentStep = 3); 
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Ошибка регистрации")),
+                 SnackBar(content: Text("Ошибка регистрации")),
                 );
               }
             }
