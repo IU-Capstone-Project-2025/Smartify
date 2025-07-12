@@ -8,20 +8,27 @@ import (
 
 // @Summary      Функция проверки доступности
 // @Description  Просто говорит привет, а точнее "ok"
-// @Tags         auth
+// @Tags         test
 // @Accept       json
 // @Produce      json
-// @Router       /commit_code_reset_password [post]
+// @Success		 200 {Object} success_answer
+// @Failure		 405 {Object} error_answer
+// @Router       /api/hello [get]
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(error_answer{
+			Error: "Method not allowed",
+			Code:  http.StatusMethodNotAllowed,
+		})
 		return
 	}
 
 	log.Println("New check")
 
-	response := map[string]string{
-		"message": "ok",
+	response := success_answer{
+		Status: "ok",
+		Code:   http.StatusOK,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

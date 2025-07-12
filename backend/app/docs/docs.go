@@ -18,9 +18,44 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/commit_code_reset_password": {
+        "/api/add_tutor": {
             "post": {
-                "description": "Просто говорит привет, а точнее \"ok\"",
+                "description": "Доступно только аутентифицированным пользователям с ролью тьютора",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tutor"
+                ],
+                "summary": "Добавление/обновление информации о тьюторе",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.tutor_succes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.error_answer"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/api.error_answer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/commit_code_reset_password": {
+            "post": {
+                "description": "Меняет пароль после подтверждения кода",
                 "consumes": [
                     "application/json"
                 ],
@@ -30,11 +65,41 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Функция проверки доступности",
-                "responses": {}
+                "summary": "Установка нового пароля",
+                "parameters": [
+                    {
+                        "description": "Email и код",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.code_verification"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    }
+                }
             }
         },
-        "/forgot_password": {
+        "/api/forgot_password": {
             "post": {
                 "description": "Отправляет код подтверждения на email",
                 "consumes": [
@@ -47,7 +112,173 @@ const docTemplate = `{
                     "auth"
                 ],
                 "summary": "Запрос на сброс пароля",
+                "parameters": [
+                    {
+                        "description": "Email и пароль",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/database.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get_tutor": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Доступно только аутентифицированным пользователям с ролью тьютора",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tutor"
+                ],
+                "summary": "Получение информации о тьюторе",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/database.Tutor"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.error_answer"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/api.error_answer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/hello": {
+            "get": {
+                "description": "Просто говорит привет, а точнее \"ok\"",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "test"
+                ],
+                "summary": "Функция проверки доступности",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/questionnaire": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Доступно только аутентифицированным пользователям",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "questionnaire"
+                ],
+                "summary": "Создание новой анкеты",
                 "responses": {}
+            }
+        },
+        "/api/reset_password": {
+            "post": {
+                "description": "Проверяет код и разрешает смену пароля",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Подтверждение кода для сброса пароля",
+                "parameters": [
+                    {
+                        "description": "Email и пароль",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.update_password"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    }
+                }
             }
         },
         "/login": {
@@ -74,28 +305,32 @@ const docTemplate = `{
                         }
                     }
                 ],
-                "responses": {}
-            }
-        },
-        "/questionnaire": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "Object"
+                        }
                     }
-                ],
-                "description": "Доступно только аутентифицированным пользователям",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "questionnaire"
-                ],
-                "summary": "Создание новой анкеты",
-                "responses": {}
+                }
             }
         },
         "/refresh_token": {
@@ -111,7 +346,25 @@ const docTemplate = `{
                     "auth"
                 ],
                 "summary": "Обновление JWT-токена",
-                "responses": {}
+                "parameters": [
+                    {
+                        "description": "refresh token",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.refresh_token"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    }
+                }
             }
         },
         "/registration_codevalidation": {
@@ -127,7 +380,37 @@ const docTemplate = `{
                     "auth"
                 ],
                 "summary": "Проверка кода подтверждения",
-                "responses": {}
+                "parameters": [
+                    {
+                        "description": "Email и пароль",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.code_verification"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    }
+                }
             }
         },
         "/registration_emailvalidation": {
@@ -143,7 +426,43 @@ const docTemplate = `{
                     "auth"
                 ],
                 "summary": "Отправка email для регистрации",
-                "responses": {}
+                "parameters": [
+                    {
+                        "description": "Email и пароль",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.email_struct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    }
+                }
             }
         },
         "/registration_password": {
@@ -159,27 +478,116 @@ const docTemplate = `{
                     "auth"
                 ],
                 "summary": "Установка пароля",
-                "responses": {}
-            }
-        },
-        "/reset_password": {
-            "post": {
-                "description": "Меняет пароль после подтверждения кода",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Установка нового пароля",
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "type": "Object"
+                        }
+                    }
+                }
             }
         }
     },
     "definitions": {
+        "api.code_verification": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.email_struct": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.error_answer": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.refresh_token": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.tutor_succes": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.update_password": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "newPassword": {
+                    "type": "string"
+                }
+            }
+        },
+        "database.Tutor": {
+            "type": "object",
+            "properties": {
+                "cource": {
+                    "type": "integer"
+                },
+                "interests": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "timestamp": {
+                    "type": "string"
+                },
+                "university": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "database.User": {
             "type": "object"
         }
