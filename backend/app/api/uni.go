@@ -29,3 +29,28 @@ func AddUniversityHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{"status": "University added"})
 }
+
+// @Summary Эндпоинт для обновления университетов
+// @Description Возвращяет universities.json файл
+// @Tags universities
+// @Produce json
+// @Success 200 {array} database.University "Successfully downloaded universities.json"
+// @Failure 400 {string} string "Bad request - Only GET method allowed"
+// @Failure 500 {string} string "Internal server error - Failed to send file"
+// @Router /update [get]
+func RequestToUpdate(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Only GET method allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	universities, err := database.GetAllUniversities()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(universities); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}

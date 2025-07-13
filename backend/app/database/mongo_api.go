@@ -23,6 +23,31 @@ type University struct {
 	ExtraData map[string]interface{} `bson:",extraelements" json:"extra_data,omitempty"`
 }
 
+type UniversityMongo struct {
+	ID                    primitive.ObjectID `bson:"_id" json:"id"`
+	Link                  string             `bson:"ссылка" json:"ссылка"`
+	Name                  string             `bson:"название" json:"название"`
+	Region                string             `bson:"регион" json:"регион"`
+	City                  string             `bson:"город" json:"город"`
+	FoundationYear        string             `bson:"год основания" json:"год основания"`
+	Dormitory             string             `bson:"общежитие" json:"общежитие"`
+	IsState               string             `bson:"государственный" json:"государственный"`
+	HasMilitaryDepartment string             `bson:"воен. уч. центр" json:"воен. уч. центр"`
+	HasBudgetPlaces       string             `bson:"бюджетные места" json:"бюджетные места"`
+	IsAccredited          string             `bson:"лицензия/аккредитация" json:"лицензия/аккредитация"`
+	Rating                string             `bson:"рейтинг" json:"рейтинг"`
+	StudentsCount         string             `bson:"учащихся" json:"учащихся"`
+	BudgetPlaces          string             `bson:"бюджетных мест" json:"бюджетных мес"`
+	PaidPlaces            string             `bson:"платных мест" json:"платных мест"`
+	MinPrice              string             `bson:"самая низкая стоимость" json:"самая низкая стоимость"`
+	PhotoURL              string             `bson:"фото" json:"фото"`
+	Phone                 string             `bson:"телефон" json:"телефон"`
+	Address               string             `bson:"адрес" json:"адрес"`
+	Faculties             []string           `bson:"факультеты" json:"факультеты"`
+	PassingScores         map[string]string  `bson:"проходные_баллы" json:"проходные_баллы"`
+	TimeStamp             time.Time          `bson:"timestamp" json:"timestamp"`
+}
+
 type Profession struct {
 	Name            string    `json:"name" bson:"name"`
 	Description     string    `json:"description" bson:"description"`
@@ -299,4 +324,53 @@ func GetTutor(userID int) (Tutor, error) {
 
 	log.Println("Successfully get tutor information")
 	return existing, nil
+}
+
+func GetAllUniversities() ([]UniversityMongo, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	collection := mongoClient.Database("smartify").Collection("universities")
+
+	log.Println("Fetching all universities from MongoDB")
+
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer func() {
+		if err := cursor.Close(ctx); err != nil {
+			log.Printf("Error closing cursor: %v", err)
+		}
+	}()
+
+	var universities []UniversityMongo
+
+	// Обрабатываем документы по одному
+	for cursor.Next(ctx) {
+		// Сначала декодируем в map для проверки структуры
+		var rawDoc bson.M
+		if err := cursor.Decode(&rawDoc); err != nil {
+			log.Printf("Failed to decode raw document: %v", err)
+			continue
+		}
+
+		// Логируем сырые данные для отладки
+		//log.Printf("Raw document: %+v", rawDoc)
+
+		var uni UniversityMongo
+		if err := cursor.Decode(&uni); err != nil {
+			log.Printf("Failed to decode university: %v", err)
+			continue
+		}
+
+		universities = append(universities, uni)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, fmt.Errorf("cursor iteration error: %w", err)
+	}
+
+	log.Printf("Successfully retrieved %d universities", len(universities))
+	return universities, nil
 }

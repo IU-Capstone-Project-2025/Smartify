@@ -1,12 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:smartify/pages/api_server/api_token.dart';
 import 'package:http/http.dart' as http;
 import 'package:smartify/pages/api_server/api_save_data.dart';
 import 'package:smartify/pages/api_server/api_save_prof.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ApiService {
-  //static const String _baseUrl = 'http://localhost:22025/api';
-  static const String _baseUrl = 'http://213.226.112.206:22025/api';
+  static const String _baseUrl = 'http://localhost:8080/api';
+  //static const String _baseUrl = 'http://213.226.112.206:22025/api';
 
   // Метод для входа
   static Future<bool> login(String email, String password) async {
@@ -237,3 +240,47 @@ class ApiService {
   }
 }
 
+class UniversitiesMeneger {
+  static const fileName = 'universities.json';
+  
+  static Future<void> GetUniversititesJSON() async {
+    try {
+      final token = await AuthService.getAccessToken();
+
+      final response = await http.get(
+        Uri.parse('${ApiService._baseUrl}/update_university_json'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Access_token': token ?? '',
+        }
+      );
+      if (response.statusCode == 200) {
+        final directory = await getApplicationDocumentsDirectory();
+        final file = File('${directory.path}/$fileName');
+        await file.writeAsBytes(response.bodyBytes);
+      } else {
+        print("Ошибка при отправке анкеты: ${response.statusCode}");
+        print("Ответ сервера: ${response.body}");
+        return;
+      }
+    } catch (e) {
+      print("Ошибка соединенея: $e");
+      return;
+    }
+  }
+  static Future<List<dynamic>> loadSavedJson() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/$fileName');
+      String jsonString = await file.readAsString();
+      return jsonDecode(jsonString);
+    } catch (e) {
+      print("Блин, не работает походу");
+      return await loadInitialJson();
+    }
+  }
+  static Future<List<dynamic>> loadInitialJson() async {
+    String jsonString = await rootBundle.loadString('assets/$fileName');
+    return jsonDecode(jsonString);
+  }
+}

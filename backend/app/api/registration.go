@@ -260,9 +260,9 @@ func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := map[string]string{
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
+	resp := Tokens_answer{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
 	}
 
 	// Send successful answer
