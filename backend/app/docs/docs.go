@@ -35,19 +35,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.tutor_succes"
+                            "$ref": "#/definitions/api.Tutor_succes"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api.error_answer"
+                            "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/api.error_answer"
+                            "$ref": "#/definitions/api.Error_answer"
                         }
                     }
                 }
@@ -63,7 +63,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "password_recovery"
                 ],
                 "summary": "Установка нового пароля",
                 "parameters": [
@@ -73,7 +73,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.code_verification"
+                            "$ref": "#/definitions/api.Code_verification"
                         }
                     }
                 ],
@@ -81,19 +81,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "Object"
+                            "type": "struct"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "Object"
+                            "type": "struct"
                         }
                     },
                     "405": {
                         "description": "Method Not Allowed",
                         "schema": {
-                            "type": "Object"
+                            "type": "struct"
                         }
                     }
                 }
@@ -109,7 +109,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "password_recovery"
                 ],
                 "summary": "Запрос на сброс пароля",
                 "parameters": [
@@ -127,19 +127,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "Object"
+                            "type": "struct"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "Object"
+                            "type": "struct"
                         }
                     },
                     "405": {
                         "description": "Method Not Allowed",
                         "schema": {
-                            "type": "Object"
+                            "type": "struct"
                         }
                     }
                 }
@@ -147,11 +147,6 @@ const docTemplate = `{
         },
         "/api/get_tutor": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Доступно только аутентифицированным пользователям с ролью тьютора",
                 "consumes": [
                     "application/json"
@@ -173,13 +168,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api.error_answer"
+                            "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/api.error_answer"
+                            "$ref": "#/definitions/api.Error_answer"
                         }
                     }
                 }
@@ -202,13 +197,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "Object"
+                            "$ref": "#/definitions/api.Success_answer"
                         }
                     },
                     "405": {
                         "description": "Method Not Allowed",
                         "schema": {
-                            "type": "Object"
+                            "type": "struct"
                         }
                     }
                 }
@@ -245,7 +240,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "password_recovery"
                 ],
                 "summary": "Подтверждение кода для сброса пароля",
                 "parameters": [
@@ -255,7 +250,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.update_password"
+                            "$ref": "#/definitions/api.Update_password"
                         }
                     }
                 ],
@@ -263,19 +258,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "Object"
+                            "$ref": "#/definitions/api.Success_answer"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "Object"
+                            "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "405": {
                         "description": "Method Not Allowed",
                         "schema": {
-                            "type": "Object"
+                            "$ref": "#/definitions/api.Error_answer"
                         }
                     }
                 }
@@ -291,7 +286,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "login"
                 ],
                 "summary": "Аутентификация пользователя",
                 "parameters": [
@@ -343,7 +338,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "refresh_token"
                 ],
                 "summary": "Обновление JWT-токена",
                 "parameters": [
@@ -353,7 +348,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.refresh_token"
+                            "$ref": "#/definitions/api.Refresh_token"
                         }
                     }
                 ],
@@ -361,7 +356,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "Object"
+                            "$ref": "#/definitions/api.Success_answer"
                         }
                     }
                 }
@@ -377,7 +372,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "registration"
                 ],
                 "summary": "Проверка кода подтверждения",
                 "parameters": [
@@ -387,7 +382,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.code_verification"
+                            "$ref": "#/definitions/api.Code_verification"
                         }
                     }
                 ],
@@ -395,19 +390,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "Object"
+                            "$ref": "#/definitions/api.Tokens_answer"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "Object"
+                            "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "405": {
                         "description": "Method Not Allowed",
                         "schema": {
-                            "type": "Object"
+                            "$ref": "#/definitions/api.Error_answer"
                         }
                     }
                 }
@@ -423,7 +418,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "registration"
                 ],
                 "summary": "Отправка email для регистрации",
                 "parameters": [
@@ -433,7 +428,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.email_struct"
+                            "$ref": "#/definitions/api.Email_struct"
                         }
                     }
                 ],
@@ -441,25 +436,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "Object"
+                            "$ref": "#/definitions/api.Success_answer"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "Object"
+                            "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "type": "Object"
+                            "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "Object"
+                            "$ref": "#/definitions/api.Error_answer"
                         }
                     }
                 }
@@ -475,26 +470,26 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "registration"
                 ],
                 "summary": "Установка пароля",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "Object"
+                            "$ref": "#/definitions/api.Tokens_answer"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "Object"
+                            "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "405": {
                         "description": "Method Not Allowed",
                         "schema": {
-                            "type": "Object"
+                            "$ref": "#/definitions/api.Error_answer"
                         }
                     }
                 }
@@ -502,7 +497,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "api.code_verification": {
+        "api.Code_verification": {
             "type": "object",
             "properties": {
                 "code": {
@@ -513,7 +508,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api.email_struct": {
+        "api.Email_struct": {
             "type": "object",
             "properties": {
                 "email": {
@@ -521,7 +516,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api.error_answer": {
+        "api.Error_answer": {
             "type": "object",
             "properties": {
                 "code": {
@@ -532,7 +527,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api.refresh_token": {
+        "api.Refresh_token": {
             "type": "object",
             "properties": {
                 "refresh_token": {
@@ -540,7 +535,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api.tutor_succes": {
+        "api.Success_answer": {
             "type": "object",
             "properties": {
                 "code": {
@@ -551,7 +546,29 @@ const docTemplate = `{
                 }
             }
         },
-        "api.update_password": {
+        "api.Tokens_answer": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.Tutor_succes": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.Update_password": {
             "type": "object",
             "properties": {
                 "email": {

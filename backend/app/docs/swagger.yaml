@@ -1,37 +1,51 @@
 basePath: /api
 definitions:
-  api.code_verification:
+  api.Code_verification:
     properties:
       code:
         type: string
       email:
         type: string
     type: object
-  api.email_struct:
+  api.Email_struct:
     properties:
       email:
         type: string
     type: object
-  api.error_answer:
+  api.Error_answer:
     properties:
       code:
         type: integer
       error:
         type: string
     type: object
-  api.refresh_token:
+  api.Refresh_token:
     properties:
       refresh_token:
         type: string
     type: object
-  api.tutor_succes:
+  api.Success_answer:
     properties:
       code:
         type: integer
       status:
         type: string
     type: object
-  api.update_password:
+  api.Tokens_answer:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  api.Tutor_succes:
+    properties:
+      code:
+        type: integer
+      status:
+        type: string
+    type: object
+  api.Update_password:
     properties:
       email:
         type: string
@@ -77,15 +91,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.tutor_succes'
+            $ref: '#/definitions/api.Tutor_succes'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api.error_answer'
+            $ref: '#/definitions/api.Error_answer'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/api.error_answer'
+            $ref: '#/definitions/api.Error_answer'
       summary: Добавление/обновление информации о тьюторе
       tags:
       - tutor
@@ -100,25 +114,25 @@ paths:
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/api.code_verification'
+          $ref: '#/definitions/api.Code_verification'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: Object
+            type: struct
         "400":
           description: Bad Request
           schema:
-            type: Object
+            type: struct
         "405":
           description: Method Not Allowed
           schema:
-            type: Object
+            type: struct
       summary: Установка нового пароля
       tags:
-      - auth
+      - password_recovery
   /api/forgot_password:
     post:
       consumes:
@@ -137,18 +151,18 @@ paths:
         "200":
           description: OK
           schema:
-            type: Object
+            type: struct
         "400":
           description: Bad Request
           schema:
-            type: Object
+            type: struct
         "405":
           description: Method Not Allowed
           schema:
-            type: Object
+            type: struct
       summary: Запрос на сброс пароля
       tags:
-      - auth
+      - password_recovery
   /api/get_tutor:
     get:
       consumes:
@@ -164,13 +178,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/api.error_answer'
+            $ref: '#/definitions/api.Error_answer'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/api.error_answer'
-      security:
-      - BearerAuth: []
+            $ref: '#/definitions/api.Error_answer'
       summary: Получение информации о тьюторе
       tags:
       - tutor
@@ -185,11 +197,11 @@ paths:
         "200":
           description: OK
           schema:
-            type: Object
+            $ref: '#/definitions/api.Success_answer'
         "405":
           description: Method Not Allowed
           schema:
-            type: Object
+            type: struct
       summary: Функция проверки доступности
       tags:
       - test
@@ -217,25 +229,25 @@ paths:
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/api.update_password'
+          $ref: '#/definitions/api.Update_password'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: Object
+            $ref: '#/definitions/api.Success_answer'
         "400":
           description: Bad Request
           schema:
-            type: Object
+            $ref: '#/definitions/api.Error_answer'
         "405":
           description: Method Not Allowed
           schema:
-            type: Object
+            $ref: '#/definitions/api.Error_answer'
       summary: Подтверждение кода для сброса пароля
       tags:
-      - auth
+      - password_recovery
   /login:
     post:
       consumes:
@@ -269,7 +281,7 @@ paths:
             type: Object
       summary: Аутентификация пользователя
       tags:
-      - auth
+      - login
   /refresh_token:
     post:
       consumes:
@@ -281,17 +293,17 @@ paths:
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/api.refresh_token'
+          $ref: '#/definitions/api.Refresh_token'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: Object
+            $ref: '#/definitions/api.Success_answer'
       summary: Обновление JWT-токена
       tags:
-      - auth
+      - refresh_token
   /registration_codevalidation:
     post:
       consumes:
@@ -303,25 +315,25 @@ paths:
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/api.code_verification'
+          $ref: '#/definitions/api.Code_verification'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: Object
+            $ref: '#/definitions/api.Tokens_answer'
         "400":
           description: Bad Request
           schema:
-            type: Object
+            $ref: '#/definitions/api.Error_answer'
         "405":
           description: Method Not Allowed
           schema:
-            type: Object
+            $ref: '#/definitions/api.Error_answer'
       summary: Проверка кода подтверждения
       tags:
-      - auth
+      - registration
   /registration_emailvalidation:
     post:
       consumes:
@@ -333,29 +345,29 @@ paths:
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/api.email_struct'
+          $ref: '#/definitions/api.Email_struct'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: Object
+            $ref: '#/definitions/api.Success_answer'
         "400":
           description: Bad Request
           schema:
-            type: Object
+            $ref: '#/definitions/api.Error_answer'
         "409":
           description: Conflict
           schema:
-            type: Object
+            $ref: '#/definitions/api.Error_answer'
         "500":
           description: Internal Server Error
           schema:
-            type: Object
+            $ref: '#/definitions/api.Error_answer'
       summary: Отправка email для регистрации
       tags:
-      - auth
+      - registration
   /registration_password:
     post:
       consumes:
@@ -367,16 +379,16 @@ paths:
         "200":
           description: OK
           schema:
-            type: Object
+            $ref: '#/definitions/api.Tokens_answer'
         "400":
           description: Bad Request
           schema:
-            type: Object
+            $ref: '#/definitions/api.Error_answer'
         "405":
           description: Method Not Allowed
           schema:
-            type: Object
+            $ref: '#/definitions/api.Error_answer'
       summary: Установка пароля
       tags:
-      - auth
+      - registration
 swagger: "2.0"

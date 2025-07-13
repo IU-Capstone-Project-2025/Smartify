@@ -11,15 +11,15 @@ import (
 
 // @Summary      Обновление JWT-токена
 // @Description  Возвращает новую пару access/refresh токенов
-// @Tags         auth
+// @Tags		 refresh_token
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body  refresh_token  true  "refresh token"
-// @Success		 200 {Object} tokens_answer
-// @Failure		 405 {Object} error_answer
-// @Failure		 400 {Object} error_answer
-// @Failure		 401 {Object} error_answer
-// @Failure		 500 {Object} error_answer
+// @Param        credentials  body  Refresh_token  true  "refresh token"
+// @Success		 200 {object} Tokens_answer
+// @Failure		 405 {object} Error_answer
+// @Failure		 400 {object} Error_answer
+// @Failure		 401 {object} Error_answer
+// @Failure		 500 {object} Error_answer
 // @Router       /refresh_token [post]
 func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("New refresh request!")
@@ -27,17 +27,17 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Method not allowed",
 			Code:  http.StatusMethodNotAllowed,
 		})
 		return
 	}
 
-	var req refresh_token
+	var req Refresh_token
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Invalid request",
 			Code:  http.StatusBadRequest,
 		})
@@ -48,7 +48,7 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Invalid refresh token type 1!")
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Invalid refresh token",
 			Code:  http.StatusUnauthorized,
 		})
@@ -59,7 +59,7 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil || !valid || claims.UserID != userID {
 		log.Println("Invalid refresh token type 2!")
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Refresh token expired or invalid",
 			Code:  http.StatusUnauthorized,
 		})
@@ -71,7 +71,7 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	accessToken, newRefreshToken, err := auth.GenerateTokens(userID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Could not generate tokens",
 			Code:  http.StatusInternalServerError,
 		})
@@ -81,7 +81,7 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	database.StoreRefreshToken(userID, newRefreshToken, db)
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(tokens_answer{
+	json.NewEncoder(w).Encode(Tokens_answer{
 		AccessToken:  accessToken,
 		RefreshToken: newRefreshToken,
 	})
@@ -89,18 +89,18 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 
 // @Summary      Обновление JWT-токена
 // @Description  Возвращает новую пару access/refresh токенов
-// @Tags         auth
+// @Tags         refresh_token
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body refresh_token  true  "refresh token"
-// @Success		 200 {Object} success_answer
+// @Param        credentials  body Refresh_token  true  "refresh token"
+// @Success		 200 {object} Success_answer ""
 // @Router       /refresh_token [post]
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	var req refresh_token
+	var req Refresh_token
 	json.NewDecoder(r.Body).Decode(&req)
 	database.DeleteRefreshToken(req.RefreshToken, db)
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(success_answer{
+	json.NewEncoder(w).Encode(Success_answer{
 		Status: "OK",
 		Code:   http.StatusOK,
 	})

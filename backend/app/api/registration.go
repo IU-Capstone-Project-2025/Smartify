@@ -24,27 +24,27 @@ func InitDatabase(db_ *sql.DB) {
 
 // @Summary      Отправка email для регистрации
 // @Description  Проверяет email и отправляет код подтверждения
-// @Tags         auth
+// @Tags         registration
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body	email_struct  true  "Email и пароль"
-// @Success		 200 {Object} success_answer
-// @Failure		 409 {Object} error_answer
-// @Failure		 400 {Object} error_answer
-// @Failure		 500 {Object} error_answer
+// @Param        credentials  body	Email_struct  true  "Email и пароль"
+// @Success		 200 {object} Success_answer
+// @Failure		 409 {object} Error_answer
+// @Failure		 400 {object} Error_answer
+// @Failure		 500 {object} Error_answer
 // @Router       /registration_emailvalidation [post]
 func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request) {
 	log.Println("Registration:")
 	w.Header().Set("Content-Type", "application/json")
 
-	var email email_struct
+	var email Email_struct
 
 	// Try to decode message
 	err := json.NewDecoder(r.Body).Decode(&email)
 	if err != nil {
 		log.Println("Cannot decode request")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Invalid request",
 			Code:  http.StatusBadRequest,
 		})
@@ -58,7 +58,7 @@ func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request)
 	if !database.IsValidEmail(email.Email) {
 		log.Printf("Not valid Email")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Not valid Email",
 			Code:  http.StatusBadRequest,
 		})
@@ -69,7 +69,7 @@ func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request)
 	if err := database.CheckUser(email.Email, db); err != nil {
 		log.Printf("User already exists")
 		w.WriteHeader(http.StatusConflict)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "User already exists",
 			Code:  http.StatusBadRequest,
 		})
@@ -81,7 +81,7 @@ func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		log.Printf("Cannot generate code: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Cannot generate code",
 			Code:  http.StatusBadRequest,
 		})
@@ -101,7 +101,7 @@ func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request)
 
 	// Send successful answer
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(success_answer{
+	json.NewEncoder(w).Encode(Success_answer{
 		Status: "ok",
 		Code:   http.StatusOK,
 	})
@@ -109,26 +109,26 @@ func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request)
 
 // @Summary      Проверка кода подтверждения
 // @Description  Валидирует код, отправленный на email
-// @Tags         auth
-// @Param        credentials  body	code_verification  true  "Email и пароль"
+// @Tags         registration
+// @Param        credentials  body	Code_verification  true  "Email и пароль"
 // @Accept       json
 // @Produce      json
-// @Success		 200 {Object} tokens_answer
-// @Failure		 405 {Object} error_answer
-// @Failure		 400 {Object} error_answer
+// @Success		 200 {object} Tokens_answer
+// @Failure		 405 {object} Error_answer
+// @Failure		 400 {object} Error_answer
 // @Router       /registration_codevalidation [post]
 func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) {
 	log.Println("Registration-CodeValidation:")
 	w.Header().Set("Content-Type", "application/json")
 
-	var user code_verification
+	var user Code_verification
 
 	// Декодируем json сообщение
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		log.Println("Cannot decode request")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Invalid JSON",
 			Code:  http.StatusBadRequest,
 		})
@@ -139,7 +139,7 @@ func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) 
 	if _, exists := temporary_users[user.Email]; !exists {
 		log.Printf("User does not exists")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "User does not exists...",
 			Code:  http.StatusBadRequest,
 		})
@@ -150,7 +150,7 @@ func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) 
 	if user.Code != temporary_users[user.Email] {
 		log.Printf("Code does not equal")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Code does not equal...",
 			Code:  http.StatusBadRequest,
 		})
@@ -159,7 +159,7 @@ func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) 
 
 	// Отправляем успешный ответ
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(success_answer{
+	json.NewEncoder(w).Encode(Success_answer{
 		Status: "ok",
 		Code:   http.StatusOK,
 	})
@@ -167,18 +167,18 @@ func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) 
 
 // @Summary      Установка пароля
 // @Description  Завершает регистрацию, сохраняя пароль
-// @Tags         auth
+// @Tags         registration
 // @Accept       json
 // @Produce      json
-// @Success		 200 {Object} tokens_answer
-// @Failure		 405 {Object} error_answer
-// @Failure		 400 {Object} error_answer
+// @Success		 200 {object} Tokens_answer
+// @Failure		 405 {object} Error_answer
+// @Failure		 400 {object} Error_answer
 // @Router       /registration_password [post]
 func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 	log.Println("Registration-Password:")
 	w.Header().Set("Content-Type", "application/json")
 
-	var user_request user_email_password
+	var user_request User_email_password
 
 	// Декодируем json сообщение
 	err := json.NewDecoder(r.Body).Decode(&user_request)
@@ -188,7 +188,7 @@ func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{
 			"error": "Invalid JSON",
 		})
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Code does not equal...",
 			Code:  http.StatusBadRequest,
 		})
@@ -199,7 +199,7 @@ func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 	if _, exists := temporary_users[user_request.Email]; !exists {
 		log.Printf("User does not exists")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "User does not exists...",
 			Code:  http.StatusBadRequest,
 		})
@@ -216,7 +216,7 @@ func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Error with database")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Cannot create user... error with database",
 			Code:  http.StatusBadRequest,
 		})
@@ -229,7 +229,7 @@ func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Error with database")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Cannot create user... error with database",
 			Code:  http.StatusBadRequest,
 		})
@@ -241,7 +241,7 @@ func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Cannot generate tokens: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Error generating tokens",
 			Code:  http.StatusBadRequest,
 		})
@@ -253,7 +253,7 @@ func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Cannot store refresh token: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Error saving refresh token",
 			Code:  http.StatusBadRequest,
 		})

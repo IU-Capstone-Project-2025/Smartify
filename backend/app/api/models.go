@@ -1,44 +1,44 @@
 package api
 
-type success_answer struct {
+type Success_answer struct {
 	Status string `json:"status"`
 	Code   int    `json:"code"`
 }
 
-type error_answer struct {
+type Error_answer struct {
 	Error string `json:"error"`
 	Code  int    `json:"code"`
 }
 
-type tokens_answer struct {
+type Tokens_answer struct {
 	RefreshToken string `json:"refresh_token"`
 	AccessToken  string `json:"access_token"`
 }
 
-type code_verification struct {
+type Code_verification struct {
 	Email string `json:"email"`
 	Code  string `json:"code"`
 }
 
-type update_password struct {
+type Update_password struct {
 	Email       string `json:"email"`
 	NewPassword string `json:"newPassword"`
 }
 
-type user_email_password struct {
+type User_email_password struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-type refresh_token struct {
+type Refresh_token struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-type email_struct struct {
+type Email_struct struct {
 	Email string `json:"email"`
 }
 
-type tutor_succes struct {
+type Tutor_succes struct {
 	Status string `json:"status"`
 	Code   int    `json:"code"`
 }

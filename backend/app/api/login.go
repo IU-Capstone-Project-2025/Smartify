@@ -11,14 +11,14 @@ import (
 
 // @Summary      Аутентификация пользователя
 // @Description  Вход по email и паролю, возвращает JWT-токен
-// @Tags         auth
+// @Tags         login
 // @Accept       json
 // @Produce      json
 // @Param        credentials  body  database.User  true  "Email и пароль"
-// @Success		 200 {Object} tokens_answer
-// @Failure		 405 {Object} error_answer
-// @Failure		 400 {Object} error_answer
-// @Failure		 500 {Object} error_answer
+// @Success		 200 {Object} Tokens_answer
+// @Failure		 405 {Object} Error_answer
+// @Failure		 400 {Object} Error_answer
+// @Failure		 500 {Object} Error_answer
 // @Router       /login [post]
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("New connection!")
@@ -26,7 +26,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Method not allowed",
 			Code:  http.StatusMethodNotAllowed,
 		})
@@ -40,7 +40,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Cannot decode request")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Invalid JSON",
 			Code:  http.StatusBadRequest,
 		})
@@ -55,7 +55,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Cannot write in database: %s", err)
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Account will not be found...",
 			Code:  http.StatusBadRequest,
 		})
@@ -66,7 +66,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Cannot generate tokens: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Error generating tokens",
 			Code:  http.StatusInternalServerError,
 		})
@@ -77,14 +77,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Cannot store refresh token: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Error saving refresh token",
 			Code:  http.StatusInternalServerError,
 		})
 		return
 	}
 
-	resp := tokens_answer{
+	resp := Tokens_answer{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}

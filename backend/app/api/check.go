@@ -11,13 +11,13 @@ import (
 // @Tags         test
 // @Accept       json
 // @Produce      json
-// @Success		 200 {Object} success_answer
-// @Failure		 405 {Object} error_answer
+// @Success		 200 {object} Success_answer
+// @Failure		 405 {struct} Error_answer
 // @Router       /api/hello [get]
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		json.NewEncoder(w).Encode(error_answer{
+		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Method not allowed",
 			Code:  http.StatusMethodNotAllowed,
 		})
@@ -26,7 +26,7 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("New check")
 
-	response := success_answer{
+	response := Success_answer{
 		Status: "ok",
 		Code:   http.StatusOK,
 	}
