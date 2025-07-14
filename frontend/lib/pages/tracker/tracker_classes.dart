@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartify/pages/api_server/api_server.dart';
 
 class Task {
   String title;
@@ -137,8 +138,17 @@ class SubjectsManager {
     await sharedPref.setString("subjects", jsonEncode({
       "data": subjectsJson
     }));
+    ApiService.saveTrackers(this);
     // потом можно будет добавить проверку на то, что записались данные или нет
     // и в зависимости от этого отображать раззные данные
+  }
+
+  List<String> getJSON() {
+    List<String> subjectsJson = [];
+    for (var sub in subjects) {
+      subjectsJson.add(jsonEncode(sub.toJson()));
+    }
+    return subjectsJson;
   }
 
   Future<void> loadAll() async {

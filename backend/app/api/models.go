@@ -1,5 +1,7 @@
 package api
 
+import "time"
+
 type Success_answer struct {
 	Status string `json:"status"`
 	Code   int    `json:"code"`
@@ -41,4 +43,36 @@ type Email_struct struct {
 type Tutor_succes struct {
 	Status string `json:"status"`
 	Code   int    `json:"code"`
+}
+
+type Tracker_save struct {
+	Token     string   `json:"token"`
+	Timestamp string   `json:"timestamp"`
+	Trackers  []string `json:"trackers" example:"[
+	{
+		title,
+		icon,
+		color,
+		tasks: {
+				title,
+				duration,
+				deadline,
+				isCompleted
+			}
+	},
+	{
+		title,
+		icon,
+		color,
+		tasks: {
+				title,
+				duration,
+				deadline,
+				isCompleted
+			}
+	}]"`
+}
+
+func (r *Tracker_save) GetParsedTime() (time.Time, error) {
+	return time.Parse(time.RFC3339, r.Timestamp)
 }

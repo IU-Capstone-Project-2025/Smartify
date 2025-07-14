@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:smartify/pages/api_server/api_save_data.dart';
 import 'package:smartify/pages/api_server/api_save_prof.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:smartify/pages/tracker/tracker_classes.dart';
 
 class ApiService {
   static const String _baseUrl = 'http://localhost:8080/api';
@@ -236,6 +237,65 @@ class ApiService {
     } catch (e) {
       print("Ошибка соединенея: $e");
       return [];
+    }
+  }
+    static Future<bool> saveTrackers(SubjectsManager subjectsManager) async {
+    try {
+      final token = await AuthService.getAccessToken();
+      final trackers = subjectsManager.getJSON();
+      final timeNow_ = DateTime.now().toIso8601String().split('.')[0] + 'Z';
+      final response = await http.post(
+        Uri.parse('$_baseUrl/savetrackers'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'token': token,
+          'trackers': trackers,
+          'timestamp': timeNow_
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("Success: [CODE: ${data["code"]}], [STATUS: ${data["status"]}]");
+        return true;
+      } else {
+        final data = jsonDecode(response.body);
+        print("Error: [CODE: ${data["code"]}], [ERROR: ${data["error"]}]");
+        if (data["code"] == 401) {
+          print("Refresh access token");
+          await AuthService.refreshAccessToken();
+          saveTrackers(subjectsManager);
+        }
+        return false;
+      }
+    } catch (e) {
+      print("Ошибка соединенея: $e");
+      return false;
+    }
+  }
+
+  static Future<String?> CheckTokens(String accessToken, String refreshToken) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/checkTokens'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'refresh_token': refreshToken,
+          'access_token': accessToken
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("Success: [CODE: ${data["code"]}], [STATUS: ${data["status"]}]");
+        return null;
+      } else {
+        final data = jsonDecode(response.body);
+        return data['error'];
+      }
+    } catch (e) {
+      print("Ошибка соединенея: $e");
+      return "Other Error";
     }
   }
 }

@@ -1,10 +1,17 @@
 package auth
 
 import (
+	"errors"
 	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+)
+
+var (
+	ErrInvalidTokenType = errors.New("invalid token type")
+	ErrTokenExpired     = errors.New("token expired")
+	ErrInvalidToken     = errors.New("invalid token")
 )
 
 var (
@@ -64,4 +71,39 @@ func ParseToken(tokenStr string) (*Claims, error) {
 	}
 
 	return claims, nil
+}
+
+func ValidateAccessToken(tokenStr string) error {
+	claims, err := ParseToken(tokenStr)
+	if err != nil {
+		return err
+	}
+
+	if claims.Type != "access" {
+		return ErrInvalidTokenType
+	}
+
+	if time.Now().After(claims.ExpiresAt.Time) {
+		return ErrTokenExpired
+	}
+
+	return nil
+}
+
+// ValidateRefreshToken проверяет refresh токен
+func ValidateRefreshToken(tokenStr string) error {
+	claims, err := ParseToken(tokenStr)
+	if err != nil {
+		return err
+	}
+
+	if claims.Type != "refresh" {
+		return ErrInvalidTokenType
+	}
+
+	if time.Now().After(claims.ExpiresAt.Time) {
+		return ErrTokenExpired
+	}
+
+	return nil
 }

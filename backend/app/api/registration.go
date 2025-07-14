@@ -185,11 +185,8 @@ func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Cannot decode request")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{
-			"error": "Invalid JSON",
-		})
 		json.NewEncoder(w).Encode(Error_answer{
-			Error: "Code does not equal...",
+			Error: "Invalid JSON",
 			Code:  http.StatusBadRequest,
 		})
 		return

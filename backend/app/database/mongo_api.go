@@ -108,6 +108,12 @@ type Tutor struct {
 	TimeStamp  time.Time `bson:"timestamp" json:"timestamp"`
 }
 
+type User_trackers struct {
+	UserID    int       `json:"user_id" bson:"user_id"`
+	Trackers  []string  `json:"trackers" bson:"trackers"`
+	TimeStamp time.Time `bson:"timestamp" json:"timestamp"`
+}
+
 func ConnectMongo(uri string) (*mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -268,6 +274,36 @@ func AddProfessionRecommendation(p ProfessionRec) error {
 	}
 
 	log.Println("Profession Recommendation not updated: older timestamp")
+	return nil
+}
+
+func AddTrackers(ut User_trackers) error {
+	collection := mongoClient.Database("smartify").Collection("trackers")
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	var existing Tutor
+	err := collection.FindOne(ctx, bson.M{"user_id": ut.UserID}).Decode(&existing)
+
+	if err == mongo.ErrNoDocuments {
+		_, err1 := collection.InsertOne(ctx, ut)
+		if err1 != nil {
+			return err1
+		}
+		log.Println("Successfully inserted trackers!")
+		return nil
+	} else if err != nil {
+		return err
+	} else if ut.TimeStamp.After(existing.TimeStamp) {
+		_, updateErr := collection.ReplaceOne(ctx, bson.M{"user_id": ut.UserID}, ut)
+		if updateErr != nil {
+			return updateErr
+		}
+		log.Println("Successfully updated trackers!")
+		return nil
+	}
+
+	log.Println("Tutor not updated: older timestamp")
 	return nil
 }
 

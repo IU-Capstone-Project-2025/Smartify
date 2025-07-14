@@ -39,18 +39,49 @@ func AddUniversityHandler(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {string} string "Internal server error - Failed to send file"
 // @Router /update [get]
 func RequestToUpdate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Only GET method allowed", http.StatusMethodNotAllowed)
-		return
-	}
 	universities, err := database.GetAllUniversities()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	// Преобразуем данные в нужный формат
+	var exportData []map[string]interface{}
+	for _, uni := range universities {
+		item := map[string]interface{}{
+			"ссылка":                 uni.Link,
+			"название":               uni.Name,
+			"регион":                 uni.Region,
+			"город":                  uni.City,
+			"год основания":          uni.FoundationYear,
+			"общежитие":              uni.Dormitory,
+			"государственный":        uni.IsState,
+			"воен. уч. центр":        uni.HasMilitaryDepartment,
+			"бюджетные места":        uni.HasBudgetPlaces,
+			"лицензия/аккредитация":  uni.IsAccredited,
+			"рейтинг":                uni.Rating,
+			"учащихся":               uni.StudentsCount,
+			"бюджетных мест":         uni.BudgetPlaces,
+			"платных мест":           uni.PaidPlaces,
+			"самая низкая стоимость": uni.MinPrice,
+			"фото":                   uni.PhotoURL,
+			"телефон":                uni.Phone,
+			"адрес":                  uni.Address,
+			"факультеты":             uni.Faculties,
+			"проходные_баллы":        uni.PassingScores,
+		}
+		exportData = append(exportData, item)
+	}
+
+	// Устанавливаем заголовки для скачивания файла
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(universities); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	w.Header().Set("Content-Disposition", "attachment; filename=universities.json")
+
+	// Кодируем данные в JSON с отступами
+	encoder := json.NewEncoder(w)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(exportData); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }

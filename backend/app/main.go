@@ -153,6 +153,12 @@ func main() {
 	// Возварщяет университеты
 	http.HandleFunc("/api/update_university_json", api.RequestToUpdate)
 
+	// Сохраняет трекеры
+	http.HandleFunc("/api/savetrackers", api.SaveTrackers)
+
+	// Проверяет токены на актуальность
+	http.HandleFunc("/api/checkTokens", api.TokenCheck)
+
 	// Для подтверждения по ссылке
 	/* -----------------------------------------------------------------------
 		http.Handle("/reset_password_page/",
