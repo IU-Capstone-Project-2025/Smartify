@@ -282,7 +282,7 @@ func AddTrackers(ut User_trackers) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 
-	var existing Tutor
+	var existing User_trackers
 	err := collection.FindOne(ctx, bson.M{"user_id": ut.UserID}).Decode(&existing)
 
 	if err == mongo.ErrNoDocuments {
@@ -305,6 +305,25 @@ func AddTrackers(ut User_trackers) error {
 
 	log.Println("Tutor not updated: older timestamp")
 	return nil
+}
+
+func GetTrackers(ut User_trackers) (User_trackers, error) {
+	collection := mongoClient.Database("smartify").Collection("trackers")
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	var existing User_trackers
+	err := collection.FindOne(ctx, bson.M{"user_id": ut.UserID}).Decode(&existing)
+	println(ut.UserID)
+	println(existing.UserID)
+	println(existing.Trackers)
+
+	if err != nil {
+		return existing, err
+	}
+
+	log.Println("Successfully get trackers information")
+	return existing, nil
 }
 
 func AddTutor(t Tutor) error {

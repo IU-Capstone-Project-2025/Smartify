@@ -156,8 +156,11 @@ func main() {
 	// Сохраняет трекеры
 	http.HandleFunc("/api/savetrackers", api.SaveTrackers)
 
+	// Сохраняет трекеры
+	http.HandleFunc("/api/gettrackers", api.GetTrackers)
+
 	// Проверяет токены на актуальность
-	http.HandleFunc("/api/checkTokens", api.TokenCheck)
+	http.HandleFunc("/api/checktokens", api.TokenCheck)
 
 	// Для подтверждения по ссылке
 	/* -----------------------------------------------------------------------

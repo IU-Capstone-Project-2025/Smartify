@@ -46,7 +46,7 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 // @Success		 200 {object} Success_answer
 // @Failure		 405 {object} Error_answer
 // @Failure		 401 {object} Error_answer
-// @Router       /api/checkTokens [get]
+// @Router       /api/checkTokens [post]
 func TokenCheck(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)

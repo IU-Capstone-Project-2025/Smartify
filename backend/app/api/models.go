@@ -12,9 +12,39 @@ type Error_answer struct {
 	Code  int    `json:"code"`
 }
 
+type Get_trackers_request struct {
+	Token string `json:"token"`
+}
+
 type Tokens_answer struct {
 	RefreshToken string `json:"refresh_token"`
 	AccessToken  string `json:"access_token"`
+}
+
+type Trackers struct {
+	Trackers []string `json:"trackers" example:"[
+	{
+		title,
+		icon,
+		color,
+		tasks: {
+				title,
+				duration,
+				deadline,
+				isCompleted
+			}
+	},
+	{
+		title,
+		icon,
+		color,
+		tasks: {
+				title,
+				duration,
+				deadline,
+				isCompleted
+			}
+	}]"`
 }
 
 type Code_verification struct {

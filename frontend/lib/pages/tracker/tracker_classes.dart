@@ -138,7 +138,17 @@ class SubjectsManager {
     await sharedPref.setString("subjects", jsonEncode({
       "data": subjectsJson
     }));
-    ApiService.saveTrackers(this);
+    ApiService.SaveTrackers(this);
+    // потом можно будет добавить проверку на то, что записались данные или нет
+    // и в зависимости от этого отображать раззные данные
+  }
+
+  Future<void> updateFromJSON(List<String> subjectsJson) async {
+    final sharedPref = await SharedPreferences.getInstance();
+    await sharedPref.setString("subjects", jsonEncode({
+      "data": subjectsJson
+    }));
+    ApiService.SaveTrackers(this);
     // потом можно будет добавить проверку на то, что записались данные или нет
     // и в зависимости от этого отображать раззные данные
   }
@@ -152,6 +162,10 @@ class SubjectsManager {
   }
 
   Future<void> loadAll() async {
+    final trackers = await ApiService.GetTrackers(this);
+    if (trackers != null) {
+      await updateFromJSON(trackers);
+    }
     final sharedPref = await SharedPreferences.getInstance();
     
     String? data = sharedPref.getString("subjects");

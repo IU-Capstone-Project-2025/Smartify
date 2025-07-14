@@ -9,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:smartify/pages/tracker/tracker_classes.dart';
 
 class ApiService {
-  static const String _baseUrl = 'http://localhost:8080/api';
+  static const String _baseUrl = 'http://192.168.1.195:8080/api';
   //static const String _baseUrl = 'http://213.226.112.206:22025/api';
 
   // Метод для входа
@@ -239,7 +239,7 @@ class ApiService {
       return [];
     }
   }
-    static Future<bool> saveTrackers(SubjectsManager subjectsManager) async {
+    static Future<bool> SaveTrackers(SubjectsManager subjectsManager, [int tries = 0]) async {
     try {
       final token = await AuthService.getAccessToken();
       final trackers = subjectsManager.getJSON();
@@ -262,9 +262,11 @@ class ApiService {
         final data = jsonDecode(response.body);
         print("Error: [CODE: ${data["code"]}], [ERROR: ${data["error"]}]");
         if (data["code"] == 401) {
-          print("Refresh access token");
-          await AuthService.refreshAccessToken();
-          saveTrackers(subjectsManager);
+          if (tries < 3) {
+            print("Refresh access token");
+            await AuthService.refreshAccessToken();
+            return await SaveTrackers(subjectsManager, tries + 1);
+          }
         }
         return false;
       }
@@ -274,10 +276,43 @@ class ApiService {
     }
   }
 
+  static Future<List<String>?> GetTrackers(SubjectsManager subjectsManager, [int tries = 0]) async {
+    try {
+      final token = await AuthService.getAccessToken();
+      final response = await http.post(
+        Uri.parse('$_baseUrl/gettrackers'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'token': token,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("Success!");
+        return (data['trackers'] as List<dynamic>).map((item) => item as String).toList();
+      } else {
+        final data = jsonDecode(response.body);
+        print("Error: [CODE: ${data["code"]}], [ERROR: ${data["error"]}]");
+        if (data["code"] == 401) {
+          print("Refresh access token");
+          if (tries < 3) {
+            await AuthService.refreshAccessToken();
+            return await GetTrackers(subjectsManager, tries + 1);
+          }
+        }
+        return null;
+      }
+    } catch (e) {
+      print("Ошибка соединенея: $e");
+      return null;
+    }
+  }
+
   static Future<String?> CheckTokens(String accessToken, String refreshToken) async {
     try {
       final response = await http.post(
-        Uri.parse('$_baseUrl/checkTokens'),
+        Uri.parse('$_baseUrl/checktokens'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'refresh_token': refreshToken,
