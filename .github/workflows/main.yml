@@ -1,6 +1,5 @@
 name: Smartify CI/CD
 
-#Hi
 on:
   push:
     branches:
@@ -16,19 +15,23 @@ jobs:
 
     env:
       URI: http://localhost:8080/api
-      
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Create .env.test from secret
+        run: |
+          echo "${{ secrets.ENV_TEST }}" > .env.test
 
       - name: Debug - Show current working directory and list files
         run: |
           echo "Текущая рабочая директория: $(pwd)"
           echo "Список файлов в текущей директории:"
-          ls -la # Это покажет, присутствуют ли docker-compose.yml и docker-compose.override.yml
+          ls -la
 
       - name: Debug - Show Docker Compose files on runner
         run: |
@@ -83,11 +86,9 @@ jobs:
       - name: Stop containers
         if: always()
         run: |
-          export COMPOSE_PROJECT_NAME=smartify_test 
+          export COMPOSE_PROJECT_NAME=smartify_test
           docker-compose -f docker-compose.override.yml down --rmi all --volumes --remove-orphans || true
           docker-compose down
-        
-
 
   build_and_deploy:
     needs: test
@@ -108,6 +109,10 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H $REMOTE_HOST >> ~/.ssh/known_hosts
+
+      - name: Create .env.production from secret
+        run: |
+          echo "${{ secrets.ENV_PRODUCTION }}" > .env.production
 
       - name: Copy application files to remote server
         run: |
