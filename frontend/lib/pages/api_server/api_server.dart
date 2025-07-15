@@ -5,8 +5,8 @@ import 'package:smartify/pages/api_server/api_save_data.dart';
 import 'package:smartify/pages/api_server/api_save_prof.dart';
 
 class ApiService {
-  //static const String _baseUrl = 'http://localhost:22025/api';
-  static const String _baseUrl = 'http://213.226.112.206:22025/api';
+  static const String _baseUrl = 'http://localhost:22025/api';
+  //static const String _baseUrl = 'http://213.226.112.206:22025/api';
 
   // Метод для входа
   static Future<bool> login(String email, String password) async {
