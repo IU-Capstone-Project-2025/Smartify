@@ -6,6 +6,12 @@ import (
 	"net/http"
 )
 
+// @Summary      Функция проверки доступности
+// @Description  Просто говорит привет, а точнее "ok"
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Router       /commit_code_reset_password [post]
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

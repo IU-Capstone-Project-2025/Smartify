@@ -9,6 +9,13 @@ import (
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/database"
 )
 
+// @Summary      Аутентификация пользователя
+// @Description  Вход по email и паролю, возвращает JWT-токен
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        credentials  body  database.User  true  "Email и пароль"
+// @Router       /login [post]
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("New connection!")
 	w.Header().Set("Content-Type", "application/json")

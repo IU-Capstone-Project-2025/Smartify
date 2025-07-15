@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:archive/archive.dart';
 import 'package:xml/xml.dart';
 import 'package:smartify/pages/api_server/api_server.dart';
+import 'package:smartify/pages/api_server/api_save_prof.dart';
 import 'package:smartify/pages/recommendations/recommendation_screen.dart';
 
 void main() {
@@ -67,6 +68,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   final Map<int, dynamic> answers = {};
   final highlightColor = const Color(0xFF54D0C0);
   final Map<int, TextEditingController> _textControllers = {};
+  List<dynamic> predictions = [];
 
   Future<void> _submitQuestionnaire() async {
     final Map<String, dynamic> data = {
@@ -154,13 +156,23 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
           break;
       }
     }
-    final success = await ApiService.AddQuestionnaire(data);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(success ? "Анкета отправлена!" : "Ошибка при отправке анкеты"),
-      ),
-    );
+    final predictions = await ApiService.AddQuestionnaire(data);
+
+    if (predictions.isNotEmpty) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RecommendationScreen(predictions: predictions),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Ошибка при отправке анкеты."),
+        ),
+      );
+    }
   }
 
   @override
@@ -507,12 +519,6 @@ switch (question.type) {
                               : entry.value;
                           print('${q.number ?? "-"} [${q.block ?? ""}] ${q.text}: $answer');
                         }
-                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RecommendationScreen(), // не забудь импортировать
-                          ),
-                        );
                       },
                       child: const Text(
                         'Завершить',

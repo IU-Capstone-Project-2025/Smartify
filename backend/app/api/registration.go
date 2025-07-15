@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/api_email"
-	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/database"
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/auth"
+	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/database"
 )
 
 var db *sql.DB
@@ -22,7 +22,12 @@ func InitDatabase(db_ *sql.DB) {
 	db = db_
 }
 
-// Для первого этапа регистрации (Ввод почты и подтверждение)
+// @Summary      Отправка email для регистрации
+// @Description  Проверяет email и отправляет код подтверждения
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Router       /registration_emailvalidation [post]
 func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request) {
 	log.Println("Registration:")
 	w.Header().Set("Content-Type", "application/json")
@@ -94,7 +99,12 @@ func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request)
 	})
 }
 
-// Для второго этапа регистрации (Подтверждение кода)
+// @Summary      Проверка кода подтверждения
+// @Description  Валидирует код, отправленный на email
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Router       /registration_codevalidation [post]
 func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) {
 	log.Println("Registration-CodeValidation:")
 	w.Header().Set("Content-Type", "application/json")
@@ -143,7 +153,12 @@ func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) 
 	})
 }
 
-// Для третьего этапа (Создание пароля)
+// @Summary      Установка пароля
+// @Description  Завершает регистрацию, сохраняя пароль
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Router       /registration_password [post]
 func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 	log.Println("Registration-Password:")
 	w.Header().Set("Content-Type", "application/json")

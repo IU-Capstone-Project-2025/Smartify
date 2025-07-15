@@ -1,12 +1,13 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:smartify/pages/recommendations/recommendation.dart';
 import 'package:smartify/pages/recommendations/recommendation_card.dart';
 import 'package:smartify/pages/recommendations/recommendation_small_card.dart';
+import 'package:smartify/pages/api_server/api_save_prof.dart'; // тут лежит ProfessionPrediction
 
 class RecommendationScreen extends StatefulWidget {
-  const RecommendationScreen({super.key});
+  final List<ProfessionPrediction> predictions;
+
+  const RecommendationScreen({super.key, required this.predictions});
 
   @override
   State<RecommendationScreen> createState() => _RecommendationScreenState();
@@ -18,16 +19,21 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
   @override
   void initState() {
     super.initState();
-    loadData();
+    processPredictions();
   }
 
-  Future<void> loadData() async {
-    final String response =
-        await rootBundle.loadString('assets/recommendations.json');
-    final List<dynamic> data = json.decode(response);
+  void processPredictions() {
     setState(() {
-      recommendations =
-          data.map((json) => Recommendation.fromJson(json)).toList();
+      recommendations = widget.predictions.map((p) {
+        return Recommendation(
+          name: p.name,
+          score: p.score,
+          description: p.description,
+          positives: p.positives,
+          negatives: p.negatives,
+        );
+      }).toList();
+
       recommendations.sort((a, b) => b.score.compareTo(a.score));
     });
   }
@@ -62,20 +68,22 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                       RecommendationCard(recommendation: rec),
                     const SizedBox(height: 12),
                     Wrap(
-  spacing: 8,
-  runSpacing: 8,
-  children: smallRecommendations.map(
-    (rec) => ConstrainedBox(
-      constraints: BoxConstraints(
-        maxWidth: (MediaQuery.of(context).size.width - 40) / 2,
-      ),
-      child: IntrinsicHeight(
-        child: RecommendationSmallCard(recommendation: rec),
-      ),
-    ),
-  ).toList(),
-)
-
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: smallRecommendations.map(
+                        (rec) => ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth:
+                                (MediaQuery.of(context).size.width - 40) / 2,
+                          ),
+                          child: IntrinsicHeight(
+                            child: RecommendationSmallCard(
+                              recommendation: rec,
+                            ),
+                          ),
+                        ),
+                      ).toList(),
+                    ),
                   ],
                 ),
               ),

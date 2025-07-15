@@ -1,6 +1,16 @@
 version: '3.8'
 
 services:
+  ml:
+    build:
+      context: ./ml
+    ports:
+      - "8091:8091"
+    volumes:
+      - ./database:/app/database
+    restart: always
+    networks:
+      - internal
   db:
     image: postgres:15
     ports:
@@ -43,6 +53,7 @@ services:
     depends_on:
       - db
       - mongo
+      - ml
     env_file:
     - .env.production
     container_name: smartify_prod-backend
