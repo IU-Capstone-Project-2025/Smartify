@@ -68,6 +68,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   final Map<int, dynamic> answers = {};
   final highlightColor = const Color(0xFF54D0C0);
   final Map<int, TextEditingController> _textControllers = {};
+  List<dynamic> predictions = [];
 
   Future<void> _submitQuestionnaire() async {
     final Map<String, dynamic> data = {
@@ -159,12 +160,12 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
     final predictions = await ApiService.AddQuestionnaire(data);
 
     if (predictions.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Анкета отправлена! Получено ${predictions.length} рекомендаций."),
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RecommendationScreen(predictions: predictions),
         ),
       );
-      print(predictions);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -518,12 +519,6 @@ switch (question.type) {
                               : entry.value;
                           print('${q.number ?? "-"} [${q.block ?? ""}] ${q.text}: $answer');
                         }
-                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RecommendationScreen(), // не забудь импортировать
-                          ),
-                        );
                       },
                       child: const Text(
                         'Завершить',

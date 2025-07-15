@@ -1,0 +1,222 @@
+[
+    {
+      "name": "Иван Иванов",
+      "subject": "Физика",
+      "level": "Студент",
+      "price": "1000",
+      "email": "ivanushka@email.com",
+      "phone": "+7 (999) 666-66-66",
+      "city": "Москва, Россия",
+      "rating": 5.0,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Мария Петрова",
+      "subject": "Математика",
+      "level": "Кандидат наук",
+      "price": "1500",
+      "email": "maria@email.com",
+      "phone": "+7 (999) 123-45-67",
+      "city": "Санкт-Петербург, Россия",
+      "rating": 4.8,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Александр Смирнов",
+      "subject": "Химия",
+      "level": "Доктор наук",
+      "price": "2000",
+      "email": "alex_chem@email.com",
+      "phone": "+7 (999) 111-22-33",
+      "city": "Новосибирск, Россия",
+      "rating": 4.9,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Екатерина Кузнецова",
+      "subject": "Литература",
+      "level": "Профессор",
+      "price": "1800",
+      "email": "kate_lit@email.com",
+      "phone": "+7 (999) 222-33-44",
+      "city": "Екатеринбург, Россия",
+      "rating": 5.0,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Дмитрий Попов",
+      "subject": "Информатика",
+      "level": "Senior Developer",
+      "price": "2500",
+      "email": "dima_python@email.com",
+      "phone": "+7 (999) 333-44-55",
+      "city": "Казань, Россия",
+      "rating": 4.7,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Анна Васнецова",
+      "subject": "Биология",
+      "level": "Кандидат наук",
+      "price": "1500",
+      "email": "anna_bio@email.com",
+      "phone": "+7 (999) 444-55-66",
+      "city": "Ростов-на-Дону, Россия",
+      "rating": 4.8,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Михаил Лебедев",
+      "subject": "История",
+      "level": "Преподаватель вуза",
+      "price": "1200",
+      "email": "misha_history@email.com",
+      "phone": "+7 (999) 555-66-77",
+      "city": "Владивосток, Россия",
+      "rating": 4.6,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Ольга Соколова",
+      "subject": "Английский язык",
+      "level": "Носитель языка",
+      "price": "2200",
+      "email": "olga_english@email.com",
+      "phone": "+7 (999) 666-77-88",
+      "city": "Сочи, Россия",
+      "rating": 5.0,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Артём Морозов",
+      "subject": "Физика",
+      "level": "Аспирант МФТИ",
+      "price": "1700",
+      "email": "artem_phystech@email.com",
+      "phone": "+7 (999) 777-88-99",
+      "city": "Долгопрудный, Россия",
+      "rating": 4.9,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Виктория Новикова",
+      "subject": "Английский язык",
+      "level": "Преподаватель с опытом в Испании",
+      "price": "1900",
+      "email": "vika_espanol@email.com",
+      "phone": "+7 (999) 888-99-00",
+      "city": "Краснодар, Россия",
+      "rating": 4.7,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Павел Волков",
+      "subject": "Математика",
+      "level": "Финансовый аналитик",
+      "price": "2300",
+      "email": "pavel_finance@email.com",
+      "phone": "+7 (999) 999-00-11",
+      "city": "Нижний Новгород, Россия",
+      "rating": 4.8,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Алина Козлова",
+      "subject": "Литература",
+      "level": "Художник-иллюстратор",
+      "price": "1600",
+      "email": "alina_art@email.com",
+      "phone": "+7 (999) 000-11-22",
+      "city": "Самара, Россия",
+      "rating": 4.5,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Сергей Орлов",
+      "subject": "География",
+      "level": "Путешественник, гид",
+      "price": "1400",
+      "email": "sergey_geo@email.com",
+      "phone": "+7 (999) 121-23-34",
+      "city": "Калининград, Россия",
+      "rating": 4.9,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Татьяна Белова",
+      "subject": "Русский язык",
+      "level": "Преподаватель в Alliance Française",
+      "price": "2100",
+      "email": "tanya_french@email.com",
+      "phone": "+7 (999) 232-34-45",
+      "city": "Уфа, Россия",
+      "rating": 5.0,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Игорь Медведев",
+      "subject": "Физика",
+      "level": "Научный сотрудник Пулковской обсерватории",
+      "price": "1800",
+      "email": "igor_star@email.com",
+      "phone": "+7 (999) 343-45-56",
+      "city": "Санкт-Петербург, Россия",
+      "rating": 4.7,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Юлия Павлова",
+      "subject": "Информатика",
+      "level": "Практикующий программист",
+      "price": "2000",
+      "email": "yulia_psy@email.com",
+      "phone": "+7 (999) 454-56-67",
+      "city": "Красноярск, Россия",
+      "rating": 4.8,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Кирилл Семёнов",
+      "subject": "Информатика",
+      "level": "Эксперт ЕГЭ",
+      "price": "1700",
+      "email": "kirill_ege@email.com",
+      "phone": "+7 (999) 565-67-78",
+      "city": "Воронеж, Россия",
+      "rating": 4.9,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Надежда Фёдорова",
+      "subject": "Русский язык",
+      "level": "Специалист по РКИ",
+      "price": "1600",
+      "email": "nadezhda_rki@email.com",
+      "phone": "+7 (999) 676-78-89",
+      "city": "Тюмень, Россия",
+      "rating": 5.0,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Алексей Григорьев",
+      "subject": "Литература",
+      "level": "Кандидат философских наук",
+      "price": "1500",
+      "email": "alex_phil@email.com",
+      "phone": "+7 (999) 787-89-90",
+      "city": "Пермь, Россия",
+      "rating": 4.6,
+      "avatarUrl": ""
+    },
+    {
+      "name": "Елена Зайцева",
+      "subject": "Английский язык",
+      "level": "Сертифицированный преподаватель Goethe-Institut",
+      "price": "1900",
+      "email": "elena_deutsch@email.com",
+      "phone": "+7 (999) 898-90-01",
+      "city": "Омск, Россия",
+      "rating": 4.7,
+      "avatarUrl": ""
+    }
+  ]

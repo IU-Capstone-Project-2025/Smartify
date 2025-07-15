@@ -9,23 +9,31 @@ import (
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/database"
 )
 
-// const DOMAIN = "localhost"
-// const PORT = "22025"
-
 var recovery_users = make(map[string]string)
 
 // @Summary      Запрос на сброс пароля
 // @Description  Отправляет код подтверждения на email
-// @Tags         auth
+// @Tags         password_recovery
 // @Accept       json
 // @Produce      json
-// @Router       /forgot_password [post]
+// @Param        credentials  body  database.User  true  "Email и пароль"
+// @Success		 200	{object}	Success_answer
+// @Failure		 405	{object}	Error_answer
+// @Failure		 400	{object}	Error_answer
+// @Router       /api/forgot_password [post]
 func PasswordRecovery_ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	log.Println("Request to recovery password!")
 	w.Header().Set("Content-Type", "application/json")
 
-	var request struct {
-		Email string `json:"email"`
+	var request database.User
+
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(Error_answer{
+			Error: "Method not allowed",
+			Code:  http.StatusMethodNotAllowed,
+		})
+		return
 	}
 
 	// Расшифровываем сообщение
@@ -33,8 +41,9 @@ func PasswordRecovery_ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Cannot decode request")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{
-			"error": "Invalid JSON",
+		json.NewEncoder(w).Encode(Error_answer{
+			Error: "Invalid JSON",
+			Code:  http.StatusBadRequest,
 		})
 		return
 	}
@@ -44,20 +53,12 @@ func PasswordRecovery_ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	if err != database.ErrDuplicateUser {
 		log.Println("User not found or other errors")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{
-			"error": "User not found or other errors",
+		json.NewEncoder(w).Encode(Error_answer{
+			Error: "User not found or other errors",
+			Code:  http.StatusBadRequest,
 		})
 		return
 	}
-
-	// --------------------ВВЕРСИЯ С УНИКАЛЬНОЙ ССЫЛКОЙ------------------------------
-	// Генерируем токен
-	// token := uuid.New().String()
-	// Создаем ссылку для востановления пароля
-	// resetLink := "http://" + DOMAIN + ":" + PORT + "/reset_password_page?token=" + token
-	// Добавляем токен и почту в список пользователей на восстановление
-	//recovery_users[token] = request.Email
-	// ------------------------------------------------------------------------------
 
 	// Генерируем код
 	email_code, err := Generate5DigitCode()
@@ -75,22 +76,35 @@ func PasswordRecovery_ForgotPassword(w http.ResponseWriter, r *http.Request) {
 
 	// Ответ об успехе
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"code": "OK"})
+	json.NewEncoder(w).Encode(Success_answer{
+		Status: "OK",
+		Code:   http.StatusOK,
+	})
 }
 
 // @Summary      Установка нового пароля
 // @Description  Меняет пароль после подтверждения кода
-// @Tags         auth
+// @Tags         password_recovery
 // @Accept       json
 // @Produce      json
-// @Router       /reset_password [post]
+// @Param        credentials  body  Code_verification  true  "Email и код"
+// @Success		 200	{object}	Success_answer
+// @Failure		 405	{object}	Error_answer
+// @Failure		 400	{object}	Error_answer
+// @Router       /api/commit_code_reset_password [post]
 func PasswordRecovery_CommitCode(w http.ResponseWriter, r *http.Request) {
 	log.Println("Request to recovery password!")
 	w.Header().Set("Content-Type", "application/json")
 
-	var request struct {
-		Email string `json:"email"`
-		Code  string `json:"code"`
+	var request Code_verification
+
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(Error_answer{
+			Error: "Method not allowed",
+			Code:  http.StatusMethodNotAllowed,
+		})
+		return
 	}
 
 	// Расшифровываем сообщение
@@ -98,8 +112,9 @@ func PasswordRecovery_CommitCode(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Cannot decode request")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{
-			"error": "Invalid JSON",
+		json.NewEncoder(w).Encode(Error_answer{
+			Error: "Invalid JSON",
+			Code:  http.StatusBadRequest,
 		})
 	}
 
@@ -108,8 +123,9 @@ func PasswordRecovery_CommitCode(w http.ResponseWriter, r *http.Request) {
 	if code == "" {
 		log.Println("User not found")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{
-			"error": "User not found",
+		json.NewEncoder(w).Encode(Error_answer{
+			Error: "User not found",
+			Code:  http.StatusBadGateway,
 		})
 	}
 
@@ -117,28 +133,41 @@ func PasswordRecovery_CommitCode(w http.ResponseWriter, r *http.Request) {
 	if code != request.Code {
 		log.Println("Code is incorrect")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{
-			"error": "Code is incorrect",
+		json.NewEncoder(w).Encode(Error_answer{
+			Error: "Code is incorrect",
+			Code:  http.StatusBadGateway,
 		})
 	}
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{
-		"type": "OK",
+	json.NewEncoder(w).Encode(Success_answer{
+		Status: "ok",
+		Code:   http.StatusOK,
 	})
 }
 
 // @Summary      Подтверждение кода для сброса пароля
 // @Description  Проверяет код и разрешает смену пароля
-// @Tags         auth
+// @Tags         password_recovery
 // @Accept       json
 // @Produce      json
+// @Param        credentials  body  Update_password  true  "Email и пароль"
+// @Success		 200	{object}	Success_answer
+// @Failure		 405	{object}	Error_answer
+// @Failure		 400	{object}	Error_answer
+// @Router       /api/reset_password [post]
 func PasswordRecovery_ResetPassword(w http.ResponseWriter, r *http.Request) {
 	log.Println("Request to recovery password!")
 	w.Header().Set("Content-Type", "application/json")
 
-	var request struct {
-		Email       string `json:"email"`
-		NewPassword string `json:"newPassword"`
+	var request Update_password
+
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(Error_answer{
+			Error: "Method not allowed",
+			Code:  http.StatusMethodNotAllowed,
+		})
+		return
 	}
 
 	// Расшифровываем сообщение
@@ -146,8 +175,9 @@ func PasswordRecovery_ResetPassword(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Cannot decode request")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{
-			"error": "Invalid JSON",
+		json.NewEncoder(w).Encode(Error_answer{
+			Error: "Invalid JSON",
+			Code:  http.StatusBadRequest,
 		})
 	}
 
@@ -156,8 +186,9 @@ func PasswordRecovery_ResetPassword(w http.ResponseWriter, r *http.Request) {
 	if code == "" {
 		log.Println("User not found")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{
-			"error": "User not found",
+		json.NewEncoder(w).Encode(Error_answer{
+			Error: "User not found",
+			Code:  http.StatusBadRequest,
 		})
 	}
 
@@ -166,15 +197,17 @@ func PasswordRecovery_ResetPassword(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Cannot update password")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{
-			"error": "Cannot update password",
+		json.NewEncoder(w).Encode(Error_answer{
+			Error: "Cannot update password",
+			Code:  http.StatusBadRequest,
 		})
 	}
 
 	// Удаляем использованный код
 	delete(recovery_users, request.Email)
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{
-		"type": "OK",
+	json.NewEncoder(w).Encode(Success_answer{
+		Status: "ok",
+		Code:   http.StatusOK,
 	})
 }

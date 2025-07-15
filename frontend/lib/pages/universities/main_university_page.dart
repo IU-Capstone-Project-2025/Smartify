@@ -5,6 +5,7 @@ import 'package:smartify/pages/universities/filter.dart';
 import 'package:smartify/pages/universities/filter_page.dart';
 import 'package:smartify/pages/universities/uniDetPAge.dart';
 import 'package:smartify/pages/universities/universityCard.dart';
+import 'package:smartify/pages/api_server/api_server.dart';
 import 'favorite_uni_card.dart';
 
 class UniversityPage extends StatefulWidget {
@@ -27,12 +28,15 @@ class _UniversityPageState extends State<UniversityPage> {
   }
 
   Future<void> loadUniversityData() async {
-    final String jsonString = await rootBundle.loadString('assets/universities.json');
-    final List data = json.decode(jsonString);
+    final List data = await UniversitiesMeneger.loadSavedJson();
     setState(() {
       universities = data;
       filteredUniversities = data;
     });
+  }
+
+  Future<void> refreshUniversityList() async {
+    await UniversitiesMeneger.GetUniversititesJSON();
   }
 
   void filterSearch(String query) {
@@ -110,7 +114,9 @@ class _UniversityPageState extends State<UniversityPage> {
           )
         ],
       ),
-      body: universities.isEmpty
+      body: RefreshIndicator(
+        onRefresh: refreshUniversityList,
+        child: universities.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : CustomScrollView(
               slivers: [
@@ -206,6 +212,7 @@ class _UniversityPageState extends State<UniversityPage> {
                 ),
               ],
             ),
+      ),
     );
   }
 }

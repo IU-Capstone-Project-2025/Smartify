@@ -150,6 +150,18 @@ func main() {
 	//Получение информации о tutor
 	http.Handle("/api/get_tutor", auth.Access(http.HandlerFunc(api.GetTutorInformation)))
 
+	// Возварщяет университеты
+	http.HandleFunc("/api/update_university_json", api.RequestToUpdate)
+
+	// Сохраняет трекеры
+	http.HandleFunc("/api/savetrackers", api.SaveTrackers)
+
+	// Сохраняет трекеры
+	http.HandleFunc("/api/gettrackers", api.GetTrackers)
+
+	// Проверяет токены на актуальность
+	http.HandleFunc("/api/checktokens", api.TokenCheck)
+
 	// Для подтверждения по ссылке
 	/* -----------------------------------------------------------------------
 		http.Handle("/reset_password_page/",

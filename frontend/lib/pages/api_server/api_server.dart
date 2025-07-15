@@ -1,8 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:smartify/pages/api_server/api_token.dart';
 import 'package:http/http.dart' as http;
 import 'package:smartify/pages/api_server/api_save_data.dart';
 import 'package:smartify/pages/api_server/api_save_prof.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:smartify/pages/tracker/tracker_classes.dart';
 
 class ApiService {
   static const String _baseUrl = 'http://localhost:22025/api';
@@ -235,5 +239,143 @@ class ApiService {
       return [];
     }
   }
+    static Future<bool> SaveTrackers(SubjectsManager subjectsManager, [int tries = 0]) async {
+    try {
+      final token = await AuthService.getAccessToken();
+      final trackers = subjectsManager.getJSON();
+      final timeNow_ = DateTime.now().toIso8601String().split('.')[0] + 'Z';
+      final response = await http.post(
+        Uri.parse('$_baseUrl/savetrackers'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'token': token,
+          'trackers': trackers,
+          'timestamp': timeNow_
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("Success: [CODE: ${data["code"]}], [STATUS: ${data["status"]}]");
+        return true;
+      } else {
+        final data = jsonDecode(response.body);
+        print("Error: [CODE: ${data["code"]}], [ERROR: ${data["error"]}]");
+        if (data["code"] == 401) {
+          if (tries < 3) {
+            print("Refresh access token");
+            await AuthService.refreshAccessToken();
+            return await SaveTrackers(subjectsManager, tries + 1);
+          }
+        }
+        return false;
+      }
+    } catch (e) {
+      print("Ошибка соединенея: $e");
+      return false;
+    }
+  }
+
+  static Future<List<String>?> GetTrackers(SubjectsManager subjectsManager, [int tries = 0]) async {
+    try {
+      final token = await AuthService.getAccessToken();
+      final response = await http.post(
+        Uri.parse('$_baseUrl/gettrackers'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'token': token,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("Success!");
+        return (data['trackers'] as List<dynamic>).map((item) => item as String).toList();
+      } else {
+        final data = jsonDecode(response.body);
+        print("Error: [CODE: ${data["code"]}], [ERROR: ${data["error"]}]");
+        if (data["code"] == 401) {
+          print("Refresh access token");
+          if (tries < 3) {
+            await AuthService.refreshAccessToken();
+            return await GetTrackers(subjectsManager, tries + 1);
+          }
+        }
+        return null;
+      }
+    } catch (e) {
+      print("Ошибка соединенея: $e");
+      return null;
+    }
+  }
+
+  static Future<String?> CheckTokens(String accessToken, String refreshToken) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/checktokens'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'refresh_token': refreshToken,
+          'access_token': accessToken
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("Success: [CODE: ${data["code"]}], [STATUS: ${data["status"]}]");
+        return null;
+      } else {
+        final data = jsonDecode(response.body);
+        return data['error'];
+      }
+    } catch (e) {
+      print("Ошибка соединенея: $e");
+      return "Other Error";
+    }
+  }
 }
 
+class UniversitiesMeneger {
+  static const fileName = 'universities.json';
+  
+  static Future<void> GetUniversititesJSON() async {
+    try {
+      final token = await AuthService.getAccessToken();
+
+      final response = await http.get(
+        Uri.parse('${ApiService._baseUrl}/update_university_json'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Access_token': token ?? '',
+        }
+      );
+      if (response.statusCode == 200) {
+        final directory = await getApplicationDocumentsDirectory();
+        final file = File('${directory.path}/$fileName');
+        await file.writeAsBytes(response.bodyBytes);
+      } else {
+        print("Ошибка при отправке анкеты: ${response.statusCode}");
+        print("Ответ сервера: ${response.body}");
+        return;
+      }
+    } catch (e) {
+      print("Ошибка соединенея: $e");
+      return;
+    }
+  }
+  static Future<List<dynamic>> loadSavedJson() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/$fileName');
+      String jsonString = await file.readAsString();
+      return jsonDecode(jsonString);
+    } catch (e) {
+      print("Блин, не работает походу");
+      return await loadInitialJson();
+    }
+  }
+  static Future<List<dynamic>> loadInitialJson() async {
+    String jsonString = await rootBundle.loadString('assets/$fileName');
+    return jsonDecode(jsonString);
+  }
+}

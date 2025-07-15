@@ -75,7 +75,33 @@ class AuthService {
   }
 
   static Future<bool> isAuthenticated() async {
-    final token = await getAccessToken();
-    return token != null && token.isNotEmpty;
+    final status = await isAuthenticatedServer();
+    if (status == -1) {
+      final token = await getAccessToken();
+      return token != null && token.isNotEmpty;
+    }
+    return status == 200;
+  }
+
+  static Future<int> isAuthenticatedServer() async {
+    final accessToken = await getAccessToken();
+    final refreshToken = await getRefreshToken();
+
+    if (accessToken == null || refreshToken == null || accessToken.isEmpty || refreshToken.isEmpty) {
+      return 401;
+    }
+
+    final error = await ApiService.CheckTokens(accessToken, refreshToken);
+
+    if (error != null && error == "Access Token is old") {
+      await AuthService.refreshAccessToken();
+      return 200;
+    }
+
+    if (error != null) {
+      return -1;
+    }
+
+    return 200;
   }
 }

@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
       ),
       home: widget,
       //home: const DashboardPage(),
+      //home: RecommendationScreen(),
     );
   }
 }

@@ -176,7 +176,11 @@ def score_profession_normalized(student, profession):
     total_score += (match_count / 3) * 10
 
     # Exclusions (-25% per conflict)
-    for ex in pref.get("exclude", []):
+    exclusions = pref.get("exclude", [])
+    if isinstance(exclusions, str):
+        exclusions = [exclusions]
+    
+    for ex in exclusions:
         if ex in profession.get("interests", []) or ex in profession.get("role", ""):
             total_score -= 25
             negatives.append(f"Ты хочешь избежать: {ex}, но профессия это подразумевает!")
