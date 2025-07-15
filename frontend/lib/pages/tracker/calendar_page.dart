@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:smartify/pages/tracker/tracker_classes.dart';  
 
 class CalendarPage extends StatefulWidget {
-  final List<Map<String, dynamic>> subjects;
+  final List<Subject> subjects;
 
   const CalendarPage({super.key, required this.subjects});
 
@@ -31,22 +32,22 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  List<Map<String, dynamic>> _tasksForSelectedDate() {
-    List<Map<String, dynamic>> tasks = [];
+  List<TaskCalendar> _tasksForSelectedDate() {
+    List<TaskCalendar> tasks = [];
     for (var subject in widget.subjects) {
-      for (var task in subject["tasks"]) {
-        DateTime? deadline = task["deadline"];
+      for (var task in subject.tasks) {
+        DateTime? deadline = task.deadline;
         if (deadline != null &&
             deadline.year == _selectedDate.year &&
             deadline.month == _selectedDate.month &&
             deadline.day == _selectedDate.day) {
-          tasks.add({
-            "subject": subject["title"],
-            "color": subject["color"],
-            "title": task["title"],
-            "duration": task["duration"],
-            "completed": task["completed"],
-          });
+          tasks.add(TaskCalendar.fromJson({
+            "subject": subject.title,
+            "color": subject.color,
+            "title": task.title,
+            "duration": task.duration,
+            "completed": task.isCompleted,
+          }));
         }
       }
     }
@@ -59,7 +60,7 @@ class _CalendarPageState extends State<CalendarPage> {
       future: _localeFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          List<Map<String, dynamic>> tasks = _tasksForSelectedDate();
+          List<TaskCalendar> tasks = _tasksForSelectedDate();
 
           return Scaffold(
             backgroundColor: const Color(0xFFFCFCFC),
@@ -182,7 +183,7 @@ class _CalendarPageState extends State<CalendarPage> {
                               SizedBox(
                                 width: 60,
                                 child: Text(
-                                  task["duration"],
+                                  task.duration,
                                   style: const TextStyle(fontSize: 13, color: Colors.grey),
                                 ),
                               ),
@@ -190,7 +191,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                 child: Container(
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: (task["color"] as Color).withOpacity(0.2),
+                                    color: task.color.withOpacity(0.2),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Column(
@@ -200,7 +201,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            task["subject"],
+                                            task.subjectTitle,
                                             style: const TextStyle(
                                               fontWeight: FontWeight.w600,
                                               fontSize: 16,
@@ -211,14 +212,14 @@ class _CalendarPageState extends State<CalendarPage> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        task["title"],
+                                        task.title,
                                         style: const TextStyle(color: Colors.black54),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        task["completed"] ? "Решено верно" : "В процессе",
+                                        task.isCompleted ? "Решено верно" : "В процессе",
                                         style: TextStyle(
-                                          color: task["completed"] ? Colors.green : Colors.redAccent,
+                                          color: task.isCompleted ? Colors.green : Colors.redAccent,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 13,
                                         ),

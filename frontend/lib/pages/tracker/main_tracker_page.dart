@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:intl/intl.dart';
 import 'package:smartify/pages/tracker/calendar_page.dart'; 
+import 'package:smartify/pages/tracker/tracker_classes.dart';
 
 class ProgressPage extends StatefulWidget {
   const ProgressPage({super.key});
@@ -11,14 +12,19 @@ class ProgressPage extends StatefulWidget {
 }
 
 class _ProgressPageState extends State<ProgressPage> {
-  List<Map<String, dynamic>> subjects = [
-    {
-      "title": "Математика",
-      "icon": Icons.calculate,
-      "color": Colors.teal,
-      "tasks": []
-    },
-  ];
+
+  final SubjectsManager taskManager = SubjectsManager();
+  @override
+  void initState() {
+    loadSavedSubjects();
+    super.initState();
+  }
+  
+  Future<void> loadSavedSubjects() async {
+    await taskManager.loadAll();
+    setState(() {});
+  }
+  
 
   void _addSubject() {
     showDialog(
@@ -41,13 +47,14 @@ class _ProgressPageState extends State<ProgressPage> {
               onPressed: () {
                 if (newTitle.trim().isNotEmpty) {
                   setState(() {
-                    subjects.add({
-                      "title": newTitle,
-                      "icon": Icons.book,
-                      "color": const Color.fromARGB(255, 0, 150, 136),
-                      "tasks": [],
-                    });
+                    taskManager.addSubject(Subject(
+                      title: newTitle,
+                      icon: Icons.book,
+                      color: const Color.fromARGB(255, 0, 150, 136),
+                      tasks: []
+                    ));
                   });
+                  taskManager.saveAll();
                 }
                 Navigator.pop(context);
               },
@@ -129,13 +136,14 @@ class _ProgressPageState extends State<ProgressPage> {
                   onPressed: () {
                     if (title.trim().isNotEmpty) {
                       setState(() {
-                        subjects[subjectIndex]["tasks"].add({
+                        taskManager.subjects[subjectIndex].addTasks([Task.fromJson({
                           "title": title,
                           "duration": duration,
                           "completed": false,
                           "deadline": deadline,
-                        });
+                        })]);
                       });
+                      taskManager.saveAll();
                     }
                     Navigator.pop(context);
                   },
@@ -150,9 +158,9 @@ class _ProgressPageState extends State<ProgressPage> {
   }
 
   void _editTask(int subjectIndex, int taskIndex) {
-    String title = subjects[subjectIndex]["tasks"][taskIndex]["title"];
-    String duration = subjects[subjectIndex]["tasks"][taskIndex]["duration"];
-    DateTime? deadline = subjects[subjectIndex]["tasks"][taskIndex]["deadline"];
+    String title = taskManager.subjects[subjectIndex].tasks[taskIndex].title;
+    String duration = taskManager.subjects[subjectIndex].tasks[taskIndex].duration;
+    DateTime? deadline = taskManager.subjects[subjectIndex].tasks[taskIndex].deadline;
 
     showDialog(
       context: context,
@@ -208,10 +216,11 @@ class _ProgressPageState extends State<ProgressPage> {
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      subjects[subjectIndex]["tasks"][taskIndex]["title"] = title;
-                      subjects[subjectIndex]["tasks"][taskIndex]["duration"] = duration;
-                      subjects[subjectIndex]["tasks"][taskIndex]["deadline"] = deadline;
+                      taskManager.subjects[subjectIndex].tasks[taskIndex].title = title;
+                      taskManager.subjects[subjectIndex].tasks[taskIndex].duration = duration;
+                      taskManager.subjects[subjectIndex].tasks[taskIndex].deadline = deadline;
                     });
+                    taskManager.saveAll();
                     Navigator.pop(context);
                   },
                   child: const Text("Сохранить"),
@@ -226,15 +235,16 @@ class _ProgressPageState extends State<ProgressPage> {
 
   void _deleteSubject(int index) {
     setState(() {
-      subjects.removeAt(index);
+      taskManager.removeSubject(index);
     });
+    taskManager.saveAll();
   }
 
   void _openCalendar() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CalendarPage(subjects: subjects),
+        builder: (context) => CalendarPage(subjects: taskManager.subjects),
       ),
     );
   }
@@ -243,9 +253,9 @@ class _ProgressPageState extends State<ProgressPage> {
   Widget build(BuildContext context) {
     int total = 0;
     int done = 0;
-    for (var subject in subjects) {
-      total += subject["tasks"].length as int;
-      done += subject["tasks"].where((t) => t["completed"] == true).length as int;
+    for (var subject in taskManager.subjects) {
+      total += subject.tasks.length;
+      done += subject.tasks.where((t) => t.isCompleted == true).length;
     }
 
     double percent = total > 0 ? done / total : 0;
@@ -281,14 +291,14 @@ class _ProgressPageState extends State<ProgressPage> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  ...subjects.asMap().entries.map((entry) {
+                  ...taskManager.subjects.asMap().entries.map((entry) {
                     int index = entry.key;
                     var subject = entry.value;
                     return Padding(
                       padding: const EdgeInsets.only(right: 12),
-                      child: subjectCard(subject, index),
+                      child: subjectCard(taskManager.subjects[index], index),
                     );
-                  }).toList(),
+                  }),
                   GestureDetector(
                     onTap: _addSubject,
                     child: Container(
@@ -327,12 +337,12 @@ class _ProgressPageState extends State<ProgressPage> {
     );
   }
 
-  Widget subjectCard(Map<String, dynamic> subject, int subjectIndex) {
+  Widget subjectCard(Subject subject, int subjectIndex) {
     return Container(
       width: 220,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: subject["color"],
+        color: subject.color,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -341,7 +351,7 @@ class _ProgressPageState extends State<ProgressPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(subject["icon"], color: Colors.white, size: 28),
+              Icon(subject.icon, color: Colors.white, size: 28),
               PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert, color: Colors.white, size: 20),
                 onSelected: (value) {
@@ -356,17 +366,17 @@ class _ProgressPageState extends State<ProgressPage> {
             ],
           ),
           const SizedBox(height: 8),
-          Text(subject["title"], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          Text(subject.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           SizedBox(
             height: 110,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                ...subject["tasks"].asMap().entries.map((entry) {
+                ...subject.tasks.asMap().entries.map((entry) {
                   int taskIndex = entry.key;
                   var task = entry.value;
-                  DateTime? deadline = task["deadline"];
+                  DateTime? deadline = task.deadline;
                   return GestureDetector(
                     onTap: () => _editTask(subjectIndex, taskIndex),
                     child: Container(
@@ -381,23 +391,24 @@ class _ProgressPageState extends State<ProgressPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Checkbox(
-                            value: task["completed"],
+                            value: task.isCompleted,
                             onChanged: (val) {
                               setState(() {
-                                task["completed"] = val;
+                                task.isCompleted = val ?? false;
                               });
+                              taskManager.saveAll();
                             },
                             activeColor: Colors.white,
-                            checkColor: subject["color"],
+                            checkColor: subject.color,
                           ),
                           Text(
-                            task["title"],
+                            task.title,
                             style: const TextStyle(color: Colors.white, fontSize: 12),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            task["duration"],
+                            task.duration,
                             style: const TextStyle(color: Colors.white70, fontSize: 10),
                           ),
                           if (deadline != null)
