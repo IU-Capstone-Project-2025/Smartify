@@ -16,7 +16,7 @@ var recovery_users = make(map[string]string)
 // @Tags         password_recovery
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body  database.User  true  "Email и пароль"
+// @Param        credentials  body  Email_struct  true  "Email"
 // @Success		 200	{object}	Success_answer
 // @Failure		 405	{object}	Error_answer
 // @Failure		 400	{object}	Error_answer
@@ -25,7 +25,7 @@ func PasswordRecovery_ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	log.Println("Request to recovery password!")
 	w.Header().Set("Content-Type", "application/json")
 
-	var request database.User
+	var request Email_struct
 
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)

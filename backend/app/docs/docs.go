@@ -53,7 +53,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/checkTokens": {
+        "/checkTokens": {
             "post": {
                 "description": "возращяет успешные ответ, если токены не просрочены",
                 "consumes": [
@@ -77,35 +77,6 @@ const docTemplate = `{
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
-                        }
-                    },
-                    "405": {
-                        "description": "Method Not Allowed",
-                        "schema": {
-                            "$ref": "#/definitions/api.Error_answer"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/hello": {
-            "get": {
-                "description": "Просто говорит привет, а точнее \"ok\"",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "test"
-                ],
-                "summary": "Функция проверки доступности",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.Success_answer"
                         }
                     },
                     "405": {
@@ -178,12 +149,12 @@ const docTemplate = `{
                 "summary": "Запрос на сброс пароля",
                 "parameters": [
                     {
-                        "description": "Email и пароль",
+                        "description": "Email",
                         "name": "credentials",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/database.User"
+                            "$ref": "#/definitions/api.Email_struct"
                         }
                     }
                 ],
@@ -244,6 +215,93 @@ const docTemplate = `{
                 }
             }
         },
+        "/gettrackers": {
+            "post": {
+                "description": "Пользовтаель получет трекеры с сервера",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trackers"
+                ],
+                "summary": "Для получения трекеров с сервера",
+                "parameters": [
+                    {
+                        "description": "Access Token",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.Get_trackers_request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.Trackers"
+                        }
+                    },
+                    "304": {
+                        "description": "Not Modified",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
+            }
+        },
+        "/hello": {
+            "get": {
+                "description": "Просто говорит привет, а точнее \"ok\"",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "test"
+                ],
+                "summary": "Функция проверки доступности",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.Success_answer"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "Вход по email и паролю, возвращает JWT-токен",
@@ -264,7 +322,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/database.User"
+                            "$ref": "#/definitions/api.User_email_password"
                         }
                     }
                 ],
@@ -298,11 +356,6 @@ const docTemplate = `{
         },
         "/questionnaire": {
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Доступно только аутентифицированным пользователям",
                 "consumes": [
                     "application/json"
@@ -462,6 +515,17 @@ const docTemplate = `{
                     "registration"
                 ],
                 "summary": "Установка пароля",
+                "parameters": [
+                    {
+                        "description": "Email и пароль",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.User_email_password"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -532,7 +596,7 @@ const docTemplate = `{
         },
         "/savetrackers": {
             "post": {
-                "description": "Пользовтаель получет трекеры с сервера",
+                "description": "Пользовтаель отправляет трекеры с устройства. Сервер записывает их в базуданных, чтобы трекеры были доступны на раззных устройствах",
                 "consumes": [
                     "application/json"
                 ],
@@ -540,17 +604,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "registration"
+                    "trackers"
                 ],
-                "summary": "Для получения трекеров с сервера",
+                "summary": "Для сохранения трекеров на сервере",
                 "parameters": [
                     {
-                        "description": "Access Token",
+                        "description": "Токен, время и трекеры",
                         "name": "credentials",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.Get_trackers_request"
+                            "$ref": "#/definitions/api.Tracker_save"
                         }
                     }
                 ],
@@ -558,7 +622,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.Trackers"
+                            "$ref": "#/definitions/api.Success_answer"
                         }
                     },
                     "304": {
@@ -588,7 +652,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/update": {
+        "/update_university_json": {
             "get": {
                 "description": "Возвращяет universities.json файл",
                 "produces": [
@@ -743,6 +807,17 @@ const docTemplate = `{
                 }
             }
         },
+        "api.User_email_password": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "database.Tutor": {
             "type": "object",
             "properties": {
@@ -789,9 +864,6 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
-        },
-        "database.User": {
-            "type": "object"
         }
     }
 }`
@@ -799,7 +871,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "localhost:22025",
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Smartify Backend API",

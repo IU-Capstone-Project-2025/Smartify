@@ -22,7 +22,7 @@ import (
 // @contact.name   Smartify Working Mail
 // @contact.email  projectsmartifyapp@gmail.com
 
-// @host      localhost:8080
+// @host      localhost:22025
 // @BasePath  /api
 
 func main() {

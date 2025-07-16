@@ -13,6 +13,7 @@ type ProfessionPred struct {
 	Positives   []string `json:"positives"`
 	Negatives   []string `json:"negatives"`
 	Description string   `json:"description"`
+	Subsphere   string   `json:"subsphere"`
 }
 
 type QuestionnairePred struct {

@@ -49,7 +49,6 @@ func ToMongoProf(userID int, q []ml.ProfessionPred) (database.ProfessionRec, err
 // @Tags         questionnaire
 // @Accept       json
 // @Produce      json
-// @Security     BearerAuth
 // @Router       /questionnaire [post]
 func AddQuestionnaireHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {

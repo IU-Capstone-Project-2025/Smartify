@@ -14,7 +14,7 @@ import (
 // @Tags         login
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body  database.User  true  "Email и пароль"
+// @Param        credentials  body  User_email_password  true  "Email и пароль"
 // @Success		 200 {Object} Tokens_answer
 // @Failure		 405 {Object} Error_answer
 // @Failure		 400 {Object} Error_answer
@@ -33,7 +33,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user database.User
+	var user User_email_password
 	// Try to decode message
 	err := json.NewDecoder(r.Body).Decode(&user)
 
@@ -48,10 +48,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Print Message
-	log.Printf("User: %s, %s", user.Email, user.Password_hash)
+	log.Printf("User: %s, %s", user.Email, user.Password)
 
 	// Find user in database
-	err = database.FindAndCheckUser(user.Email, user.Password_hash, &user, db)
+	var userDB database.User
+	err = database.FindAndCheckUser(user.Email, user.Password, &userDB, db)
 	if err != nil {
 		log.Printf("Cannot write in database: %s", err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -62,7 +63,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	accessToken, refreshToken, err := auth.GenerateTokens(user.ID)
+	accessToken, refreshToken, err := auth.GenerateTokens(userDB.ID)
 	if err != nil {
 		log.Printf("Cannot generate tokens: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -73,7 +74,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.StoreRefreshToken(user.ID, refreshToken, db)
+	err = database.StoreRefreshToken(userDB.ID, refreshToken, db)
 	if err != nil {
 		log.Printf("Cannot store refresh token: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)

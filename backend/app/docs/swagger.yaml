@@ -75,6 +75,13 @@ definitions:
       newPassword:
         type: string
     type: object
+  api.User_email_password:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
   database.Tutor:
     properties:
       cource:
@@ -106,9 +113,7 @@ definitions:
       timestamp:
         type: string
     type: object
-  database.User:
-    type: object
-host: localhost:8080
+host: localhost:22025
 info:
   contact:
     email: projectsmartifyapp@gmail.com
@@ -140,7 +145,7 @@ paths:
       summary: Добавление/обновление информации о тьюторе
       tags:
       - tutor
-  /api/checkTokens:
+  /checkTokens:
     post:
       consumes:
       - application/json
@@ -161,25 +166,6 @@ paths:
           schema:
             $ref: '#/definitions/api.Error_answer'
       summary: Функция проверки токенов
-      tags:
-      - test
-  /api/hello:
-    get:
-      consumes:
-      - application/json
-      description: Просто говорит привет, а точнее "ok"
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.Success_answer'
-        "405":
-          description: Method Not Allowed
-          schema:
-            $ref: '#/definitions/api.Error_answer'
-      summary: Функция проверки доступности
       tags:
       - test
   /commit_code_reset_password:
@@ -218,12 +204,12 @@ paths:
       - application/json
       description: Отправляет код подтверждения на email
       parameters:
-      - description: Email и пароль
+      - description: Email
         in: body
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/database.User'
+          $ref: '#/definitions/api.Email_struct'
       produces:
       - application/json
       responses:
@@ -265,6 +251,63 @@ paths:
       summary: Получение информации о тьюторе
       tags:
       - tutor
+  /gettrackers:
+    post:
+      consumes:
+      - application/json
+      description: Пользовтаель получет трекеры с сервера
+      parameters:
+      - description: Access Token
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/api.Get_trackers_request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.Trackers'
+        "304":
+          description: Not Modified
+          schema:
+            $ref: '#/definitions/api.Error_answer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.Error_answer'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/api.Error_answer'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/api.Error_answer'
+      summary: Для получения трекеров с сервера
+      tags:
+      - trackers
+  /hello:
+    get:
+      consumes:
+      - application/json
+      description: Просто говорит привет, а точнее "ok"
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.Success_answer'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/api.Error_answer'
+      summary: Функция проверки доступности
+      tags:
+      - test
   /login:
     post:
       consumes:
@@ -276,7 +319,7 @@ paths:
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/database.User'
+          $ref: '#/definitions/api.User_email_password'
       produces:
       - application/json
       responses:
@@ -307,8 +350,6 @@ paths:
       produces:
       - application/json
       responses: {}
-      security:
-      - BearerAuth: []
       summary: Создание новой анкеты
       tags:
       - questionnaire
@@ -403,6 +444,13 @@ paths:
       consumes:
       - application/json
       description: Завершает регистрацию, сохраняя пароль
+      parameters:
+      - description: Email и пароль
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/api.User_email_password'
       produces:
       - application/json
       responses:
@@ -455,21 +503,22 @@ paths:
     post:
       consumes:
       - application/json
-      description: Пользовтаель получет трекеры с сервера
+      description: Пользовтаель отправляет трекеры с устройства. Сервер записывает
+        их в базуданных, чтобы трекеры были доступны на раззных устройствах
       parameters:
-      - description: Access Token
+      - description: Токен, время и трекеры
         in: body
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/api.Get_trackers_request'
+          $ref: '#/definitions/api.Tracker_save'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.Trackers'
+            $ref: '#/definitions/api.Success_answer'
         "304":
           description: Not Modified
           schema:
@@ -486,10 +535,10 @@ paths:
           description: Method Not Allowed
           schema:
             $ref: '#/definitions/api.Error_answer'
-      summary: Для получения трекеров с сервера
+      summary: Для сохранения трекеров на сервере
       tags:
-      - registration
-  /update:
+      - trackers
+  /update_university_json:
     get:
       description: Возвращяет universities.json файл
       produces:
