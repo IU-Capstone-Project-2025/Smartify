@@ -146,7 +146,7 @@ jobs:
           ssh $REMOTE_USER@$REMOTE_HOST "
             export COMPOSE_PROJECT_NAME=smartify_prod
             cd ${APP_DIR} &&
-            docker-compose build &&
+            docker-compose build --no-cache &&
             docker-compose up -d
           "
           echo "Deployment completed on $REMOTE_HOST"
