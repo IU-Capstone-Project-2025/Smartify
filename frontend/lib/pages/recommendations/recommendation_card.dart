@@ -23,7 +23,7 @@ class RecommendationCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Иконку убрали, просто отступ слева
+          // Отступ слева
           const SizedBox(width: 4),
 
           // Текстовая часть
@@ -38,23 +38,39 @@ class RecommendationCard extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
+                const SizedBox(height: 2),
+                Text(
+                  recommendation.subsphere,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Color.fromRGBO(0, 76, 76, 1),
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   recommendation.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700,),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   '- $shortPositive',
-                  style: const TextStyle(fontSize: 10, color: Color.fromRGBO(0, 76, 76, 1), fontWeight: FontWeight.w400,),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: Color.fromRGBO(0, 76, 76, 1),
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ],
             ),
           ),
 
-          // % и Play
+          // % и кнопка Play
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -67,7 +83,11 @@ class RecommendationCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               IconButton(
-                icon: Icon(Icons.play_circle_rounded, size: 41, color: Color.fromRGBO(102, 178, 178, 1),),
+                icon: const Icon(
+                  Icons.play_circle_rounded,
+                  size: 41,
+                  color: Color.fromRGBO(102, 178, 178, 1),
+                ),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
                 onPressed: () {
