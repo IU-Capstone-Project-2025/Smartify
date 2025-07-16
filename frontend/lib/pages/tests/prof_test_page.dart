@@ -71,29 +71,73 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   List<dynamic> predictions = [];
 
   Future<void> _submitQuestionnaire() async {
+    // Set default values for all untouched scale questions
+    for (int i = 0; i < questions.length; i++) {
+      final q = questions[i];
+      if (q.type == QuestionType.scale && !answers.containsKey(i)) {
+        answers[i] = q.scaleMin; // Use minimum scale value as default
+      }
+    }
+
+    // Check if all fields are filled
+    bool allFieldsFilled = true;
+    for (int i = 0; i < questions.length; i++) {
+      final q = questions[i];
+      
+      if (!answers.containsKey(i)) {
+        allFieldsFilled = false;
+        break;
+      }
+      
+      final value = answers[i];
+      
+      // Validate based on question type
+      if (q.type == QuestionType.singleChoice) {
+        if (value == null || (value is String && value.isEmpty)) {
+          allFieldsFilled = false;
+          break;
+        }
+      } 
+      else if (q.type == QuestionType.multiChoice) {
+        if (value is! List || value.isEmpty) {
+          allFieldsFilled = false;
+          break;
+        }
+      }
+      // Scale questions are validated by presence only (we set defaults)
+    }
+
+    if (!allFieldsFilled) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Не все поля заполнены"),
+        ),
+      );
+      return;
+    }
+
     final Map<String, dynamic> data = {
-    "user_id": 0,
-    "class": "",
-    "region": "",
-    "avg_grade": "",
-    "favorite_subjects": [],
-    "hard_subjects": [],
-    "subject_scores": {},
-    "interests": [],
-    "values": [],
-    "mbti_scores": {},
-    "work_preferences": {
-      "role": "",
-      "place": "",
-      "style": "",
-      "exclude": "",
-    },
-  };
+      "user_id": 0,
+      "class": "",
+      "region": "",
+      "avg_grade": "",
+      "favorite_subjects": [],
+      "hard_subjects": [],
+      "subject_scores": {},
+      "interests": [],
+      "values": [],
+      "mbti_scores": {},
+      "work_preferences": {
+        "role": "",
+        "place": "",
+        "style": "",
+        "exclude": "",
+      },
+    };
+    
     for (final entry in answers.entries) {
       final index = entry.key;
       final value = entry.value;
-
-      print("✔ ${index} = $value");
 
       switch (index) {
         case 0:
@@ -106,7 +150,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
           data["avg_grade"] = value;
           break;
         case 3:
-          data["favorite_subjects"] = value; // List<String>
+          data["favorite_subjects"] = value;
           break;
         case 4:
           data["hard_subjects"] = value;
@@ -139,7 +183,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
           data["values"] = value;
           break;
         case >= 16 && <= 40:
-          final mbtiKey = "q${index - 5}";  // Например, q11…q35
+          final mbtiKey = "q${index - 5}";
           data["mbti_scores"][mbtiKey] = int.tryParse(value.toString()) ?? 0;
           break;
         case 41:
@@ -157,19 +201,26 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       }
     }
 
-    final predictions = await ApiService.AddQuestionnaire(data);
-
-    if (predictions.isNotEmpty) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => RecommendationScreen(predictions: predictions),
-        ),
-      );
-    } else {
+    try {
+      final predictions = await ApiService.AddQuestionnaire(data);
+      if (predictions.isNotEmpty) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RecommendationScreen(predictions: predictions),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Ошибка при отправке анкеты."),
+          ),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Ошибка при отправке анкеты."),
+          content: Text("Ошибка: ${e.toString()}"),
         ),
       );
     }
@@ -177,7 +228,6 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
 
   @override
   void dispose() {
-    // Очищаем контроллеры при уничтожении виджета
     _textControllers.values.forEach((controller) => controller.dispose());
     super.dispose();
   }
@@ -313,93 +363,90 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   Widget buildQuestion(int index, Question question) {
     Widget content;
 
-switch (question.type) {
-  case QuestionType.singleChoice:
-    String? selected = answers[index];
+    switch (question.type) {
+      case QuestionType.singleChoice:
+        String? selected = answers[index];
 
-    final otherOption = question.options!.firstWhere(
-      (o) => o.toLowerCase().contains('другое'),
-      orElse: () => '',
-    );
+        final otherOption = question.options!.firstWhere(
+          (o) => o.toLowerCase().contains('другое'),
+          orElse: () => '',
+        );
 
-    // Инициализируем контроллер один раз
-    if (!_textControllers.containsKey(index)) {
-      _textControllers[index] = TextEditingController();
-    }
+        if (!_textControllers.containsKey(index)) {
+          _textControllers[index] = TextEditingController();
+        }
 
-    // Восстанавливаем значение, если оно кастомное
-    if (selected != null &&
-        !question.options!.contains(selected) &&
-        otherOption.isNotEmpty) {
-      _textControllers[index]!.text = selected;
-    }
+        if (selected != null &&
+            !question.options!.contains(selected) &&
+            otherOption.isNotEmpty) {
+          _textControllers[index]!.text = selected;
+        }
 
-    content = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          question.text,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        ...question.options!
-            .where((o) => o != otherOption)
-            .map(
-              (option) => RadioListTile<String>(
-                activeColor: highlightColor,
-                title:
-                    Text(option, style: const TextStyle(color: Colors.black)),
-                value: option,
-                groupValue:
-                    question.options!.contains(selected) ? selected : '',
-                onChanged: (value) =>
-                    setState(() => answers[index] = value),
+        content = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              question.text,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
             ),
-        if (otherOption.isNotEmpty)
-          RadioListTile<String>(
-            activeColor: highlightColor,
-            value: '__other__',
-            groupValue: (!question.options!.contains(selected) &&
-                    selected != null)
-                ? '__other__'
-                : '',
-            onChanged: (_) {
-              setState(() {
-                answers[index] = _textControllers[index]!.text;
-              });
-            },
-            title: Row(
-              children: [
-                const Text(
-                  'Другое:',
-                  style: TextStyle(color: Colors.black),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: _textControllers[index],
-                    decoration: const InputDecoration(
-                      hintText: 'Ваш вариант',
-                      isDense: true,
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (value) {
-                      answers[index] = value;
-                    },
+            ...question.options!
+                .where((o) => o != otherOption)
+                .map(
+                  (option) => RadioListTile<String>(
+                    activeColor: highlightColor,
+                    title:
+                        Text(option, style: const TextStyle(color: Colors.black)),
+                    value: option,
+                    groupValue:
+                        question.options!.contains(selected) ? selected : '',
+                    onChanged: (value) =>
+                        setState(() => answers[index] = value),
                   ),
                 ),
-              ],
-            ),
-          ),
-      ],
-    );
-    break;
-
+            if (otherOption.isNotEmpty)
+              RadioListTile<String>(
+                activeColor: highlightColor,
+                value: '__other__',
+                groupValue: (!question.options!.contains(selected) &&
+                        selected != null)
+                    ? '__other__'
+                    : '',
+                onChanged: (_) {
+                  setState(() {
+                    answers[index] = _textControllers[index]!.text;
+                  });
+                },
+                title: Row(
+                  children: [
+                    const Text(
+                      'Другое:',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextField(
+                        controller: _textControllers[index],
+                        decoration: const InputDecoration(
+                          hintText: 'Ваш вариант',
+                          isDense: true,
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          answers[index] = value;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        );
+        break;
 
       case QuestionType.multiChoice:
         final selected = (answers[index] as List?)?.map((e) => e.toString()).toList() ?? <String>[];
@@ -510,16 +557,7 @@ switch (question.type) {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: highlightColor,
                       ),
-                      onPressed: () {
-                        _submitQuestionnaire();
-                        for (final entry in answers.entries) {
-                          final q = questions[entry.key];
-                          final answer = entry.value is List
-                              ? (entry.value as List).join(', ')
-                              : entry.value;
-                          print('${q.number ?? "-"} [${q.block ?? ""}] ${q.text}: $answer');
-                        }
-                      },
+                      onPressed: _submitQuestionnaire,
                       child: const Text(
                         'Завершить',
                         style: TextStyle(color: Colors.white),

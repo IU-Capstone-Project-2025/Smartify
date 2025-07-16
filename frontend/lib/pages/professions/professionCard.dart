@@ -12,22 +12,24 @@ class ProfessionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
       child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        color: const Color(0xFF0E736B),
-        child: Center(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Text(
               title,
-              textAlign: TextAlign.center,
               style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
                 fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
               ),
             ),
           ),
