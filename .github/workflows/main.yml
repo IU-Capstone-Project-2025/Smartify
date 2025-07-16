@@ -112,7 +112,7 @@ jobs:
         run: cd frontend && flutter pub get
 
       - name: Build Flutter web
-        run: cd frontend && flutter build web --base-href="/smartify/"
+        run: cd frontend && flutter build web --release --no-tree-shake-icons
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
