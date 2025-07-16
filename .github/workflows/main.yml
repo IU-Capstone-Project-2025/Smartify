@@ -37,7 +37,7 @@ jobs:
       - name: Build web
         run: |
           flutter create .
-      #    flutter build web --base-href /smartify/
+          flutter build web --base-href /smartify/
         working-directory: ./frontend
 
       - name: Deploy to GitHub Pages
