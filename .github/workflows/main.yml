@@ -103,6 +103,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.4'
+
+      - name: Install Flutter dependencies
+        run: cd frontend && flutter pub get
+
+      #- name: Build Flutter web
+      #  run: cd frontend && flutter build web --release
+
+      #- name: Deploy to GitHub Pages
+      #  uses: peaceiris/actions-gh-pages@v3
+      #  with:
+      #    github_token: ${{ secrets.GITHUB_TOKEN }}
+      #    publish_dir: ./frontend/build/web
+
       - name: Setup SSH client
         run: |
           mkdir -p ~/.ssh
@@ -116,7 +133,7 @@ jobs:
 
       - name: Copy application files to remote server
         run: |
-          ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p ${APP_DIR}"
+          ssh $REMOTE_USER@$REMOTE_HOST " rm -rf ${APP_DIR}/* && mkdir -p ${APP_DIR}"
           scp -r .env.production $REMOTE_USER@$REMOTE_HOST:${APP_DIR}
           scp -r docker-compose.yml $REMOTE_USER@$REMOTE_HOST:${APP_DIR}
           scp -r backend/ $REMOTE_USER@$REMOTE_HOST:${APP_DIR}
