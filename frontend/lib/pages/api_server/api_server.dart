@@ -7,10 +7,11 @@ import 'package:smartify/pages/api_server/api_save_data.dart';
 import 'package:smartify/pages/api_server/api_save_prof.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:smartify/pages/tracker/tracker_classes.dart';
+import 'package:smartify/pages/teachers/teacher_model.dart';
 
 class ApiService {
-  static const String _baseUrl = 'http://localhost:22025/api';
-  //static const String _baseUrl = 'http://213.226.112.206:22025/api';
+  //static const String _baseUrl = 'http://localhost:22025/api';
+  static const String _baseUrl = 'http://213.226.112.206:22025/api';
 
   // Метод для входа
   static Future<bool> login(String email, String password) async {
@@ -331,6 +332,44 @@ class ApiService {
     } catch (e) {
       print("Ошибка соединенея: $e");
       return "Other Error";
+    }
+  }
+  static Future<List<Teacher>> GetTeachers() async {
+    try {
+      final token = await AuthService.getAccessToken();
+
+      final response = await http.post(
+        Uri.parse('$_baseUrl/get_teachers'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Access_token': token ?? '',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print("Ответ получен");
+        final List<dynamic> data = json.decode(response.body);
+        final teachers = data
+          .map((item) => Teacher.fromJson(item))
+          .toList();
+        return teachers;
+      } else if (response.statusCode == 401) {
+        print("Access token is invalid or expired. Trying to refresh...");
+
+        bool refreshSuccess = await AuthService.refreshTokens();
+        if (!refreshSuccess) {
+          print("Не удалось обновить токены");
+          return [];
+        }
+        return await GetTeachers();
+      } else {
+        print("Ошибка при отправке запроса: ${response.statusCode}");
+        print("Ответ сервера: ${response.body}");
+        return [];
+      }
+    } catch (e) {
+      print("Ошибка соединенея: $e");
+      return [];
     }
   }
 }
