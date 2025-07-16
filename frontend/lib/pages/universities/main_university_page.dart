@@ -266,33 +266,41 @@ class _FavoriteUniversitiesCarouselState
         const SizedBox(height: 8),
         SizedBox(
           height: 200,
-          child: PageView.builder(
-            controller: _pageController,
-            itemCount: widget.favorites.length,
-            itemBuilder: (context, index) {
-              final favUni = widget.favorites[index];
-              return AnimatedBuilder(
-                animation: _pageController,
-                builder: (context, child) {
-                  double value = 1.0;
-                  if (_pageController.position.haveDimensions) {
-                    value = (_pageController.page! - index).abs();
-                    value = (1 - (value * 0.3)).clamp(0.0, 1.0);
-                  }
-                  return Center(
-                    child: Transform.scale(
-                      scale: Curves.easeOut.transform(value),
-                      child: child,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              double screenWidth = MediaQuery.of(context).size.width;
+              double cardWidth = screenWidth * 0.7; // 70% ширины экрана
+              return PageView.builder(
+                controller: _pageController,
+                itemCount: widget.favorites.length,
+                itemBuilder: (context, index) {
+                  final favUni = widget.favorites[index];
+                  return AnimatedBuilder(
+                    animation: _pageController,
+                    builder: (context, child) {
+                      double value = 1.0;
+                      if (_pageController.position.haveDimensions) {
+                        value = (_pageController.page! - index).abs();
+                        value = (1 - (value * 0.3)).clamp(0.0, 1.0);
+                      }
+                      return Center(
+                        child: Transform.scale(
+                          scale: Curves.easeOut.transform(value),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: FavoriteUniversityCard(
+                        university: favUni,
+                        onTap: () => widget.onTap(favUni),
+                        width: cardWidth,
+                        height: 200,
+                      ),
                     ),
                   );
                 },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: FavoriteUniversityCard(
-                    university: favUni,
-                    onTap: () => widget.onTap(favUni),
-                  ),
-                ),
               );
             },
           ),

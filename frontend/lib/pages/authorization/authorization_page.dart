@@ -4,6 +4,7 @@ import 'package:smartify/pages/menu/menu_page.dart';
 import 'package:smartify/pages/reset/reset_password_page.dart';
 import 'package:smartify/pages/nav/nav_page.dart';
 import 'package:smartify/l10n/app_localizations.dart';
+import 'package:smartify/pages/sign/sign_up_page.dart'; // Исправленный импорт
 
 class AuthorizationPage extends StatefulWidget {
   const AuthorizationPage({super.key});
@@ -118,7 +119,25 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                   ),
                 ),
                 child: Text(
-                  AppLocalizations.of(context)!.login,
+                  'Войти', // Жёстко прописываем текст
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SignUpPage(),
+                    ),
+                  );
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.createAccount,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),

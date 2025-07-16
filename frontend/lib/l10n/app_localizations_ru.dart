@@ -84,7 +84,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get enterPassword => 'Введите пароль';
 
   @override
-  String get login => 'Войти';
+  String get login => 'Создать аккаунт';
+
 
   @override
   String get forgotPassword => 'Забыли пароль?';
