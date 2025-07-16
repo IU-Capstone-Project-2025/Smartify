@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 class FavoriteUniversityCard extends StatelessWidget {
   final Map university;
   final VoidCallback onTap;
+  final double width;
+  final double height;
 
   const FavoriteUniversityCard({
     required this.university,
     required this.onTap,
+    this.width = 240,
+    this.height = 200,
     super.key,
   });
 
@@ -15,8 +19,8 @@ class FavoriteUniversityCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 240, // Подходит для ленты высотой 200
-        height: 200,
+        width: width, // Используем параметр
+        height: height, // Используем параметр
         margin: const EdgeInsets.only(left: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),

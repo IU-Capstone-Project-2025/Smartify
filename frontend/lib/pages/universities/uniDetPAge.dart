@@ -35,7 +35,7 @@ class _UniversityDetailPageState extends State<UniversityDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      // backgroundColor: Colors.grey[100], // убрано для поддержки темы
       body: Column(
         children: [
           Stack(
@@ -62,7 +62,7 @@ class _UniversityDetailPageState extends State<UniversityDetailPage> {
           Expanded(
             child: Container(
               decoration: const BoxDecoration(
-                color: Colors.white,
+                // color: Colors.white, // убрано для поддержки темы
                 borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),

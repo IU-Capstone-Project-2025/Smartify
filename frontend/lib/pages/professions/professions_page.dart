@@ -4,6 +4,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:smartify/pages/tests/prof_test_page.dart';
 import 'package:smartify/pages/professions/professionCard.dart';
 import 'package:smartify/pages/professions/profDetPage.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 class ProfessionsPage extends StatefulWidget {
   const ProfessionsPage({super.key});
@@ -32,7 +33,7 @@ class _ProfessionsPageState extends State<ProfessionsPage> {
         filteredProfessions = data;
       });
     } catch (e) {
-      debugPrint('Ошибка при загрузке данных: $e');
+      debugPrint(AppLocalizations.of(context)!.loadDataError + ': $e');
     }
   }
 
@@ -72,7 +73,7 @@ class _ProfessionsPageState extends State<ProfessionsPage> {
                   child: TextField(
                     onChanged: filterSearch,
                     decoration: InputDecoration(
-                      hintText: 'Поиск профессии...',
+                      hintText: AppLocalizations.of(context)!.searchProfessionHint,
                       prefixIcon: const Icon(Icons.search),
                       contentPadding:
                           const EdgeInsets.symmetric(vertical: 12),
@@ -104,10 +105,10 @@ class _ProfessionsPageState extends State<ProfessionsPage> {
                         ),
                       );
                     },
-                    child: const Center(
+                    child: Center(
                       child: Text(
-                        'Пройти анкетирование',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        AppLocalizations.of(context)!.takeQuestionnaire,
+                        style: const TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
                   ),
@@ -119,7 +120,7 @@ class _ProfessionsPageState extends State<ProfessionsPage> {
                     itemCount: filteredProfessions.length,
                     itemBuilder: (context, index) {
                       final prof = filteredProfessions[index];
-                      final title = prof['name'] ?? 'Без названия';
+                      final title = prof['name'] ?? AppLocalizations.of(context)!.noTitle;
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12.0),

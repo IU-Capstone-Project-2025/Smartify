@@ -28,15 +28,16 @@ class Task {
 
   factory Task.fromJson(Map<String, dynamic> json) {
     DateTime? dt;
-    if (json['deadline'] != null && json['deadline'] is DateTime?) {
-      dt = json['deadline'];
-    }
-    else if (json['deadline'] != null) {
-      dt = DateTime.parse(json['deadline']);
+    if (json['deadline'] != null) {
+      if (json['deadline'] is DateTime) {
+        dt = json['deadline'];
+      } else if (json['deadline'] is String) {
+        dt = DateTime.tryParse(json['deadline']);
+      }
     }
     return Task(
-      title: json['title'], 
-      duration: json['duration'], 
+      title: json['title'],
+      duration: json['duration'],
       deadline: dt,
       isCompleted: json['isCompleted'] ?? false
     );
@@ -50,7 +51,6 @@ class TaskCalendar {
   String subjectTitle;
   bool isCompleted;
 
-
   TaskCalendar({
     required this.title,
     required this.duration,
@@ -61,10 +61,10 @@ class TaskCalendar {
 
   factory TaskCalendar.fromJson(Map<String, dynamic> jsonData) {
     return TaskCalendar(
-      title: jsonData['title'], 
-      duration: jsonData['duration'], 
-      color: jsonData['color'], 
-      isCompleted: jsonData['completed'], 
+      title: jsonData['title'],
+      duration: jsonData['duration'],
+      color: jsonData['color'],
+      isCompleted: jsonData['completed'],
       subjectTitle: jsonData['subject']
     );
   }
@@ -85,7 +85,7 @@ class Subject {
 
   Subject({
     required this.title,
-    this.icon = Icons.book, 
+    this.icon = Icons.book,
     this.color = const Color.fromARGB(255, 0, 150, 136),
     this.tasks = const []
   });
@@ -128,8 +128,10 @@ class Subject {
 }
 
 class SubjectsManager {
-  List<Subject> subjects;
-  SubjectsManager() : subjects = [];
+  static final SubjectsManager _instance = SubjectsManager._internal();
+  factory SubjectsManager() => _instance;
+  SubjectsManager._internal();
+  List<Subject> subjects = [];
 
   Future<void> saveAll() async {
     final sharedPref = await SharedPreferences.getInstance();
@@ -171,17 +173,13 @@ class SubjectsManager {
       await updateFromJSON(trackers);
     }
     final sharedPref = await SharedPreferences.getInstance();
-    
     String? data = sharedPref.getString("subjects");
     if (data == null) {
       return;
     }
-
     final decoded = jsonDecode(data);
     final List<dynamic> subjectsJson = decoded['data'];
-
     subjects.clear();
-
     for (var sub in subjectsJson) {
       final Map<String, dynamic> subJson = jsonDecode(sub);
       subjects.add(Subject.fromJson(subJson));
