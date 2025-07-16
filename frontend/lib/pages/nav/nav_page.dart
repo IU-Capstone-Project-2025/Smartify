@@ -4,6 +4,7 @@ import 'package:smartify/pages/universities/main_university_page.dart';
 import 'package:smartify/pages/account/account_page.dart';
 import 'package:smartify/pages/professions/professions_page.dart';
 import 'package:smartify/pages/teachers/teachers_list_page.dart';
+import 'package:smartify/pages/professions/spheres_page.dart';
 
 void main() {
   runApp(const SmartifyApp());
@@ -177,7 +178,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const ProfessionsPage(),
+                              builder: (context) => const SpheresPage(),
                             ),
                           );
                         },
