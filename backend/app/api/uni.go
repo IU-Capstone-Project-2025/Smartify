@@ -37,7 +37,7 @@ func AddUniversityHandler(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {array} database.University "Successfully downloaded universities.json"
 // @Failure 400 {string} string "Bad request - Only GET method allowed"
 // @Failure 500 {string} string "Internal server error - Failed to send file"
-// @Router /update [get]
+// @Router /update_university_json [get]
 func RequestToUpdate(w http.ResponseWriter, r *http.Request) {
 	universities, err := database.GetAllUniversities()
 	if err != nil {

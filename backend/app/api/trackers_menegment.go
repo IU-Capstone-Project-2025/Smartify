@@ -11,16 +11,16 @@ import (
 
 // @Summary      Для сохранения трекеров на сервере
 // @Description  Пользовтаель отправляет трекеры с устройства. Сервер записывает их в базуданных, чтобы трекеры были доступны на раззных устройствах
-// @Tags         registration
+// @Tags         trackers
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body	Tracker_save  true
+// @Param        credentials  body	Tracker_save  true "Токен, время и трекеры"
 // @Success		 200 {object} Success_answer
 // @Failure		 405 {object} Error_answer
 // @Failure		 400 {object} Error_answer
 // @Failure		 401 {object} Error_answer
 // @Failure		 304 {object} Error_answer
-// @Router		 /api/savetrackers [post]
+// @Router		 /savetrackers [post]
 func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		json.NewEncoder(w).Encode(Error_answer{
@@ -88,7 +88,7 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 
 // @Summary      Для получения трекеров с сервера
 // @Description  Пользовтаель получет трекеры с сервера
-// @Tags         registration
+// @Tags         trackers
 // @Accept       json
 // @Produce      json
 // @Param        credentials  body	Get_trackers_request  true  "Access Token"
@@ -97,7 +97,7 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 // @Failure		 400 {object} Error_answer
 // @Failure		 401 {object} Error_answer
 // @Failure		 304 {object} Error_answer
-// @Router		 /api/savetrackers [post]
+// @Router		 /gettrackers [post]
 func GetTrackers(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		json.NewEncoder(w).Encode(Error_answer{

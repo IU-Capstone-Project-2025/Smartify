@@ -170,6 +170,7 @@ func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) 
 // @Tags         registration
 // @Accept       json
 // @Produce      json
+// @Param        credentials  body	User_email_password  true  "Email и пароль"
 // @Success		 200 {object} Tokens_answer
 // @Failure		 405 {object} Error_answer
 // @Failure		 400 {object} Error_answer
