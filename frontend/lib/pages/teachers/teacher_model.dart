@@ -22,15 +22,13 @@
   });
 }*/
 
-import 'dart:ffi';
-
 class Teacher {
   final String name;
   final String subject;
   final String level;
   final String price;
   final String city;
-  final Float rating;
+  final double rating;
   final String avatarUrl;
   final String link;
   final DateTime timestamp;
