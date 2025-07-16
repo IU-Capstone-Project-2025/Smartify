@@ -9,8 +9,8 @@ on:
     branches:
       - main
 
-
-
+jobs:
+  
   build_and_deploy:
     #needs: test
     runs-on: [self-hosted]
