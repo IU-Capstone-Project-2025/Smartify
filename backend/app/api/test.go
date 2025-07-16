@@ -50,7 +50,7 @@ func ToMongoProf(userID int, q []ml.ProfessionPred) (database.ProfessionRec, err
 // @Accept       json
 // @Produce      json
 // @Security     BearerAuth
-// @Router       /api/questionnaire [post]
+// @Router       /questionnaire [post]
 func AddQuestionnaireHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

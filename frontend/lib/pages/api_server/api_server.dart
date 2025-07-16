@@ -9,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:smartify/pages/tracker/tracker_classes.dart';
 
 class ApiService {
-  static const String _baseUrl = 'http://192.168.1.195:8080/api';
+  static const String _baseUrl = 'http://localhost:8080/api';
   //static const String _baseUrl = 'http://213.226.112.206:22025/api';
 
   // Метод для входа

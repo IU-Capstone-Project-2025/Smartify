@@ -14,13 +14,13 @@ import (
 // @Tags         registration
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body	Tracker_save  true
+// @Param        credentials  body	Tracker_save  true "missing"
 // @Success		 200 {object} Success_answer
 // @Failure		 405 {object} Error_answer
 // @Failure		 400 {object} Error_answer
 // @Failure		 401 {object} Error_answer
 // @Failure		 304 {object} Error_answer
-// @Router		 /api/savetrackers [post]
+// @Router		 /savetrackers [post]
 func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		json.NewEncoder(w).Encode(Error_answer{
@@ -97,7 +97,7 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 // @Failure		 400 {object} Error_answer
 // @Failure		 401 {object} Error_answer
 // @Failure		 304 {object} Error_answer
-// @Router		 /api/savetrackers [post]
+// @Router		 /savetrackers [post]
 func GetTrackers(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		json.NewEncoder(w).Encode(Error_answer{

@@ -56,7 +56,7 @@ func GiveTutorRole(w http.ResponseWriter, r *http.Request) {
 // @Success      200	{object}	Tutor_succes ""
 // @Failure      400	{object}	Error_answer ""
 // @Failure      401	{object}	Error_answer ""
-// @Router       /api/add_tutor [post]
+// @Router       /add_tutor [post]
 func ChangeTutorInformation(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -116,7 +116,7 @@ func ChangeTutorInformation(w http.ResponseWriter, r *http.Request) {
 // @Success      200  {object}  database.Tutor
 // @Failure      400  {object}  Error_answer
 // @Failure      401  {object}  Error_answer
-// @Router       /api/get_tutor [get]
+// @Router       /get_tutor [get]
 func GetTutorInformation(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

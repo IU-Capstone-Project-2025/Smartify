@@ -20,7 +20,7 @@ var recovery_users = make(map[string]string)
 // @Success		 200	{object}	Success_answer
 // @Failure		 405	{object}	Error_answer
 // @Failure		 400	{object}	Error_answer
-// @Router       /api/forgot_password [post]
+// @Router       /forgot_password [post]
 func PasswordRecovery_ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	log.Println("Request to recovery password!")
 	w.Header().Set("Content-Type", "application/json")
@@ -91,7 +91,7 @@ func PasswordRecovery_ForgotPassword(w http.ResponseWriter, r *http.Request) {
 // @Success		 200	{object}	Success_answer
 // @Failure		 405	{object}	Error_answer
 // @Failure		 400	{object}	Error_answer
-// @Router       /api/commit_code_reset_password [post]
+// @Router       /commit_code_reset_password [post]
 func PasswordRecovery_CommitCode(w http.ResponseWriter, r *http.Request) {
 	log.Println("Request to recovery password!")
 	w.Header().Set("Content-Type", "application/json")
@@ -154,7 +154,7 @@ func PasswordRecovery_CommitCode(w http.ResponseWriter, r *http.Request) {
 // @Success		 200	{object}	Success_answer
 // @Failure		 405	{object}	Error_answer
 // @Failure		 400	{object}	Error_answer
-// @Router       /api/reset_password [post]
+// @Router       /reset_password [post]
 func PasswordRecovery_ResetPassword(w http.ResponseWriter, r *http.Request) {
 	log.Println("Request to recovery password!")
 	w.Header().Set("Content-Type", "application/json")
