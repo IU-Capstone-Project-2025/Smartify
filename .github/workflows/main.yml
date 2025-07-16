@@ -133,7 +133,7 @@ jobs:
 
       - name: Copy application files to remote server
         run: |
-          ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p ${APP_DIR}"
+          ssh $REMOTE_USER@$REMOTE_HOST " rm -rf ${APP_DIR}/* && mkdir -p ${APP_DIR}"
           scp -r .env.production $REMOTE_USER@$REMOTE_HOST:${APP_DIR}
           scp -r docker-compose.yml $REMOTE_USER@$REMOTE_HOST:${APP_DIR}
           scp -r backend/ $REMOTE_USER@$REMOTE_HOST:${APP_DIR}
