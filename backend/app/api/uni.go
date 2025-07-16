@@ -30,13 +30,15 @@ func AddUniversityHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"status": "University added"})
 }
 
-// @Summary Эндпоинт для обновления университетов
-// @Description Возвращяет universities.json файл
+// @Summary Получение списка университетов в формате JSON
+// @Description Возвращает файл universities.json со всеми университетами из базы данных в структурированном формате для скачивания
 // @Tags universities
 // @Produce json
-// @Success 200 {array} database.University "Successfully downloaded universities.json"
+// @Success 200 {object} []map[string]interface{} "JSON файл с данными университетов"
 // @Failure 400 {string} string "Bad request - Only GET method allowed"
-// @Failure 500 {string} string "Internal server error - Failed to send file"
+// @Failure 500 {string} string "Internal server error - Failed to generate or send file"
+// @Header 200 {string} Content-Disposition "attachment; filename=universities.json"
+// @Header 200 {string} Content-Type "application/json"
 // @Router /update_university_json [get]
 func RequestToUpdate(w http.ResponseWriter, r *http.Request) {
 	universities, err := database.GetAllUniversities()

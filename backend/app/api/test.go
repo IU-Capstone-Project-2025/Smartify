@@ -45,10 +45,16 @@ func ToMongoProf(userID int, q []ml.ProfessionPred) (database.ProfessionRec, err
 }
 
 // @Summary      Создание новой анкеты
-// @Description  Доступно только аутентифицированным пользователям
+// @Description  Создает новую анкету пользователя и возвращает рекомендации профессий на основе ML. Требуется аутентификация (JWT токен в заголовке Authorization)
 // @Tags         questionnaire
 // @Accept       json
 // @Produce      json
+// @Param        questionnaire  body      database.Questionnaire  true  "Данные анкеты"
+// @Success      200            {object}  ProfessionPredResponse  "Успешный ответ с рекомендациями профессий"
+// @Failure      400            {string}  string                   "Невалидные данные анкеты"
+// @Failure      401            {string}  string                   "Пользователь не аутентифицирован"
+// @Failure      405            {string}  string                   "Метод не разрешен"
+// @Failure      500            {string}  string                   "Ошибка сервера (БД, ML модель и т.д.)"
 // @Router       /questionnaire [post]
 func AddQuestionnaireHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {

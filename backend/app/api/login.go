@@ -10,15 +10,15 @@ import (
 )
 
 // @Summary      Аутентификация пользователя
-// @Description  Вход по email и паролю, возвращает JWT-токен
-// @Tags         login
+// @Description  Проверяет учетные данные пользователя и возвращает пару JWT-токенов (access и refresh)
+// @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body  User_email_password  true  "Email и пароль"
-// @Success		 200 {Object} Tokens_answer
-// @Failure		 405 {Object} Error_answer
-// @Failure		 400 {Object} Error_answer
-// @Failure		 500 {Object} Error_answer
+// @Param        credentials  body      User_email_password  true  "Email и пароль пользователя"
+// @Success      200         {object}  Tokens_answer         "Успешная аутентификация, возвращает токены"
+// @Failure      400         {object}  Error_answer          "Неверные учетные данные или невалидный запрос"
+// @Failure      405         {object}  Error_answer          "Метод не разрешен"
+// @Failure      500         {object}  Error_answer          "Ошибка сервера (генерация токенов, проблемы с БД)"
 // @Router       /login [post]
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("New connection!")

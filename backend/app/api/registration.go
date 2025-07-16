@@ -22,16 +22,16 @@ func InitDatabase(db_ *sql.DB) {
 	db = db_
 }
 
-// @Summary      Отправка email для регистрации
-// @Description  Проверяет email и отправляет код подтверждения
+// @Summary      Валидация email при регистрации
+// @Description  Проверяет валидность email и отправляет код подтверждения. Email не должен быть уже зарегистрирован.
 // @Tags         registration
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body	Email_struct  true  "Email и пароль"
-// @Success		 200 {object} Success_answer
-// @Failure		 409 {object} Error_answer
-// @Failure		 400 {object} Error_answer
-// @Failure		 500 {object} Error_answer
+// @Param        request  body      Email_struct    true  "Email пользователя"
+// @Success      200     {object}  Success_answer  "Код подтверждения отправлен"
+// @Failure      400     {object}  Error_answer    "Невалидный email или запрос"
+// @Failure      409     {object}  Error_answer    "Пользователь уже существует"
+// @Failure      500     {object}  Error_answer    "Ошибка сервера (генерация кода, отправка email)"
 // @Router       /registration_emailvalidation [post]
 func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request) {
 	log.Println("Registration:")
@@ -108,14 +108,14 @@ func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request)
 }
 
 // @Summary      Проверка кода подтверждения
-// @Description  Валидирует код, отправленный на email
+// @Description  Валидирует код, отправленный на email пользователя
 // @Tags         registration
-// @Param        credentials  body	Code_verification  true  "Email и пароль"
 // @Accept       json
 // @Produce      json
-// @Success		 200 {object} Tokens_answer
-// @Failure		 405 {object} Error_answer
-// @Failure		 400 {object} Error_answer
+// @Param        request  body      Code_verification  true  "Email и код подтверждения"
+// @Success      200     {object}  Success_answer      "Код подтвержден"
+// @Failure      400     {object}  Error_answer        "Неверный код или пользователь не найден"
+// @Failure      405     {object}  Error_answer        "Метод не разрешен"
 // @Router       /registration_codevalidation [post]
 func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) {
 	log.Println("Registration-CodeValidation:")
@@ -165,15 +165,16 @@ func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) 
 	})
 }
 
-// @Summary      Установка пароля
-// @Description  Завершает регистрацию, сохраняя пароль
+// @Summary      Завершение регистрации
+// @Description  Сохраняет пароль пользователя и выдает токены доступа
 // @Tags         registration
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body	User_email_password  true  "Email и пароль"
-// @Success		 200 {object} Tokens_answer
-// @Failure		 405 {object} Error_answer
-// @Failure		 400 {object} Error_answer
+// @Param        request  body      User_email_password  true  "Email и пароль пользователя"
+// @Success      200     {object}  Tokens_answer         "Токены доступа"
+// @Failure      400     {object}  Error_answer          "Невалидные данные или пользователь не найден"
+// @Failure      405     {object}  Error_answer          "Метод не разрешен"
+// @Failure      500     {object}  Error_answer          "Ошибка сервера (БД, генерация токенов)"
 // @Router       /registration_password [post]
 func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 	log.Println("Registration-Password:")

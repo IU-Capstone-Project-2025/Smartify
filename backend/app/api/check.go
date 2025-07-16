@@ -8,13 +8,12 @@ import (
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/auth"
 )
 
-// @Summary      Функция проверки доступности
-// @Description  Просто говорит привет, а точнее "ok"
-// @Tags         test
-// @Accept       json
+// @Summary      Проверка доступности сервера
+// @Description  Возвращает статус "ok" если сервер работает
+// @Tags         utils
 // @Produce      json
-// @Success		 200 {object} Success_answer
-// @Failure		 405 {object} Error_answer
+// @Success      200 {object} Success_answer "Сервер доступен"
+// @Failure      405 {object} Error_answer   "Метод не разрешен"
 // @Router       /hello [get]
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
@@ -38,14 +37,16 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-// @Summary      Функция проверки токенов
-// @Description  возращяет успешные ответ, если токены не просрочены
-// @Tags         test
+// @Summary      Проверка валидности токенов
+// @Description  Проверяет срок действия access и refresh токенов
+// @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Success		 200 {object} Success_answer
-// @Failure		 405 {object} Error_answer
-// @Failure		 401 {object} Error_answer
+// @Param        tokens  body      Tokens_answer  true  "Пара токенов для проверки"
+// @Success      200     {object}  Success_answer "Токены валидны"
+// @Failure      400     {object}  Error_answer   "Невалидный запрос"
+// @Failure      401     {object}  Error_answer   "Токены невалидны или просрочены"
+// @Failure      405     {object}  Error_answer   "Метод не разрешен"
 // @Router       /checkTokens [post]
 func TokenCheck(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {

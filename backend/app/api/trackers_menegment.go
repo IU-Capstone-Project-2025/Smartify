@@ -9,18 +9,18 @@ import (
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/database"
 )
 
-// @Summary      Для сохранения трекеров на сервере
-// @Description  Пользовтаель отправляет трекеры с устройства. Сервер записывает их в базуданных, чтобы трекеры были доступны на раззных устройствах
+// @Summary      Сохранение трекеров пользователя
+// @Description  Сохраняет трекеры пользователя на сервере для синхронизации между устройствами. Требуется валидный access token и корректная метка времени.
 // @Tags         trackers
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body	Tracker_save  true "Токен, время и трекеры"
-// @Success		 200 {object} Success_answer
-// @Failure		 405 {object} Error_answer
-// @Failure		 400 {object} Error_answer
-// @Failure		 401 {object} Error_answer
-// @Failure		 304 {object} Error_answer
-// @Router		 /savetrackers [post]
+// @Param        request  body      Tracker_save      true  "Данные для сохранения (токен, трекеры и метка времени)"
+// @Success      200      {object}  Success_answer    "Трекеры успешно сохранены"
+// @Failure      304      {object}  Error_answer      "Данные не были изменены (Not Modified)"
+// @Failure      400      {object}  Error_answer      "Невалидный запрос (некорректные данные или формат времени)"
+// @Failure      401      {object}  Error_answer      "Неавторизованный доступ (невалидный токен)"
+// @Failure      405      {object}  Error_answer      "Метод не разрешен"
+// @Router       /savetrackers [post]
 func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		json.NewEncoder(w).Encode(Error_answer{
@@ -86,18 +86,18 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// @Summary      Для получения трекеров с сервера
-// @Description  Пользовтаель получет трекеры с сервера
+// @Summary      Получение трекеров пользователя
+// @Description  Возвращает список трекеров для аутентифицированного пользователя. Требуется валидный access token.
 // @Tags         trackers
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body	Get_trackers_request  true  "Access Token"
-// @Success		 200 {object} Trackers
-// @Failure		 405 {object} Error_answer
-// @Failure		 400 {object} Error_answer
-// @Failure		 401 {object} Error_answer
-// @Failure		 304 {object} Error_answer
-// @Router		 /gettrackers [post]
+// @Param        request  body      Get_trackers_request  true  "Запрос с access token"
+// @Success      200      {object}  Trackers              "Успешный ответ с трекерами"
+// @Failure      304      {object}  Error_answer          "Данные не были изменены (Not Modified)"
+// @Failure      400      {object}  Error_answer          "Невалидный запрос"
+// @Failure      401      {object}  Error_answer          "Неавторизованный доступ (невалидный токен)"
+// @Failure      405      {object}  Error_answer          "Метод не разрешен"
+// @Router       /gettrackers [post]
 func GetTrackers(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		json.NewEncoder(w).Encode(Error_answer{

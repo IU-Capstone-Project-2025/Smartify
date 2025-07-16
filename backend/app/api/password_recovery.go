@@ -12,14 +12,14 @@ import (
 var recovery_users = make(map[string]string)
 
 // @Summary      Запрос на сброс пароля
-// @Description  Отправляет код подтверждения на email
-// @Tags         password_recovery
+// @Description  Отправляет код подтверждения на email пользователя для восстановления пароля
+// @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body  Email_struct  true  "Email"
-// @Success		 200	{object}	Success_answer
-// @Failure		 405	{object}	Error_answer
-// @Failure		 400	{object}	Error_answer
+// @Param        request  body      Email_struct    true  "Email пользователя"
+// @Success      200     {object}  Success_answer  "Код подтверждения отправлен"
+// @Failure      400     {object}  Error_answer    "Невалидный запрос или пользователь не найден"
+// @Failure      405     {object}  Error_answer    "Метод не разрешен"
 // @Router       /forgot_password [post]
 func PasswordRecovery_ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	log.Println("Request to recovery password!")
@@ -82,15 +82,15 @@ func PasswordRecovery_ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// @Summary      Установка нового пароля
-// @Description  Меняет пароль после подтверждения кода
-// @Tags         password_recovery
+// @Summary      Проверка кода подтверждения
+// @Description  Валидирует код для сброса пароля, отправленный на email
+// @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body  Code_verification  true  "Email и код"
-// @Success		 200	{object}	Success_answer
-// @Failure		 405	{object}	Error_answer
-// @Failure		 400	{object}	Error_answer
+// @Param        request  body      Code_verification  true  "Email и код подтверждения"
+// @Success      200     {object}  Success_answer      "Код подтвержден"
+// @Failure      400     {object}  Error_answer        "Неверный код или пользователь не найден"
+// @Failure      405     {object}  Error_answer        "Метод не разрешен"
 // @Router       /commit_code_reset_password [post]
 func PasswordRecovery_CommitCode(w http.ResponseWriter, r *http.Request) {
 	log.Println("Request to recovery password!")
@@ -145,15 +145,15 @@ func PasswordRecovery_CommitCode(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// @Summary      Подтверждение кода для сброса пароля
-// @Description  Проверяет код и разрешает смену пароля
-// @Tags         password_recovery
+// @Summary      Установка нового пароля
+// @Description  Устанавливает новый пароль после успешной проверки кода подтверждения
+// @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body  Update_password  true  "Email и пароль"
-// @Success		 200	{object}	Success_answer
-// @Failure		 405	{object}	Error_answer
-// @Failure		 400	{object}	Error_answer
+// @Param        request  body      Update_password  true  "Email и новый пароль"
+// @Success      200     {object}  Success_answer   "Пароль успешно изменен"
+// @Failure      400     {object}  Error_answer     "Невалидный запрос или ошибка обновления пароля"
+// @Failure      405     {object}  Error_answer     "Метод не разрешен"
 // @Router       /reset_password [post]
 func PasswordRecovery_ResetPassword(w http.ResponseWriter, r *http.Request) {
 	log.Println("Request to recovery password!")
