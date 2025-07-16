@@ -12,6 +12,7 @@ import (
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/auth"
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/database"
 	_ "github.com/IU-Capstone-Project-2025/Smartify/backend/app/docs"
+	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/parsers"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
@@ -150,6 +151,9 @@ func main() {
 	//Получение информации о tutor
 	http.Handle("/api/get_tutor", auth.Access(http.HandlerFunc(api.GetTutorInformation)))
 
+	// Возварщяет учителей
+	http.Handle("/api/get_teachers", auth.Access(http.HandlerFunc(api.GetTeachersHandler)))
+
 	// Возварщяет университеты
 	http.HandleFunc("/api/update_university_json", api.RequestToUpdate)
 
@@ -201,6 +205,8 @@ func main() {
 			log.Fatalf("Connection is lost: %v", err)
 		}
 	}
+
+	parsers.StartTeacherParserTicker(24)
 
 	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

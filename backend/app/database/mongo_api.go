@@ -115,6 +115,18 @@ type User_trackers struct {
 	TimeStamp time.Time `bson:"timestamp" json:"timestamp"`
 }
 
+type Teacher struct {
+	Name      string    `bson:"name" json:"name"`
+	Subject   string    `bson:"subject" json:"subject"`
+	Level     string    `bson:"level" json:"level"`
+	Price     string    `bson:"price" json:"price"`
+	City      string    `bson:"city" json:"city"`
+	Rating    float64   `bson:"rating" json:"rating"`
+	AvatarURL string    `bson:"avatarurl" json:"avatarurl"`
+	Link      string    `bson:"link" json:"link"`
+	TimeStamp time.Time `bson:"timestamp" json:"timestamp"`
+}
+
 func ConnectMongo(uri string) (*mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -429,4 +441,79 @@ func GetAllUniversities() ([]UniversityMongo, error) {
 
 	log.Printf("Successfully retrieved %d universities", len(universities))
 	return universities, nil
+}
+
+func AddTeacher(t Teacher) error {
+	collection := mongoClient.Database("smartify").Collection("teachers")
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	if t.TimeStamp.IsZero() {
+		t.TimeStamp = time.Now()
+	}
+
+	var existing Teacher
+	err := collection.FindOne(ctx, bson.M{"name": t.Name}).Decode(&existing)
+
+	if err == mongo.ErrNoDocuments {
+		_, err1 := collection.InsertOne(ctx, t)
+		if err1 != nil {
+			return err1
+		}
+		log.Println("Successfully inserted teacher!")
+		return nil
+	} else if err != nil {
+		return err
+	} else if t.TimeStamp.After(existing.TimeStamp) {
+		_, updateErr := collection.ReplaceOne(ctx, bson.M{"name": t.Name}, t)
+		if updateErr != nil {
+			return updateErr
+		}
+		log.Println("Successfully updated teacher!")
+		return nil
+	}
+
+	log.Println("Teacher not updated: older timestamp")
+	return nil
+}
+
+func GetAllTeachers() ([]Teacher, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	collection := mongoClient.Database("smartify").Collection("teachers")
+
+	log.Println("Fetching all teachers from MongoDB")
+
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer func() {
+		if err := cursor.Close(ctx); err != nil {
+			log.Printf("Error closing cursor: %v", err)
+		}
+	}()
+
+	var teachers []Teacher
+
+	// Обрабатываем документы по одному
+	for cursor.Next(ctx) {
+		var t Teacher
+		if err := cursor.Decode(&t); err != nil {
+			log.Printf("Failed to decode teacher: %v", err)
+			continue
+		}
+
+		log.Printf("Decoded teacher: %+v", t)
+
+		teachers = append(teachers, t)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, fmt.Errorf("cursor iteration error: %w", err)
+	}
+
+	log.Printf("Successfully retrieved %d teachers", len(teachers))
+	return teachers, nil
 }

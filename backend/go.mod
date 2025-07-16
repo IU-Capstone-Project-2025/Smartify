@@ -3,6 +3,7 @@ module github.com/IU-Capstone-Project-2025/Smartify/backend
 go 1.24.4
 
 require (
+	github.com/PuerkitoBio/goquery v1.10.3
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/lib/pq v1.10.9
 	github.com/swaggo/http-swagger v1.3.4
@@ -13,6 +14,7 @@ require (
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
+	github.com/andybalholm/cascadia v1.3.3 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.20.0 // indirect
 	github.com/go-openapi/spec v0.20.6 // indirect
