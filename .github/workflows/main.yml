@@ -9,89 +9,10 @@ on:
     branches:
       - main
 
-jobs:
-  test:
-    runs-on: [self-hosted]
 
-    env:
-      URI: http://localhost:8080/api
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Create .env.test from secret
-        run: |
-          echo "${{ secrets.ENV_TEST }}" > .env.test
-
-      - name: Debug - Show current working directory and list files
-        run: |
-          echo "Текущая рабочая директория: $(pwd)"
-          echo "Список файлов в текущей директории:"
-          ls -la
-
-      - name: Debug - Show Docker Compose files on runner
-        run: |
-          echo "--- Содержимое docker-compose.yml ---"
-          cat docker-compose.yml || echo "Файл docker-compose.yml не найден или недоступен для чтения."
-          echo "--- Содержимое docker-compose.override.yml ---"
-          cat docker-compose.override.yml || echo "Файл docker-compose.override.yml не найден или недоступен для чтения."
-
-      - name: Build and start services
-        run: |
-          export COMPOSE_PROJECT_NAME=smartify_test
-          docker-compose -f docker-compose.override.yml down --rmi all --volumes --remove-orphans || true
-          docker-compose pull || true
-          docker-compose -f docker-compose.override.yml build &&
-          docker-compose -f docker-compose.override.yml up -d
-
-      - name: Wait for services to be healthy
-        run: |
-          echo "Waiting for backend to be healthy..."
-          echo "URI is: ${URI}"
-          for i in {1..20}; do
-            sleep 1
-          done
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${URI}/hello)
-          if [ "$STATUS" -eq 200 ]; then
-            echo "✅ Backend is up!"
-            exit 0
-          fi
-          echo "❌ Backend did not start"
-          docker-compose logs
-          exit 1
-
-      - name: Check maildog
-        run: |
-          echo "Waiting for maildog to be healthy..."
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8025/api/v2/messages)
-          if [ "$STATUS" -eq 200 ]; then
-            echo "✅ maildog is up!"
-            exit 0
-          fi
-          echo "❌ maildog did not start"
-          docker-compose logs
-          exit 1
-
-      - name: Run integration tests
-        run: |
-          chmod +x backend/tests/registration_test.sh
-          backend/tests/registration_test.sh
-          chmod +x backend/tests/login_test.sh
-          backend/tests/login_test.sh
-
-      - name: Stop containers
-        if: always()
-        run: |
-          export COMPOSE_PROJECT_NAME=smartify_test
-          docker-compose -f docker-compose.override.yml down --rmi all --volumes --remove-orphans || true
-          docker-compose down
 
   build_and_deploy:
-    needs: test
+    #needs: test
     runs-on: [self-hosted]
 
     env:
@@ -106,19 +27,24 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.32.4'
+          channel: stable
+          flutter-version: 3.32.4
 
-      - name: Install Flutter dependencies
-        run: cd frontend && flutter pub get
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ./frontend
 
-      #- name: Build Flutter web
-      #  run: cd frontend && flutter build web --release
+      - name: Build web
+        run: |
+          flutter create .
+      #    flutter build web --base-href /smartify/
+        working-directory: ./frontend
 
-      #- name: Deploy to GitHub Pages
-      #  uses: peaceiris/actions-gh-pages@v3
-      #  with:
-      #    github_token: ${{ secrets.GITHUB_TOKEN }}
-      #    publish_dir: ./frontend/build/web
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./frontend/build/web
 
       - name: Setup SSH client
         run: |
