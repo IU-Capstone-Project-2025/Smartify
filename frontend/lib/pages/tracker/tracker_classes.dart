@@ -76,6 +76,13 @@ class Subject {
   IconData icon;
   Color color;
 
+  static const Map<int, IconData> iconMapping = {
+    0xe000: Icons.book,      
+    0xe001: Icons.school,     
+    0xe002: Icons.work,
+    0xe003: Icons.sports_soccer,
+  };
+
   Subject({
     required this.title,
     this.icon = Icons.book, 
@@ -84,15 +91,11 @@ class Subject {
   });
 
   Map<String, dynamic> toJson() {
-    List<Map<String, dynamic>> tasksJson = [];
-    for (var task in tasks) {
-      tasksJson.add(task.toJson());
-    }
     return {
       'title': title,
-      'icon': icon.codePoint,
+      'icon': icon.codePoint, 
       'color': color.value,
-      'tasks': tasksJson
+      'tasks': tasks.map((task) => task.toJson()).toList()
     };
   }
 
@@ -104,9 +107,10 @@ class Subject {
         loadTasks.add(Task.fromJson(taskJson));
       }
     }
+    
     return Subject(
       title: json['title'] as String,
-      icon: IconData(json['icon']),
+      icon: iconMapping[json['icon']] ?? Icons.book,
       color: Color(json['color']),
       tasks: loadTasks
     );
