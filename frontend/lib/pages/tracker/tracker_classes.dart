@@ -27,11 +27,12 @@ class Task {
 
   factory Task.fromJson(Map<String, dynamic> json) {
     DateTime? dt;
-    if (json['deadline'] != null && json['deadline'] is DateTime?) {
-      dt = json['deadline'];
-    }
-    else if (json['deadline'] != null) {
-      dt = DateTime.parse(json['deadline']);
+    if (json['deadline'] != null) {
+      if (json['deadline'] is DateTime) {
+        dt = json['deadline'];
+      } else if (json['deadline'] is String) {
+        dt = DateTime.tryParse(json['deadline']);
+      }
     }
     return Task(
       title: json['title'], 
@@ -123,8 +124,10 @@ class Subject {
 }
 
 class SubjectsManager {
-  List<Subject> subjects;
-  SubjectsManager() : subjects = [];
+  static final SubjectsManager _instance = SubjectsManager._internal();
+  factory SubjectsManager() => _instance;
+  SubjectsManager._internal();
+  List<Subject> subjects = [];
 
   Future<void> saveAll() async {
     final sharedPref = await SharedPreferences.getInstance();

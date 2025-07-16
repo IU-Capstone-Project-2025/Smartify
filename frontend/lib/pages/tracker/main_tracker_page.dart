@@ -3,6 +3,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:intl/intl.dart';
 import 'package:smartify/pages/tracker/calendar_page.dart'; 
 import 'package:smartify/pages/tracker/tracker_classes.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 class ProgressPage extends StatefulWidget {
   const ProgressPage({super.key});
@@ -16,8 +17,8 @@ class _ProgressPageState extends State<ProgressPage> {
   final SubjectsManager taskManager = SubjectsManager();
   @override
   void initState() {
-    loadSavedSubjects();
     super.initState();
+    loadSavedSubjects();
   }
   
   Future<void> loadSavedSubjects() async {
@@ -32,16 +33,16 @@ class _ProgressPageState extends State<ProgressPage> {
       builder: (context) {
         String newTitle = "";
         return AlertDialog(
-          title: const Text("Новый предмет"),
+          title: Text(AppLocalizations.of(context)!.newSubject),
           content: TextField(
             autofocus: true,
-            decoration: const InputDecoration(hintText: "Название предмета"),
+            decoration: InputDecoration(hintText: AppLocalizations.of(context)!.subjectTitle),
             onChanged: (val) => newTitle = val,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Отмена"),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: () {
@@ -58,7 +59,7 @@ class _ProgressPageState extends State<ProgressPage> {
                 }
                 Navigator.pop(context);
               },
-              child: const Text("Добавить"),
+              child: Text(AppLocalizations.of(context)!.add),
             )
           ],
         );
@@ -87,23 +88,23 @@ class _ProgressPageState extends State<ProgressPage> {
         return StatefulBuilder(
           builder: (context, setStateDialog) {
             return AlertDialog(
-              title: const Text("Новое задание"),
+              title: Text(AppLocalizations.of(context)!.newTask),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
                     autofocus: true,
-                    decoration: const InputDecoration(labelText: "Название"),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.title),
                     onChanged: (val) => title = val,
                   ),
                   TextField(
-                    decoration: const InputDecoration(labelText: "Длительность"),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.duration),
                     onChanged: (val) => duration = val,
                   ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      const Text("Дедлайн: "),
+                      Text(AppLocalizations.of(context)!.deadline),
                       Expanded(
                         child: Text(
                           deadline != null
@@ -121,7 +122,7 @@ class _ProgressPageState extends State<ProgressPage> {
                             });
                           }
                         },
-                        child: const Text("Выбрать"),
+                        child: Text(AppLocalizations.of(context)!.select),
                       )
                     ],
                   ),
@@ -130,7 +131,7 @@ class _ProgressPageState extends State<ProgressPage> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text("Отмена"),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -147,7 +148,7 @@ class _ProgressPageState extends State<ProgressPage> {
                     }
                     Navigator.pop(context);
                   },
-                  child: const Text("Добавить"),
+                  child: Text(AppLocalizations.of(context)!.add),
                 )
               ],
             );
@@ -168,24 +169,24 @@ class _ProgressPageState extends State<ProgressPage> {
         return StatefulBuilder(
           builder: (context, setStateDialog) {
             return AlertDialog(
-              title: const Text("Редактировать задание"),
+              title: Text(AppLocalizations.of(context)!.editTask),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
                     controller: TextEditingController(text: title),
-                    decoration: const InputDecoration(labelText: "Название"),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.title),
                     onChanged: (val) => title = val,
                   ),
                   TextField(
                     controller: TextEditingController(text: duration),
-                    decoration: const InputDecoration(labelText: "Длительность"),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.duration),
                     onChanged: (val) => duration = val,
                   ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      const Text("Дедлайн: "),
+                      Text(AppLocalizations.of(context)!.deadline),
                       Expanded(
                         child: Text(
                           deadline != null
@@ -202,7 +203,7 @@ class _ProgressPageState extends State<ProgressPage> {
                             });
                           }
                         },
-                        child: const Text("Выбрать"),
+                        child: Text(AppLocalizations.of(context)!.select),
                       )
                     ],
                   ),
@@ -211,7 +212,7 @@ class _ProgressPageState extends State<ProgressPage> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text("Отмена"),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -223,7 +224,7 @@ class _ProgressPageState extends State<ProgressPage> {
                     taskManager.saveAll();
                     Navigator.pop(context);
                   },
-                  child: const Text("Сохранить"),
+                  child: Text(AppLocalizations.of(context)!.save),
                 )
               ],
             );
@@ -244,7 +245,7 @@ class _ProgressPageState extends State<ProgressPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CalendarPage(subjects: taskManager.subjects),
+        builder: (context) => CalendarPage(),
       ),
     );
   }
@@ -261,7 +262,6 @@ class _ProgressPageState extends State<ProgressPage> {
     double percent = total > 0 ? done / total : 0;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -271,7 +271,7 @@ class _ProgressPageState extends State<ProgressPage> {
             Navigator.pop(context);
           },
         ),
-        title: const Text('Прогресс', style: TextStyle(color: Colors.black)),
+        title: Text(AppLocalizations.of(context)!.progress, style: const TextStyle(color: Colors.black)),
         centerTitle: true,
         actions: [
           IconButton(
@@ -285,52 +285,45 @@ class _ProgressPageState extends State<ProgressPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Предметы', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  ...taskManager.subjects.asMap().entries.map((entry) {
-                    int index = entry.key;
-                    var subject = entry.value;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: subjectCard(taskManager.subjects[index], index),
-                    );
-                  }),
-                  GestureDetector(
-                    onTap: _addSubject,
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: const Icon(Icons.add, size: 40, color: Colors.grey),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(height: 32),
-            const Text("Прогресс", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const Text("За всё время"),
+            // Общий прогресс
+            Text(AppLocalizations.of(context)!.progress, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(AppLocalizations.of(context)!.forAllTime),
             const SizedBox(height: 12),
             Center(
               child: CircularPercentIndicator(
                 radius: 80.0,
                 lineWidth: 15.0,
                 percent: percent,
-                center: Text("${(percent * 100).toInt()}%\nВыполнено", textAlign: TextAlign.center),
+                center: Text("${(percent * 100).toInt()}%\n${AppLocalizations.of(context)!.completed}", textAlign: TextAlign.center),
                 progressColor: Colors.teal,
                 backgroundColor: Colors.teal.shade100,
                 circularStrokeCap: CircularStrokeCap.round,
               ),
             ),
-            const SizedBox(height: 16),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
+            // Список предметов
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(AppLocalizations.of(context)!.subjects, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                IconButton(
+                  icon: const Icon(Icons.add, color: Colors.teal),
+                  onPressed: _addSubject,
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: taskManager.subjects.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: subjectCard(taskManager.subjects[index], index),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -338,103 +331,97 @@ class _ProgressPageState extends State<ProgressPage> {
   }
 
   Widget subjectCard(Subject subject, int subjectIndex) {
+    int total = subject.tasks.length;
+    int done = subject.tasks.where((t) => t.isCompleted == true).length;
+    double percent = total > 0 ? done / total : 0;
     return Container(
-      width: 220,
-      padding: const EdgeInsets.all(12),
+      width: double.infinity,
+      height: 120,
       decoration: BoxDecoration(
-        color: subject.color,
-        borderRadius: BorderRadius.circular(16),
+        color: subject.color.withOpacity(0.85),
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(subject.icon, color: Colors.white, size: 28),
-              PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert, color: Colors.white, size: 20),
-                onSelected: (value) {
-                  if (value == 'delete') {
-                    _deleteSubject(subjectIndex);
-                  }
-                },
-                itemBuilder: (BuildContext context) => [
-                  const PopupMenuItem(value: 'delete', child: Text('Удалить предмет')),
-                ],
-              )
-            ],
+          // Декоративные круги (имитация фона как на картинке)
+          Positioned(
+            top: -30,
+            right: -30,
+            child: Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.12),
+                shape: BoxShape.circle,
+              ),
+            ),
           ),
-          const SizedBox(height: 8),
-          Text(subject.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 110,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                ...subject.tasks.asMap().entries.map((entry) {
-                  int taskIndex = entry.key;
-                  var task = entry.value;
-                  DateTime? deadline = task.deadline;
-                  return GestureDetector(
-                    onTap: () => _editTask(subjectIndex, taskIndex),
-                    child: Container(
-                      width: 130,
-                      margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white24,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Checkbox(
-                            value: task.isCompleted,
-                            onChanged: (val) {
-                              setState(() {
-                                task.isCompleted = val ?? false;
-                              });
-                              taskManager.saveAll();
-                            },
-                            activeColor: Colors.white,
-                            checkColor: subject.color,
-                          ),
-                          Text(
-                            task.title,
-                            style: const TextStyle(color: Colors.white, fontSize: 12),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(
-                            task.duration,
-                            style: const TextStyle(color: Colors.white70, fontSize: 10),
-                          ),
-                          if (deadline != null)
-                            Text(
-                              "Дедлайн: ${DateFormat('dd.MM.yyyy').format(deadline)}",
-                              style: const TextStyle(color: Colors.white70, fontSize: 10, fontStyle: FontStyle.italic),
-                            ),
-                        ],
+          Positioned(
+            bottom: -20,
+            left: -20,
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.10),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          // Контент карточки
+          Row(
+            children: [
+              const SizedBox(width: 16),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      subject.title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
                       ),
                     ),
-                  );
-                }).toList(),
-                GestureDetector(
-                  onTap: () => _addTask(subjectIndex),
-                  child: Container(
-                    width: 100,
-                    margin: const EdgeInsets.only(right: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white30,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Center(child: Icon(Icons.add, color: Colors.white)),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Center(
+                  child: CircularPercentIndicator(
+                    radius: 38.0,
+                    lineWidth: 8.0,
+                    percent: percent,
+                    center: Text("${(percent * 100).toInt()}%", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+                    progressColor: Colors.white,
+                    backgroundColor: Colors.white24,
+                    circularStrokeCap: CircularStrokeCap.round,
                   ),
                 ),
-              ],
-            ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert, color: Colors.white, size: 22),
+                    onSelected: (value) {
+                      if (value == 'delete') {
+                        _deleteSubject(subjectIndex);
+                      }
+                    },
+                    itemBuilder: (BuildContext context) => [
+                      PopupMenuItem(value: 'delete', child: Text(AppLocalizations.of(context)!.deleteSubject)),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
           ),
         ],
       ),

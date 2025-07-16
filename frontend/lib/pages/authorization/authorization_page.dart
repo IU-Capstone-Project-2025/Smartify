@@ -3,6 +3,7 @@ import 'package:smartify/pages/api_server/api_server.dart';
 import 'package:smartify/pages/menu/menu_page.dart';
 import 'package:smartify/pages/reset/reset_password_page.dart';
 import 'package:smartify/pages/nav/nav_page.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 class AuthorizationPage extends StatefulWidget {
   const AuthorizationPage({super.key});
@@ -40,15 +41,15 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white, // убрано для поддержки темы
       appBar: AppBar(
         automaticallyImplyLeading: true,
         elevation: 0,
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white, // убрано для поддержки темы
         foregroundColor: Colors.black,
-        title: const Text(
-          'Войти в аккаунт',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.loginToAccount,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
@@ -60,15 +61,15 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Почта',
-              style: TextStyle(fontWeight: FontWeight.w500),
+            Text(
+              AppLocalizations.of(context)!.email,
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 6),
             TextField(
               controller:  _emailController,
               decoration: InputDecoration(
-                hintText: 'example@example',
+                hintText: AppLocalizations.of(context)!.email,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -76,16 +77,16 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Пароль',
-              style: TextStyle(fontWeight: FontWeight.w500),
+            Text(
+              AppLocalizations.of(context)!.password,
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 6),
             TextField(
               controller: _passwordController,
               obscureText: _obscurePassword,
               decoration: InputDecoration(
-                hintText: 'Введите пароль',
+                hintText: AppLocalizations.of(context)!.enterPassword,
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscurePassword
@@ -116,9 +117,9 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  'Войти',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                child: Text(
+                  AppLocalizations.of(context)!.login,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -133,9 +134,9 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                         ),
                   );
                 },
-                child: const Text(
-                  'Забыли пароль?',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                child: Text(
+                  AppLocalizations.of(context)!.forgotPassword,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -145,16 +146,8 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: Text.rich(
                   TextSpan(
-                    text: 'Используя Smartify, вы соглашаетесь с\n',
+                    text: AppLocalizations.of(context)!.termsAndPrivacy + '\n',
                     style: const TextStyle(fontSize: 12),
-                    children: [
-                      TextSpan(
-                        text: 'Условиями пользования и Политикой конфиденциальности.',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
                   ),
                   textAlign: TextAlign.center,
                 ),

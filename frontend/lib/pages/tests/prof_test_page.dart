@@ -19,12 +19,12 @@ class SmartifyApp extends StatelessWidget {
       title: 'Smartify Test',
       theme: ThemeData(
         primarySwatch: Colors.teal,
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          iconTheme: IconThemeData(color: Colors.black),
-        ),
+        // scaffoldBackgroundColor: Colors.white, // убрано для поддержки темы
+        // appBarTheme: const AppBarTheme(
+        //   backgroundColor: Colors.white,
+        //   elevation: 0,
+        //   iconTheme: IconThemeData(color: Colors.black),
+        // ),
       ),
       home: const QuestionnairePage(),
     );

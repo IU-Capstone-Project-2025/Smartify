@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 import 'package:smartify/pages/menu/menu_page.dart';
 import 'package:smartify/pages/tracker/main_tracker_page.dart';
 import 'package:smartify/pages/universities/main_university_page.dart';
 import 'package:smartify/pages/welcome/welcome_page.dart';
 import 'package:smartify/pages/nav/nav_page.dart';
+import '../../main.dart'; // Импортируйте themeModeNotifier
+
+final themeModeNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
+final localeNotifier = ValueNotifier<Locale?>(null);
 
 void main() {
   runApp(const MyApp());
@@ -13,14 +19,71 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const WelcomePage(),
-      //home: const DashboardPage(),
-
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeModeNotifier,
+      builder: (context, mode, _) {
+        return ValueListenableBuilder<Locale?>(
+          valueListenable: localeNotifier,
+          builder: (context, locale, _) {
+            return MaterialApp(
+              title: 'Flutter Demo',
+              theme: ThemeData(
+                colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.light),
+              ),
+              darkTheme: ThemeData(
+                brightness: Brightness.dark,
+                scaffoldBackgroundColor: Colors.black,
+                appBarTheme: const AppBarTheme(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                ),
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: Colors.deepPurple,
+                  brightness: Brightness.dark,
+                  background: Colors.black,
+                  surface: Colors.black,
+                  onBackground: Colors.white,
+                  onSurface: Colors.white,
+                  primary: Colors.white,
+                  secondary: Colors.white,
+                ),
+                cardColor: Colors.grey[900],
+                dialogBackgroundColor: Colors.black,
+                textTheme: const TextTheme(
+                  bodyLarge: TextStyle(color: Colors.white),
+                  bodyMedium: TextStyle(color: Colors.white),
+                  bodySmall: TextStyle(color: Colors.white),
+                  displayLarge: TextStyle(color: Colors.white),
+                  displayMedium: TextStyle(color: Colors.white),
+                  displaySmall: TextStyle(color: Colors.white),
+                  headlineLarge: TextStyle(color: Colors.white),
+                  headlineMedium: TextStyle(color: Colors.white),
+                  headlineSmall: TextStyle(color: Colors.white),
+                  titleLarge: TextStyle(color: Colors.white),
+                  titleMedium: TextStyle(color: Colors.white),
+                  titleSmall: TextStyle(color: Colors.white),
+                  labelLarge: TextStyle(color: Colors.white),
+                  labelMedium: TextStyle(color: Colors.white),
+                  labelSmall: TextStyle(color: Colors.white),
+                ),
+              ),
+              themeMode: mode,
+              locale: locale,
+              supportedLocales: const [
+                Locale('en'),
+                Locale('ru'),
+              ],
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              home: const WelcomePage(),
+            );
+          },
+        );
+      },
     );
   }
 }

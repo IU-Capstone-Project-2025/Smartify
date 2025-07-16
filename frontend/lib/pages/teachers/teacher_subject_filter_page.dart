@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 class TeacherSubjectFilterPage extends StatelessWidget {
   const TeacherSubjectFilterPage({Key? key}) : super(key: key);
@@ -7,10 +8,10 @@ class TeacherSubjectFilterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Предмет'),
+        title: Text(AppLocalizations.of(context)!.subject),
       ),
-      body: const Center(
-        child: Text('Фильтр по предмету будет здесь'),
+      body: Center(
+        child: Text(AppLocalizations.of(context)!.subjectFilterHere),
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:smartify/pages/universities/main_university_page.dart';
 import 'package:smartify/pages/account/account_page.dart';
 import 'package:smartify/pages/professions/professions_page.dart';
 import 'package:smartify/pages/teachers/teachers_list_page.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 void main() {
   runApp(const SmartifyApp());
@@ -32,12 +33,12 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white, // убрано для поддержки темы
       appBar: AppBar(
-  backgroundColor: Colors.white,
-  elevation: 0,
-  automaticallyImplyLeading: false, // We'll manually control it
-  title: Stack(
+        // backgroundColor: Colors.white, // убрано для поддержки темы
+        elevation: 0,
+        automaticallyImplyLeading: false, // We'll manually control it
+        title: Stack(
     alignment: Alignment.center,
     children: [
       Center(
@@ -56,7 +57,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 showGeneralDialog(
                   context: context,
                   barrierDismissible: true,
-                  barrierLabel: 'Settings',
+                  barrierLabel: AppLocalizations.of(context)!.settings,
                   transitionDuration: const Duration(milliseconds: 300),
                   pageBuilder: (_, __, ___) {
                     return Align(
@@ -67,7 +68,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           width: 360,
                           height: MediaQuery.of(context).size.height,
                           decoration: const BoxDecoration(
-                            color: Colors.white,
+                            // color: Colors.white, // убрано для поддержки темы
                             borderRadius: BorderRadius.only(
                               topRight: Radius.circular(16),
                               bottomRight: Radius.circular(16),
@@ -116,25 +117,25 @@ class _DashboardPageState extends State<DashboardPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Добро пожаловать!',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.welcome,
+                        style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
-                        'Выберите тему',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      Text(
+                        AppLocalizations.of(context)!.chooseTheme,
+                        style: const TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                       const SizedBox(height: 20),
                       Row(
                         children: [
                           Expanded(
                             child: _TopicCard(
-                              title: 'Университеты',
-                              subtitle: 'Более ста разных университетов',
+                              title: AppLocalizations.of(context)!.universities,
+                              subtitle: AppLocalizations.of(context)!.moreThanHundredUniversities,
                               assetImage: 'university.png',
                               onPressed: () {
                                 Navigator.push(
@@ -151,8 +152,8 @@ class _DashboardPageState extends State<DashboardPage> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: _TopicCard(
-                              title: 'Подготовка\nк ЕГЭ',
-                              subtitle: 'Отслеживайте\nсвой прогресс',
+                              title: AppLocalizations.of(context)!.preparationForEge,
+                              subtitle: AppLocalizations.of(context)!.trackYourProgress,
                               assetImage: 'career.png',
                               onPressed: () {
                                   Navigator.push(
@@ -170,8 +171,8 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                       const SizedBox(height: 12),
                       _WideButton(
-                        title: 'Карьерные Предложения',
-                        subtitle: 'Огромная база карьер',
+                        title: AppLocalizations.of(context)!.careerOffers,
+                        subtitle: AppLocalizations.of(context)!.hugeCareerBase,
                         onPressed: () {
                                 Navigator.push(
                                   context,
@@ -184,8 +185,8 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                       const SizedBox(height: 12),
                       _WideButton(
-                        title: 'Репетиторы',
-                        subtitle: 'Более ста репетиторов',
+                        title: AppLocalizations.of(context)!.teachers,
+                        subtitle: AppLocalizations.of(context)!.moreThanHundredTeachers,
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -274,7 +275,7 @@ class _TopicCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
               ),
               onPressed: onPressed,
-              child: const Text('Перейти'),
+              child: Text(AppLocalizations.of(context)!.go),
             ),
           ),
         ],
