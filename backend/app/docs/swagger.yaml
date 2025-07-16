@@ -113,7 +113,7 @@ definitions:
       timestamp:
         type: string
     type: object
-host: localhost:22025
+host: 213.226.112.206:22025
 info:
   contact:
     email: projectsmartifyapp@gmail.com

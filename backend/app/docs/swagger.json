@@ -9,7 +9,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:22025",
+    "host": "213.226.112.206:22025",
     "basePath": "/api",
     "paths": {
         "/add_tutor": {
