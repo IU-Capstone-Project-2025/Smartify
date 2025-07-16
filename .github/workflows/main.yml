@@ -111,8 +111,8 @@ jobs:
       - name: Install Flutter dependencies
         run: cd frontend && flutter pub get
 
-      - name: Build Flutter web
-        run: cd frontend && flutter build web --release --no-tree-shake-icons
+      #- name: Build Flutter web
+      #  run: cd frontend && flutter build web --release
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
