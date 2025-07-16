@@ -1,22 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartify/l10n/app_localizations.dart';
 import 'package:smartify/pages/menu/menu_page.dart';
 import 'package:smartify/pages/tracker/main_tracker_page.dart';
 import 'package:smartify/pages/universities/main_university_page.dart';
 import 'package:smartify/pages/welcome/welcome_page.dart';
 import 'package:smartify/pages/nav/nav_page.dart';
-import '../../main.dart'; // Импортируйте themeModeNotifier
+import 'package:smartify/pages/api_server/api_token.dart';
+import 'package:smartify/pages/recommendations/recommendation_screen.dart';
 
 final themeModeNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
 final localeNotifier = ValueNotifier<Locale?>(null);
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // ВРЕМЕННАЯ ОЧИСТКА — удалит все сохранённые токены!
+  /*
+  const storage = FlutterSecureStorage();
+  await storage.deleteAll();
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.clear();
+  */
+  // Проверка аутентификации
+  final isAuthenticated = await AuthService.isAuthenticated();
+  runApp(MyApp(startWidget: isAuthenticated ? const DashboardPage() : const WelcomePage()));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Widget startWidget;
+  const MyApp({super.key, required this.startWidget});
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
@@ -79,7 +93,7 @@ class MyApp extends StatelessWidget {
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
               ],
-              home: const WelcomePage(),
+              home: startWidget,
             );
           },
         );

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:smartify/pages/api_server/api_token.dart';
 import 'package:http/http.dart' as http;
 import 'package:smartify/pages/api_server/api_save_data.dart';
+import 'package:smartify/pages/api_server/api_save_prof.dart';
 
 class ApiService {
   //static const String _baseUrl = 'http://localhost:22025/api';
@@ -195,7 +196,7 @@ class ApiService {
     }
   }
   // Метод для входа
-  static Future<bool> AddQuestionnaire(Map<String, dynamic> questionnaire) async {
+  static Future<List<ProfessionPrediction>> AddQuestionnaire(Map<String, dynamic> questionnaire) async {
     try {
       final token = await AuthService.getAccessToken();
 
@@ -210,24 +211,28 @@ class ApiService {
 
       if (response.statusCode == 200) {
         print("Анкета успешно отправлена");
-        return true;
+        final List<dynamic> data = json.decode(response.body);
+        final predictions = data
+          .map((item) => ProfessionPrediction.fromJson(item))
+          .toList();
+        return predictions;
       } else if (response.statusCode == 401) {
         print("Access token is invalid or expired. Trying to refresh...");
 
         bool refreshSuccess = await AuthService.refreshTokens();
         if (!refreshSuccess) {
           print("Не удалось обновить токены");
-          return false;
+          return [];
         }
         return await AddQuestionnaire(questionnaire);
       } else {
         print("Ошибка при отправке анкеты: ${response.statusCode}");
         print("Ответ сервера: ${response.body}");
-        return false;
+        return [];
       }
     } catch (e) {
       print("Ошибка соединенея: $e");
-      return false;
+      return [];
     }
   }
 }

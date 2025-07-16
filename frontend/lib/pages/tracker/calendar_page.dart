@@ -20,7 +20,6 @@ class _CalendarPageState extends State<CalendarPage> {
   void initState() {
     super.initState();
     _localeFuture = initializeDateFormatting('ru');
-    // Диапазон дат на месяц вперёд
     DateTime today = DateTime.now();
     DateTime oneMonthAhead = DateTime(today.year, today.month + 1, today.day);
     int days = oneMonthAhead.difference(today).inDays + 1;
@@ -30,12 +29,10 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  // Сравнение только по дате (без времени)
   bool isSameDay(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
-  // Получить задания на выбранную дату
   List<_TaskWithSubject> _tasksForSelectedDate() {
     final List<_TaskWithSubject> result = [];
     for (final subject in SubjectsManager().subjects) {
@@ -61,7 +58,6 @@ class _CalendarPageState extends State<CalendarPage> {
           body: SafeArea(
             child: Column(
               children: [
-                // Header
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: Row(
@@ -78,13 +74,12 @@ class _CalendarPageState extends State<CalendarPage> {
                         color: const Color(0xFF26977F),
                         minSize: 28,
                         borderRadius: BorderRadius.circular(8),
-                        child: const Text('+ Добавить', style: TextStyle(fontSize: 15)),
+                        child: const Text('+ Добавить', style: TextStyle(fontSize: 15, color: Colors.white)),
                         onPressed: () => _showAddTaskDialog(context),
                       ),
                     ],
                   ),
                 ),
-                // Date selector
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
@@ -163,7 +158,6 @@ class _CalendarPageState extends State<CalendarPage> {
                     ],
                   ),
                 ),
-                // Task list
                 Expanded(
                   child: tasks.isEmpty
                       ? const Center(child: Text('Нет заданий на выбранную дату'))
@@ -253,7 +247,6 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  // Диалог добавления задания
   void _showAddTaskDialog(BuildContext context) {
     String? selectedSubjectTitle = SubjectsManager().subjects.isNotEmpty ? SubjectsManager().subjects[0].title : null;
     String taskTitle = '';
@@ -368,7 +361,6 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  // Диалог редактирования задания
   void _showEditTaskDialog(Task task, Subject subject) {
     String taskTitle = task.title;
     DateTime selectedDateTime = task.deadline ?? _selectedDate;
@@ -423,7 +415,6 @@ class _CalendarPageState extends State<CalendarPage> {
                   child: const Text('Сохранить'),
                   onPressed: () {
                     task.title = taskTitle;
-                    // deadline только дата без времени
                     task.deadline = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
                     task.duration = DateFormat('HH:mm').format(selectedDateTime);
                     SubjectsManager().saveAll();
@@ -444,7 +435,6 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 }
 
-// Вспомогательный класс для связи Task и Subject
 class _TaskWithSubject {
   final Task task;
   final Subject subject;

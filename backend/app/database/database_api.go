@@ -251,6 +251,25 @@ func Add_new_user(user User, database *sql.DB) error {
 	return nil
 }
 
+func ChangeUserInfo(user User, database *sql.DB) error {
+	log.Printf("Change user info in db: %s, %s", user.Email, user.Password_hash)
+	err := database.QueryRow(`
+        update users set first_name = $2, last_name = $3, middle_name = $4, 
+               date_of_birth = $5, user_role = $5 WHERE id = $1`,
+		&user.ID,
+		&user.First_name,
+		&user.Last_name,
+		&user.Middle_name,
+		&user.Date_of_birth,
+		&user.User_role,
+	)
+
+	if err != nil {
+		return fmt.Errorf("Failed to query user: %w", err)
+	}
+	return nil
+}
+
 func StoreRefreshToken(userID int, token string, database *sql.DB) error {
 	_, err := database.Exec(
 		`INSERT INTO refresh_tokens (user_id, token, expires_at)

@@ -35,8 +35,8 @@ class Task {
       }
     }
     return Task(
-      title: json['title'], 
-      duration: json['duration'], 
+      title: json['title'],
+      duration: json['duration'],
       deadline: dt,
       isCompleted: json['isCompleted'] ?? false
     );
@@ -50,7 +50,6 @@ class TaskCalendar {
   String subjectTitle;
   bool isCompleted;
 
-
   TaskCalendar({
     required this.title,
     required this.duration,
@@ -61,10 +60,10 @@ class TaskCalendar {
 
   factory TaskCalendar.fromJson(Map<String, dynamic> jsonData) {
     return TaskCalendar(
-      title: jsonData['title'], 
-      duration: jsonData['duration'], 
-      color: jsonData['color'], 
-      isCompleted: jsonData['completed'], 
+      title: jsonData['title'],
+      duration: jsonData['duration'],
+      color: jsonData['color'],
+      isCompleted: jsonData['completed'],
       subjectTitle: jsonData['subject']
     );
   }
@@ -78,7 +77,7 @@ class Subject {
 
   Subject({
     required this.title,
-    this.icon = Icons.book, 
+    this.icon = Icons.book,
     this.color = const Color.fromARGB(255, 0, 150, 136),
     this.tasks = const []
   });
@@ -146,17 +145,13 @@ class SubjectsManager {
 
   Future<void> loadAll() async {
     final sharedPref = await SharedPreferences.getInstance();
-    
     String? data = sharedPref.getString("subjects");
     if (data == null) {
       return;
     }
-
     final decoded = jsonDecode(data);
     final List<dynamic> subjectsJson = decoded['data'];
-
     subjects.clear();
-
     for (var sub in subjectsJson) {
       final Map<String, dynamic> subJson = jsonDecode(sub);
       subjects.add(Subject.fromJson(subJson));

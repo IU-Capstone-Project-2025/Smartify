@@ -1,0 +1,122 @@
+basePath: /api
+definitions:
+  database.User:
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: projectsmartifyapp@gmail.com
+    name: Smartify Working Mail
+  description: REST API для доступа внешним устройствам ко внутренней системе Smartify
+  title: Smartify Backend API
+  version: "1.0"
+paths:
+  /commit_code_reset_password:
+    post:
+      consumes:
+      - application/json
+      description: Просто говорит привет, а точнее "ok"
+      produces:
+      - application/json
+      responses: {}
+      summary: Функция проверки доступности
+      tags:
+      - auth
+  /forgot_password:
+    post:
+      consumes:
+      - application/json
+      description: Отправляет код подтверждения на email
+      produces:
+      - application/json
+      responses: {}
+      summary: Запрос на сброс пароля
+      tags:
+      - auth
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Вход по email и паролю, возвращает JWT-токен
+      parameters:
+      - description: Email и пароль
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/database.User'
+      produces:
+      - application/json
+      responses: {}
+      summary: Аутентификация пользователя
+      tags:
+      - auth
+  /questionnaire:
+    post:
+      consumes:
+      - application/json
+      description: Доступно только аутентифицированным пользователям
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Создание новой анкеты
+      tags:
+      - questionnaire
+  /refresh_token:
+    post:
+      consumes:
+      - application/json
+      description: Возвращает новую пару access/refresh токенов
+      produces:
+      - application/json
+      responses: {}
+      summary: Обновление JWT-токена
+      tags:
+      - auth
+  /registration_codevalidation:
+    post:
+      consumes:
+      - application/json
+      description: Валидирует код, отправленный на email
+      produces:
+      - application/json
+      responses: {}
+      summary: Проверка кода подтверждения
+      tags:
+      - auth
+  /registration_emailvalidation:
+    post:
+      consumes:
+      - application/json
+      description: Проверяет email и отправляет код подтверждения
+      produces:
+      - application/json
+      responses: {}
+      summary: Отправка email для регистрации
+      tags:
+      - auth
+  /registration_password:
+    post:
+      consumes:
+      - application/json
+      description: Завершает регистрацию, сохраняя пароль
+      produces:
+      - application/json
+      responses: {}
+      summary: Установка пароля
+      tags:
+      - auth
+  /reset_password:
+    post:
+      consumes:
+      - application/json
+      description: Меняет пароль после подтверждения кода
+      produces:
+      - application/json
+      responses: {}
+      summary: Установка нового пароля
+      tags:
+      - auth
+swagger: "2.0"

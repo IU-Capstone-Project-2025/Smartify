@@ -18,6 +18,12 @@ type TokenResponse struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
+// @Summary      Обновление JWT-токена
+// @Description  Возвращает новую пару access/refresh токенов
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Router       /refresh_token [post]
 func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("New refresh request!")
 	w.Header().Set("Content-Type", "application/json")

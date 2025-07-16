@@ -1,0 +1,181 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "REST API для доступа внешним устройствам ко внутренней системе Smartify",
+        "title": "Smartify Backend API",
+        "contact": {
+            "name": "Smartify Working Mail",
+            "email": "projectsmartifyapp@gmail.com"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api",
+    "paths": {
+        "/commit_code_reset_password": {
+            "post": {
+                "description": "Просто говорит привет, а точнее \"ok\"",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Функция проверки доступности",
+                "responses": {}
+            }
+        },
+        "/forgot_password": {
+            "post": {
+                "description": "Отправляет код подтверждения на email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Запрос на сброс пароля",
+                "responses": {}
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Вход по email и паролю, возвращает JWT-токен",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Аутентификация пользователя",
+                "parameters": [
+                    {
+                        "description": "Email и пароль",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/database.User"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/questionnaire": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Доступно только аутентифицированным пользователям",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "questionnaire"
+                ],
+                "summary": "Создание новой анкеты",
+                "responses": {}
+            }
+        },
+        "/refresh_token": {
+            "post": {
+                "description": "Возвращает новую пару access/refresh токенов",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Обновление JWT-токена",
+                "responses": {}
+            }
+        },
+        "/registration_codevalidation": {
+            "post": {
+                "description": "Валидирует код, отправленный на email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Проверка кода подтверждения",
+                "responses": {}
+            }
+        },
+        "/registration_emailvalidation": {
+            "post": {
+                "description": "Проверяет email и отправляет код подтверждения",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Отправка email для регистрации",
+                "responses": {}
+            }
+        },
+        "/registration_password": {
+            "post": {
+                "description": "Завершает регистрацию, сохраняя пароль",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Установка пароля",
+                "responses": {}
+            }
+        },
+        "/reset_password": {
+            "post": {
+                "description": "Меняет пароль после подтверждения кода",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Установка нового пароля",
+                "responses": {}
+            }
+        }
+    },
+    "definitions": {
+        "database.User": {
+            "type": "object"
+        }
+    }
+}

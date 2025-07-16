@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:intl/intl.dart';
-import 'package:smartify/pages/tracker/calendar_page.dart'; 
+import 'package:smartify/pages/tracker/calendar_page.dart';
 import 'package:smartify/pages/tracker/tracker_classes.dart';
 import 'package:smartify/l10n/app_localizations.dart';
 
@@ -13,19 +13,18 @@ class ProgressPage extends StatefulWidget {
 }
 
 class _ProgressPageState extends State<ProgressPage> {
-
   final SubjectsManager taskManager = SubjectsManager();
+
   @override
   void initState() {
     super.initState();
     loadSavedSubjects();
   }
-  
+
   Future<void> loadSavedSubjects() async {
     await taskManager.loadAll();
     setState(() {});
   }
-  
 
   void _addSubject() {
     showDialog(
@@ -67,173 +66,6 @@ class _ProgressPageState extends State<ProgressPage> {
     );
   }
 
-  Future<DateTime?> _pickDate(DateTime? initialDate) async {
-    DateTime now = DateTime.now();
-    return await showDatePicker(
-      context: context,
-      initialDate: initialDate ?? now,
-      firstDate: DateTime(now.year - 5),
-      lastDate: DateTime(now.year + 5),
-    );
-  }
-
-  void _addTask(int subjectIndex) {
-    String title = "";
-    String duration = "";
-    DateTime? deadline;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setStateDialog) {
-            return AlertDialog(
-              title: Text(AppLocalizations.of(context)!.newTask),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    autofocus: true,
-                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.title),
-                    onChanged: (val) => title = val,
-                  ),
-                  TextField(
-                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.duration),
-                    onChanged: (val) => duration = val,
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Text(AppLocalizations.of(context)!.deadline),
-                      Expanded(
-                        child: Text(
-                          deadline != null
-                              ? DateFormat('dd.MM.yyyy').format(deadline!)
-                              : '',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          DateTime? picked = await _pickDate(deadline);
-                          if (picked != null) {
-                            setStateDialog(() {
-                              deadline = picked;
-                            });
-                          }
-                        },
-                        child: Text(AppLocalizations.of(context)!.select),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(AppLocalizations.of(context)!.cancel),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (title.trim().isNotEmpty) {
-                      setState(() {
-                        taskManager.subjects[subjectIndex].addTasks([Task.fromJson({
-                          "title": title,
-                          "duration": duration,
-                          "completed": false,
-                          "deadline": deadline,
-                        })]);
-                      });
-                      taskManager.saveAll();
-                    }
-                    Navigator.pop(context);
-                  },
-                  child: Text(AppLocalizations.of(context)!.add),
-                )
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  void _editTask(int subjectIndex, int taskIndex) {
-    String title = taskManager.subjects[subjectIndex].tasks[taskIndex].title;
-    String duration = taskManager.subjects[subjectIndex].tasks[taskIndex].duration;
-    DateTime? deadline = taskManager.subjects[subjectIndex].tasks[taskIndex].deadline;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setStateDialog) {
-            return AlertDialog(
-              title: Text(AppLocalizations.of(context)!.editTask),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: TextEditingController(text: title),
-                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.title),
-                    onChanged: (val) => title = val,
-                  ),
-                  TextField(
-                    controller: TextEditingController(text: duration),
-                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.duration),
-                    onChanged: (val) => duration = val,
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Text(AppLocalizations.of(context)!.deadline),
-                      Expanded(
-                        child: Text(
-                          deadline != null
-                              ? DateFormat('dd.MM.yyyy').format(deadline!):'',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          DateTime? picked = await _pickDate(deadline);
-                          if (picked != null) {
-                            setStateDialog(() {
-                              deadline = picked;
-                            });
-                          }
-                        },
-                        child: Text(AppLocalizations.of(context)!.select),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(AppLocalizations.of(context)!.cancel),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      taskManager.subjects[subjectIndex].tasks[taskIndex].title = title;
-                      taskManager.subjects[subjectIndex].tasks[taskIndex].duration = duration;
-                      taskManager.subjects[subjectIndex].tasks[taskIndex].deadline = deadline;
-                    });
-                    taskManager.saveAll();
-                    Navigator.pop(context);
-                  },
-                  child: Text(AppLocalizations.of(context)!.save),
-                )
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
   void _deleteSubject(int index) {
     setState(() {
       taskManager.removeSubject(index);
@@ -258,7 +90,6 @@ class _ProgressPageState extends State<ProgressPage> {
       total += subject.tasks.length;
       done += subject.tasks.where((t) => t.isCompleted == true).length;
     }
-
     double percent = total > 0 ? done / total : 0;
 
     return Scaffold(
@@ -285,7 +116,7 @@ class _ProgressPageState extends State<ProgressPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Общий прогресс
+            // Общая диаграмма прогресса
             Text(AppLocalizations.of(context)!.progress, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Text(AppLocalizations.of(context)!.forAllTime),
             const SizedBox(height: 12),
@@ -302,16 +133,7 @@ class _ProgressPageState extends State<ProgressPage> {
             ),
             const SizedBox(height: 32),
             // Список предметов
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(AppLocalizations.of(context)!.subjects, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                IconButton(
-                  icon: const Icon(Icons.add, color: Colors.teal),
-                  onPressed: _addSubject,
-                ),
-              ],
-            ),
+            Text(AppLocalizations.of(context)!.subjects, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             ListView.builder(
               shrinkWrap: true,

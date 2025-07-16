@@ -14,6 +14,12 @@ import (
 
 var recovery_users = make(map[string]string)
 
+// @Summary      Запрос на сброс пароля
+// @Description  Отправляет код подтверждения на email
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Router       /forgot_password [post]
 func PasswordRecovery_ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	log.Println("Request to recovery password!")
 	w.Header().Set("Content-Type", "application/json")
@@ -72,6 +78,12 @@ func PasswordRecovery_ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"code": "OK"})
 }
 
+// @Summary      Установка нового пароля
+// @Description  Меняет пароль после подтверждения кода
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Router       /reset_password [post]
 func PasswordRecovery_CommitCode(w http.ResponseWriter, r *http.Request) {
 	log.Println("Request to recovery password!")
 	w.Header().Set("Content-Type", "application/json")
@@ -115,6 +127,11 @@ func PasswordRecovery_CommitCode(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// @Summary      Подтверждение кода для сброса пароля
+// @Description  Проверяет код и разрешает смену пароля
+// @Tags         auth
+// @Accept       json
+// @Produce      json
 func PasswordRecovery_ResetPassword(w http.ResponseWriter, r *http.Request) {
 	log.Println("Request to recovery password!")
 	w.Header().Set("Content-Type", "application/json")
