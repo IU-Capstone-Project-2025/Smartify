@@ -23,6 +23,31 @@ type University struct {
 	ExtraData map[string]interface{} `bson:",extraelements" json:"extra_data,omitempty"`
 }
 
+type UniversityMongo struct {
+	ID                    primitive.ObjectID `bson:"_id" json:"id"`
+	Link                  string             `bson:"ссылка" json:"ссылка"`
+	Name                  string             `bson:"название" json:"название"`
+	Region                string             `bson:"регион" json:"регион"`
+	City                  string             `bson:"город" json:"город"`
+	FoundationYear        string             `bson:"год основания" json:"год основания"`
+	Dormitory             string             `bson:"общежитие" json:"общежитие"`
+	IsState               string             `bson:"государственный" json:"государственный"`
+	HasMilitaryDepartment string             `bson:"воен. уч. центр" json:"воен. уч. центр"`
+	HasBudgetPlaces       string             `bson:"бюджетные места" json:"бюджетные места"`
+	IsAccredited          string             `bson:"лицензия/аккредитация" json:"лицензия/аккредитация"`
+	Rating                string             `bson:"рейтинг" json:"рейтинг"`
+	StudentsCount         string             `bson:"учащихся" json:"учащихся"`
+	BudgetPlaces          string             `bson:"бюджетных мест" json:"бюджетных мес"`
+	PaidPlaces            string             `bson:"платных мест" json:"платных мест"`
+	MinPrice              string             `bson:"самая низкая стоимость" json:"самая низкая стоимость"`
+	PhotoURL              string             `bson:"фото" json:"фото"`
+	Phone                 string             `bson:"телефон" json:"телефон"`
+	Address               string             `bson:"адрес" json:"адрес"`
+	Faculties             []string           `bson:"факультеты" json:"факультеты"`
+	PassingScores         map[string]string  `bson:"проходные_баллы" json:"проходные_баллы"`
+	TimeStamp             time.Time          `bson:"timestamp" json:"timestamp"`
+}
+
 type Profession struct {
 	Name            string    `json:"name" bson:"name"`
 	Description     string    `json:"description" bson:"description"`
@@ -73,6 +98,7 @@ type ProfessionPredic struct {
 	Positives   []string `json:"positives"`
 	Negatives   []string `json:"negatives"`
 	Description string   `json:"description"`
+	Subsphere   string   `json:"subsphere"`
 }
 
 type Tutor struct {
@@ -81,6 +107,24 @@ type Tutor struct {
 	University []string  `json:"university" bson:"university"`
 	Interests  []string  `json:"interests" bson:"interests"`
 	TimeStamp  time.Time `bson:"timestamp" json:"timestamp"`
+}
+
+type User_trackers struct {
+	UserID    int       `json:"user_id" bson:"user_id"`
+	Trackers  []string  `json:"trackers" bson:"trackers"`
+	TimeStamp time.Time `bson:"timestamp" json:"timestamp"`
+}
+
+type Teacher struct {
+	Name      string    `bson:"name" json:"name"`
+	Subject   string    `bson:"subject" json:"subject"`
+	Level     string    `bson:"level" json:"level"`
+	Price     string    `bson:"price" json:"price"`
+	City      string    `bson:"city" json:"city"`
+	Rating    float64   `bson:"rating" json:"rating"`
+	AvatarURL string    `bson:"avatarurl" json:"avatarurl"`
+	Link      string    `bson:"link" json:"link"`
+	TimeStamp time.Time `bson:"timestamp" json:"timestamp"`
 }
 
 func ConnectMongo(uri string) (*mongo.Client, error) {
@@ -246,6 +290,55 @@ func AddProfessionRecommendation(p ProfessionRec) error {
 	return nil
 }
 
+func AddTrackers(ut User_trackers) error {
+	collection := mongoClient.Database("smartify").Collection("trackers")
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	var existing User_trackers
+	err := collection.FindOne(ctx, bson.M{"user_id": ut.UserID}).Decode(&existing)
+
+	if err == mongo.ErrNoDocuments {
+		_, err1 := collection.InsertOne(ctx, ut)
+		if err1 != nil {
+			return err1
+		}
+		log.Println("Successfully inserted trackers!")
+		return nil
+	} else if err != nil {
+		return err
+	} else if ut.TimeStamp.After(existing.TimeStamp) {
+		_, updateErr := collection.ReplaceOne(ctx, bson.M{"user_id": ut.UserID}, ut)
+		if updateErr != nil {
+			return updateErr
+		}
+		log.Println("Successfully updated trackers!")
+		return nil
+	}
+
+	log.Println("Tutor not updated: older timestamp")
+	return nil
+}
+
+func GetTrackers(ut User_trackers) (User_trackers, error) {
+	collection := mongoClient.Database("smartify").Collection("trackers")
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	var existing User_trackers
+	err := collection.FindOne(ctx, bson.M{"user_id": ut.UserID}).Decode(&existing)
+	println(ut.UserID)
+	println(existing.UserID)
+	println(existing.Trackers)
+
+	if err != nil {
+		return existing, err
+	}
+
+	log.Println("Successfully get trackers information")
+	return existing, nil
+}
+
 func AddTutor(t Tutor) error {
 	collection := mongoClient.Database("smartify").Collection("tutors")
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
@@ -299,4 +392,128 @@ func GetTutor(userID int) (Tutor, error) {
 
 	log.Println("Successfully get tutor information")
 	return existing, nil
+}
+
+func GetAllUniversities() ([]UniversityMongo, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	collection := mongoClient.Database("smartify").Collection("universities")
+
+	log.Println("Fetching all universities from MongoDB")
+
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer func() {
+		if err := cursor.Close(ctx); err != nil {
+			log.Printf("Error closing cursor: %v", err)
+		}
+	}()
+
+	var universities []UniversityMongo
+
+	// Обрабатываем документы по одному
+	for cursor.Next(ctx) {
+		// Сначала декодируем в map для проверки структуры
+		var rawDoc bson.M
+		if err := cursor.Decode(&rawDoc); err != nil {
+			log.Printf("Failed to decode raw document: %v", err)
+			continue
+		}
+
+		// Логируем сырые данные для отладки
+		//log.Printf("Raw document: %+v", rawDoc)
+
+		var uni UniversityMongo
+		if err := cursor.Decode(&uni); err != nil {
+			log.Printf("Failed to decode university: %v", err)
+			continue
+		}
+
+		universities = append(universities, uni)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, fmt.Errorf("cursor iteration error: %w", err)
+	}
+
+	log.Printf("Successfully retrieved %d universities", len(universities))
+	return universities, nil
+}
+
+func AddTeacher(t Teacher) error {
+	collection := mongoClient.Database("smartify").Collection("teachers")
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	if t.TimeStamp.IsZero() {
+		t.TimeStamp = time.Now()
+	}
+
+	var existing Teacher
+	err := collection.FindOne(ctx, bson.M{"name": t.Name}).Decode(&existing)
+
+	if err == mongo.ErrNoDocuments {
+		_, err1 := collection.InsertOne(ctx, t)
+		if err1 != nil {
+			return err1
+		}
+		log.Println("Successfully inserted teacher!")
+		return nil
+	} else if err != nil {
+		return err
+	} else if t.TimeStamp.After(existing.TimeStamp) {
+		_, updateErr := collection.ReplaceOne(ctx, bson.M{"name": t.Name}, t)
+		if updateErr != nil {
+			return updateErr
+		}
+		log.Println("Successfully updated teacher!")
+		return nil
+	}
+
+	log.Println("Teacher not updated: older timestamp")
+	return nil
+}
+
+func GetAllTeachers() ([]Teacher, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	collection := mongoClient.Database("smartify").Collection("teachers")
+
+	log.Println("Fetching all teachers from MongoDB")
+
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer func() {
+		if err := cursor.Close(ctx); err != nil {
+			log.Printf("Error closing cursor: %v", err)
+		}
+	}()
+
+	var teachers []Teacher
+
+	// Обрабатываем документы по одному
+	for cursor.Next(ctx) {
+		var t Teacher
+		if err := cursor.Decode(&t); err != nil {
+			log.Printf("Failed to decode teacher: %v", err)
+			continue
+		}
+
+		log.Printf("Decoded teacher: %+v", t)
+
+		teachers = append(teachers, t)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, fmt.Errorf("cursor iteration error: %w", err)
+	}
+
+	log.Printf("Successfully retrieved %d teachers", len(teachers))
+	return teachers, nil
 }

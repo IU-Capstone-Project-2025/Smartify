@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartify/pages/api_server/api_server.dart';
 
 class Task {
   String title;
@@ -75,6 +76,13 @@ class Subject {
   IconData icon;
   Color color;
 
+  static const Map<int, IconData> iconMapping = {
+    0xe000: Icons.book,      
+    0xe001: Icons.school,     
+    0xe002: Icons.work,
+    0xe003: Icons.sports_soccer,
+  };
+
   Subject({
     required this.title,
     this.icon = Icons.book,
@@ -83,15 +91,11 @@ class Subject {
   });
 
   Map<String, dynamic> toJson() {
-    List<Map<String, dynamic>> tasksJson = [];
-    for (var task in tasks) {
-      tasksJson.add(task.toJson());
-    }
     return {
       'title': title,
-      'icon': icon.codePoint,
+      'icon': icon.codePoint, 
       'color': color.value,
-      'tasks': tasksJson
+      'tasks': tasks.map((task) => task.toJson()).toList()
     };
   }
 
@@ -103,9 +107,10 @@ class Subject {
         loadTasks.add(Task.fromJson(taskJson));
       }
     }
+    
     return Subject(
       title: json['title'] as String,
-      icon: IconData(json['icon']),
+      icon: iconMapping[json['icon']] ?? Icons.book,
       color: Color(json['color']),
       tasks: loadTasks
     );
@@ -139,11 +144,34 @@ class SubjectsManager {
     await sharedPref.setString("subjects", jsonEncode({
       "data": subjectsJson
     }));
+    ApiService.SaveTrackers(this);
     // потом можно будет добавить проверку на то, что записались данные или нет
     // и в зависимости от этого отображать раззные данные
   }
 
+  Future<void> updateFromJSON(List<String> subjectsJson) async {
+    final sharedPref = await SharedPreferences.getInstance();
+    await sharedPref.setString("subjects", jsonEncode({
+      "data": subjectsJson
+    }));
+    ApiService.SaveTrackers(this);
+    // потом можно будет добавить проверку на то, что записались данные или нет
+    // и в зависимости от этого отображать раззные данные
+  }
+
+  List<String> getJSON() {
+    List<String> subjectsJson = [];
+    for (var sub in subjects) {
+      subjectsJson.add(jsonEncode(sub.toJson()));
+    }
+    return subjectsJson;
+  }
+
   Future<void> loadAll() async {
+    final trackers = await ApiService.GetTrackers(this);
+    if (trackers != null) {
+      await updateFromJSON(trackers);
+    }
     final sharedPref = await SharedPreferences.getInstance();
     String? data = sharedPref.getString("subjects");
     if (data == null) {

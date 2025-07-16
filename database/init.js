@@ -4,3 +4,4 @@ db.createCollection('professions');
 db.createCollection('dataset_career_test');
 db.createCollection('profession_recommendation');
 db.createCollection('tutors');
+db.createCollection('trackers');

@@ -6,6 +6,7 @@ class ProfessionPrediction {
   final List<String> positives;
   final List<String> negatives;
   final String description;
+  //final String subsphere;
 
   ProfessionPrediction({
     required this.name,
@@ -13,6 +14,7 @@ class ProfessionPrediction {
     required this.positives,
     required this.negatives,
     required this.description,
+    //required this.subsphere,
   });
 
   factory ProfessionPrediction.fromJson(Map<String, dynamic> json) {
@@ -22,6 +24,7 @@ class ProfessionPrediction {
       positives: List<String>.from(json['positives'] ?? []),
       negatives: List<String>.from(json['negatives'] ?? []),
       description: json['description'] ?? '',
+      //subsphere: json['subsphere'],
     );
   }
 }

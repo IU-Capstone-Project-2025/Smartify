@@ -19,6 +19,7 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     super.initState();
+    // Инициализация локали
     _localeFuture = initializeDateFormatting('ru');
     DateTime today = DateTime.now();
     DateTime oneMonthAhead = DateTime(today.year, today.month + 1, today.day);
