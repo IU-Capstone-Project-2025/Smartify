@@ -52,11 +52,13 @@ jobs:
           ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p ${FRONTEND_DIR}"
           scp -r frontend/build/web/* $REMOTE_USER@$REMOTE_HOST:${FRONTEND_DIR}
 
-      - name: Setup Nginx
+      - name: Setup Nginx (non-root)
         run: |
           ssh $REMOTE_USER@$REMOTE_HOST "
-            echo 'server {
-              listen 80;
+            mkdir -p ~/nginx/conf.d
+            cat > ~/nginx/conf.d/smartify.conf << 'EOL'
+            server {
+              listen 8080;
               server_name _;
               root ${FRONTEND_DIR};
               index index.html;
@@ -64,8 +66,9 @@ jobs:
               location / {
                 try_files \$uri \$uri/ /index.html;
               }
-            }' | sudo tee /etc/nginx/conf.d/smartify.conf
-            sudo nginx -t && sudo systemctl restart nginx
+            }
+            EOL
+            ~/nginx/sbin/nginx -c ~/nginx/conf/nginx.conf
           "
           
       - name: Verify deployment
