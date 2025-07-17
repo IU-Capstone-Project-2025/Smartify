@@ -52,13 +52,11 @@ jobs:
           ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p ${FRONTEND_DIR}"
           scp -r frontend/build/web/* $REMOTE_USER@$REMOTE_HOST:${FRONTEND_DIR}
 
-      - name: Setup Nginx (non-root)
+      - name: Update Nginx config
         run: |
           ssh $REMOTE_USER@$REMOTE_HOST "
-            mkdir -p ~/nginx/conf.d
-            cat > ~/nginx/conf.d/smartify.conf << 'EOL'
-            server {
-              listen 22030;
+            echo 'server {
+              listen 80 default_server;
               server_name _;
               root ${FRONTEND_DIR};
               index index.html;
@@ -66,14 +64,14 @@ jobs:
               location / {
                 try_files \$uri \$uri/ /index.html;
               }
-            }
-            EOL
-            ~/nginx/sbin/nginx -c ~/nginx/conf/nginx.conf
-          "
+            }' | sudo tee /etc/nginx/sites-available/default
+
+            sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+            sudo nginx -t && sudo systemctl restart nginx
           
       - name: Verify deployment
         run: |
-          echo "Frontend доступен по: http://${REMOTE_HOST}"
+          echo "Frontend доступен по: http://${REMOTE_HOST}:22030"
 
       - name: Clean up SSH key
         if: always()
