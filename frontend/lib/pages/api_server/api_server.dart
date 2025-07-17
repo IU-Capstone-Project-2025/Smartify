@@ -334,12 +334,17 @@ class ApiService {
       return "Other Error";
     }
   }
-  static Future<List<Teacher>> GetTeachers() async {
+}
+
+class TeacherMeneger {
+  static const fileName = 'teachers.json';
+
+  static Future<void> UpdateTeachers() async {
     try {
       final token = await AuthService.getAccessToken();
 
       final response = await http.post(
-        Uri.parse('$_baseUrl/get_teachers'),
+        Uri.parse('${ApiService._baseUrl}/get_teachers'),
         headers: {
           'Content-Type': 'application/json',
           'Access_token': token ?? '',
@@ -349,28 +354,47 @@ class ApiService {
       if (response.statusCode == 200) {
         print("Ответ получен");
         final List<dynamic> data = json.decode(response.body);
-        final teachers = data
+        final directory = await getApplicationDocumentsDirectory();
+        final file = File('${directory.path}/$fileName');
+        await file.writeAsBytes(response.bodyBytes);
+        /*final teachers = data
           .map((item) => Teacher.fromJson(item))
           .toList();
-        return teachers;
+        return teachers;*/
+        return ;
       } else if (response.statusCode == 401) {
         print("Access token is invalid or expired. Trying to refresh...");
 
         bool refreshSuccess = await AuthService.refreshTokens();
         if (!refreshSuccess) {
           print("Не удалось обновить токены");
-          return [];
+          return ;
         }
-        return await GetTeachers();
+        return await UpdateTeachers();
       } else {
         print("Ошибка при отправке запроса: ${response.statusCode}");
         print("Ответ сервера: ${response.body}");
-        return [];
+        return ;
       }
     } catch (e) {
       print("Ошибка соединенея: $e");
-      return [];
+      return ;
     }
+  }
+
+  static Future<String> loadSavedJsonTeachers() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/$fileName');
+      String jsonString = await file.readAsString();
+      return jsonString;
+    } catch (e) {
+      print("Блин, не работает походу $e");
+      return await loadInitialJsonTeachers();
+    }
+  }
+  static Future<String> loadInitialJsonTeachers() async {
+    return await rootBundle.loadString('assets/$fileName');
   }
 }
 
