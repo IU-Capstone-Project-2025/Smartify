@@ -15,7 +15,7 @@ jobs:
     env:
       REMOTE_HOST: 213.226.112.206
       REMOTE_USER: ghrunner
-      FRONTEND_DIR: /pro/smartify/frontend
+      FRONTEND_DIR: /pro/frontend
 
     steps:
       - name: Checkout code
