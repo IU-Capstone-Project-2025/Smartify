@@ -108,7 +108,7 @@ func LoadAndParse(url string, city string) error {
 			rating_float, _ = strconv.ParseFloat(ratingStr, 64)
 		}
 
-		if !(name == "" || avatar == "" || link == "" || IsValidExamSubject(subject)) {
+		if !(name == "" || avatar == "" || link == "" || !IsValidExamSubject(subject)) {
 			subject = CapitalizeFirst(subject)
 			teacher := database.Teacher{
 				Name:      name,
