@@ -26,7 +26,7 @@ class Teacher {
   final String name;
   final String subject;
   final String level;
-  final String price;
+  final int price;
   final String city;
   final double rating;
   final String avatarUrl;

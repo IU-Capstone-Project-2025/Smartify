@@ -119,7 +119,7 @@ type Teacher struct {
 	Name      string    `bson:"name" json:"name"`
 	Subject   string    `bson:"subject" json:"subject"`
 	Level     string    `bson:"level" json:"level"`
-	Price     string    `bson:"price" json:"price"`
+	Price     int       `bson:"price" json:"price"`
 	City      string    `bson:"city" json:"city"`
 	Rating    float64   `bson:"rating" json:"rating"`
 	AvatarURL string    `bson:"avatarurl" json:"avatarurl"`

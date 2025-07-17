@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -59,6 +60,32 @@ func IsValidExamSubject(input string) bool {
 	return false
 }
 
+func ExtractFirstInt(raw string) (int, bool) {
+	clean := strings.ToLower(raw)
+	clean = strings.Map(func(r rune) rune {
+		if !unicode.IsSpace(r) {
+			return r
+		}
+		return -1
+	}, clean)
+
+	re := regexp.MustCompile(`\d+`)
+	match := re.FindString(clean)
+
+	if match == "" {
+		log.Println("Integer price isn't found")
+		return 0, false
+	}
+
+	num, err := strconv.Atoi(match)
+	if err != nil {
+		log.Println("Error when converting %q в int: %v", match, err)
+		return 0, false
+	}
+
+	return num, true
+}
+
 func LoadAndParse(url string, city string) error {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -108,13 +135,15 @@ func LoadAndParse(url string, city string) error {
 			rating_float, _ = strconv.ParseFloat(ratingStr, 64)
 		}
 
-		if !(name == "" || avatar == "" || link == "" || !IsValidExamSubject(subject)) {
+		pr, t := ExtractFirstInt(price)
+
+		if !(name == "" || avatar == "" || link == "" || !IsValidExamSubject(subject) || !t) {
 			subject = CapitalizeFirst(subject)
 			teacher := database.Teacher{
 				Name:      name,
 				Subject:   subject,
 				Level:     level,
-				Price:     price,
+				Price:     pr,
 				City:      city,
 				Rating:    rating_float,
 				AvatarURL: avatar,
