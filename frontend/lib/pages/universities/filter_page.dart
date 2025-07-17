@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:smartify/pages/universities/filter.dart';
 
 class UniversityFilterPage extends StatefulWidget {
@@ -11,7 +13,7 @@ class UniversityFilterPage extends StatefulWidget {
 }
 
 class _UniversityFilterPageState extends State<UniversityFilterPage> {
-  final List<String> allRegions = ['Москва', 'Санкт-Петербург', 'Новосибирск', 'Казань'];
+  List<String> allRegions = [];
   final List<String> allFaculties = ['ИТ', 'Экономика', 'Медицина'];
 
   List<String> selectedRegions = [];
@@ -29,6 +31,7 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
   @override
   void initState() {
     super.initState();
+    _loadRegions();
     final filter = widget.currentFilter;
     if (filter != null) {
       selectedRegions = List.from(filter.regions);
@@ -38,6 +41,20 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
       hasDorm = filter.hasDorm;
       hasMilitary = filter.hasMilitary;
     }
+  }
+
+  Future<void> _loadRegions() async {
+    final String jsonString = await rootBundle.loadString('assets/universities.json');
+    final List data = json.decode(jsonString);
+    final Set<String> regions = {};
+    for (final uni in data) {
+      if (uni['город'] != null && uni['город'].toString().trim().isNotEmpty) {
+        regions.add(uni['город'].toString().trim());
+      }
+    }
+    setState(() {
+      allRegions = regions.toList()..sort();
+    });
   }
 
   void clearFilters() {
@@ -99,7 +116,7 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
     }
   }
 
-  void showSliderDialog(String title, double value, double max, Function(double) onChanged) {
+  void showSliderDialog(String title, double value, double max, Function(double) onChanged, {int step = 1}) {
   double tempValue = value;
 
   showDialog(
@@ -120,12 +137,14 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
                       value: tempValue,
                       min: 0,
                       max: max,
-                      divisions: 100,
-                      label: tempValue.toStringAsFixed(1),
+                      divisions: ((max / step).round()),
+                      label: tempValue.toInt().toString(),
                       activeColor: const Color(0xFF4CAF50),
                       onChanged: (val) {
                         setStateDialog(() {
-                          tempValue = val;
+                          tempValue = ((val / step).round() * step).toDouble();
+                          if (tempValue > max) tempValue = max;
+                          if (tempValue < 0) tempValue = 0;
                         });
                       },
                     ),
@@ -133,9 +152,7 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
                   SizedBox(
                     width: 40,
                     child: Text(
-                      max > 10
-                          ? tempValue.toInt().toString()
-                          : tempValue.toStringAsFixed(1),
+                      tempValue.toInt().toString(),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
@@ -266,11 +283,11 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
             }),
 
             buildFilterButton("Бюджетных мест", () {
-              showSliderDialog("Бюджетных мест", budgetPlaces, 9999, (value) {
+              showSliderDialog("Бюджетных мест", budgetPlaces, 1000, (value) {
                 setState(() {
                   budgetPlaces = value;
                 });
-              });
+              }, step: 100);
             }),
 
             // Обновлённый стиль "Общежитие" и "Военный центр"

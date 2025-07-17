@@ -33,7 +33,7 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
     } else {
       // Failed to log in
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Some Error')),
+        SnackBar(content: Text('Ошибка входа')),
       );
     }
     
@@ -48,9 +48,9 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
         elevation: 0,
         // backgroundColor: Colors.white, // убрано для поддержки темы
         foregroundColor: Colors.black,
-        title: Text(
-          AppLocalizations.of(context)!.loginToAccount,
-          style: const TextStyle(
+        title: const Text(
+          'Вход в аккаунт',
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
@@ -62,32 +62,32 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              AppLocalizations.of(context)!.email,
-              style: const TextStyle(fontWeight: FontWeight.w500),
+            const Text(
+              'Почта',
+              style: TextStyle(fontWeight: FontWeight.w500),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6),
             TextField(
               controller:  _emailController,
               decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.email,
+                hintText: 'Почта',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
               keyboardType: TextInputType.emailAddress,
             ),
-            const SizedBox(height: 16),
-            Text(
-              AppLocalizations.of(context)!.password,
-              style: const TextStyle(fontWeight: FontWeight.w500),
+            SizedBox(height: 16),
+            const Text(
+              'Пароль',
+              style: TextStyle(fontWeight: FontWeight.w500),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6),
             TextField(
               controller: _passwordController,
               obscureText: _obscurePassword,
               decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.enterPassword,
+                hintText: 'Введите пароль',
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscurePassword
@@ -105,7 +105,7 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -118,13 +118,13 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'Войти', // Жёстко прописываем текст
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
@@ -136,13 +136,13 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                     ),
                   );
                 },
-                child: Text(
-                  AppLocalizations.of(context)!.createAccount,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                child: const Text(
+                  'Создать аккаунт',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Center(
               child: TextButton(
                 onPressed: () {
@@ -153,9 +153,9 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                         ),
                   );
                 },
-                child: Text(
-                  AppLocalizations.of(context)!.forgotPassword,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                child: const Text(
+                  'Забыли пароль?',
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -165,8 +165,7 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: Text.rich(
                   TextSpan(
-                    text: AppLocalizations.of(context)!.termsAndPrivacy + '\n',
-                    style: const TextStyle(fontSize: 12),
+                    text: 'Пользуясь Smartify, вы соглашаетесь с условиями использования и политикой конфиденциальности.',
                   ),
                   textAlign: TextAlign.center,
                 ),
