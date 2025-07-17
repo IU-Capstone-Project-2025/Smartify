@@ -58,7 +58,7 @@ jobs:
             mkdir -p ~/nginx/conf.d
             cat > ~/nginx/conf.d/smartify.conf << 'EOL'
             server {
-              listen 8080;
+              listen 22030;
               server_name _;
               root ${FRONTEND_DIR};
               index index.html;
