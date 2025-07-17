@@ -37,7 +37,7 @@ class WelcomePage extends StatelessWidget {
               Column(
                 children: [
                   const Text(
-                    'Добро пожаловать в',
+                    'Добро пожаловать в Smartify',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -54,10 +54,10 @@ class WelcomePage extends StatelessWidget {
               ),
               Column(
                 children: [
-                  Text(
-                    AppLocalizations.of(context)!.welcome,
+                  const Text(
+                    'Откройте для себя новые возможности образования вместе с нами!',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       color: Colors.black87,
                     ),
@@ -71,7 +71,6 @@ class WelcomePage extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) => const SignUpPage(),
-                            //builder: (context) => const DashboardPage(),
                           ),
                         );
                       },
@@ -83,9 +82,9 @@ class WelcomePage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: Text(
-                        AppLocalizations.of(context)!.login,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      child: const Text(
+                        'Создать аккаунт',
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),

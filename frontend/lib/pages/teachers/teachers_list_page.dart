@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'teacher_detail_page.dart';
+import '../nav/nav_page.dart';
 
 class TeachersListPage extends StatefulWidget {
   const TeachersListPage({Key? key}) : super(key: key);
@@ -13,7 +14,7 @@ class TeachersListPage extends StatefulWidget {
 class _TeachersListPageState extends State<TeachersListPage> {
   List<Map<String, dynamic>> _allTeachers = [];
   String? _selectedSubject;
-  String? _selectedRating;
+  double? _selectedRating; // теперь double
   String? _selectedPriceRange;
   bool _loading = true;
 
@@ -33,7 +34,14 @@ class _TeachersListPageState extends State<TeachersListPage> {
   }
 
   List<String> get _subjects => _allTeachers.map((t) => t['subject'] as String).toSet().toList();
-  List<String> get _ratings => _allTeachers.map((t) => (t['rating']?.toString() ?? '')).toSet().toList()..sort((a, b) => double.tryParse(b)?.compareTo(double.tryParse(a) ?? 0) ?? 0);
+  List<double> get _ratings {
+    final ratings = _allTeachers
+        .map((t) => double.tryParse(t['rating']?.toString() ?? '0') ?? 0)
+        .toSet()
+        .toList();
+    ratings.sort((a, b) => b.compareTo(a));
+    return ratings;
+  }
   final List<String> _priceRanges = [
     'Меньше 1000',
     '1000–2000',
@@ -44,7 +52,8 @@ class _TeachersListPageState extends State<TeachersListPage> {
   List<Map<String, dynamic>> get _filteredTeachers {
     return _allTeachers.where((t) {
       final subjectMatch = _selectedSubject == null || t['subject'] == _selectedSubject;
-      final ratingMatch = _selectedRating == null || (t['rating']?.toString() == _selectedRating);
+      final rating = double.tryParse(t['rating']?.toString() ?? '0') ?? 0;
+      final ratingMatch = _selectedRating == null || rating >= _selectedRating!;
       final price = int.tryParse(t['price']?.toString() ?? '') ?? 0;
       bool priceMatch = true;
       if (_selectedPriceRange != null) {
@@ -67,6 +76,78 @@ class _TeachersListPageState extends State<TeachersListPage> {
     }).toList();
   }
 
+  void _showRatingSliderDialog() {
+    final ratings = _ratings;
+    final min = ratings.isEmpty ? 0.0 : ratings.reduce((a, b) => a < b ? a : b);
+    final max = ratings.isEmpty ? 5.0 : ratings.reduce((a, b) => a > b ? a : b);
+    double value = _selectedRating ?? min;
+    double step = 0.1;
+    showDialog(
+      context: context,
+      builder: (context) {
+        double tempValue = value;
+        return AlertDialog(
+          title: const Text('Минимальный рейтинг', style: TextStyle(fontWeight: FontWeight.bold)),
+          content: StatefulBuilder(
+            builder: (context, setStateDialog) {
+              return SizedBox(
+                width: 280,
+                height: 80,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: Slider(
+                        value: tempValue,
+                        min: min,
+                        max: max,
+                        divisions: ((max - min) ~/ step).toInt(),
+                        label: tempValue.toStringAsFixed(1),
+                        activeColor: const Color(0xFF4CAF50),
+                        onChanged: (val) {
+                          setStateDialog(() {
+                            tempValue = double.parse(val.toStringAsFixed(1));
+                            if (tempValue > max) tempValue = max;
+                            if (tempValue < min) tempValue = min;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 40,
+                      child: Text(
+                        tempValue.toStringAsFixed(1),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Отмена'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() => _selectedRating = tempValue);
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF4CAF50),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Применить'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,7 +158,12 @@ class _TeachersListPageState extends State<TeachersListPage> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black54),
-          onPressed: () => Navigator.of(context).maybePop(),
+          onPressed: () {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const DashboardPage()),
+              (route) => false,
+            );
+          },
         ),
         title: const Text(
           'Репетиторы',
@@ -104,8 +190,8 @@ class _TeachersListPageState extends State<TeachersListPage> {
                       const SizedBox(width: 8),
                       _FilterButton(
                         text: 'Рейтинг',
-                        value: _selectedRating,
-                        onTap: () => _showFilterDialog('Рейтинг', _ratings, _selectedRating, (val) => setState(() => _selectedRating = val)),
+                        value: _selectedRating == null ? null : _selectedRating!.toStringAsFixed(1),
+                        onTap: _showRatingSliderDialog,
                       ),
                       const SizedBox(width: 8),
                       _FilterButton(
@@ -127,6 +213,7 @@ class _TeachersListPageState extends State<TeachersListPage> {
                         subject: teacher['subject'] ?? '',
                         experience: teacher['level'] ?? '',
                         rating: teacher['rating']?.toString() ?? '',
+                        price: teacher['price']?.toString() ?? '',
                         avatar: 'assets/user_avatar.jpg',
                         onDetail: () {
                           Navigator.push(
@@ -206,13 +293,14 @@ class _FilterButton extends StatelessWidget {
 }
 
 class _TeacherCard extends StatelessWidget {
-  final String name, subject, experience, rating, avatar;
+  final String name, subject, experience, rating, price, avatar;
   final VoidCallback onDetail;
   const _TeacherCard({
     required this.name,
     required this.subject,
     required this.experience,
     required this.rating,
+    required this.price,
     required this.avatar,
     required this.onDetail,
   });
@@ -253,6 +341,7 @@ class _TeacherCard extends StatelessWidget {
                     const Icon(Icons.star, color: Colors.amber, size: 16),
                   ],
                 ),
+                Text('Цена: $price ₽', style: const TextStyle(fontSize: 12, color: Colors.black87)),
               ],
             ),
           ),
