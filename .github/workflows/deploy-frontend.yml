@@ -1,0 +1,62 @@
+name: Deploy Flutter Frontend
+
+on:
+  push:
+    branches:
+      - main
+      - Back
+    #paths:
+    #  - 'frontend/**'
+
+jobs:
+  deploy_frontend:
+    runs-on: ubuntu-latest 
+
+    env:
+      REMOTE_HOST: 213.226.112.206
+      REMOTE_USER: ghrunner
+      FRONTEND_DIR: /pro/smartify/frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.32.4
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ./frontend
+
+      - name: Build Flutter web (with increased memory)
+        run: |
+          # Увеличиваем лимит памяти для Node.js
+          export NODE_OPTIONS="--max-old-space-size=4096"
+          
+          # Собираем проект без повторного создания
+          flutter build web --release --verbose
+        working-directory: ./frontend
+
+      - name: Setup SSH client
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $REMOTE_HOST >> ~/.ssh/known_hosts
+
+      - name: Deploy frontend to server
+        run: |
+          ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p ${FRONTEND_DIR}"
+          scp -r frontend/build/web/* $REMOTE_USER@$REMOTE_HOST:${FRONTEND_DIR}
+          ssh $REMOTE_USER@$REMOTE_HOST "sudo systemctl reload nginx"
+          
+      - name: Verify deployment
+        run: |
+          echo "Frontend доступен по: http://${REMOTE_HOST}:22030"
+
+      - name: Clean up SSH key
+        if: always()
+        run: rm -f ~/.ssh/id_rsa
