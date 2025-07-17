@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/database"
 	"github.com/PuerkitoBio/goquery"
@@ -18,6 +19,16 @@ type DataInfo struct {
 	Link   string `json:"link"`
 	Rating string `json:"rating"`
 	Avatar string `json:"avatar"`
+}
+
+func CapitalizeFirst(s string) string {
+	if s == "" {
+		return s
+	}
+
+	runes := []rune(s)
+	runes[0] = unicode.ToUpper(runes[0])
+	return string(runes)
 }
 
 func LoadAndParse(url string, city string) error {
@@ -59,6 +70,7 @@ func LoadAndParse(url string, city string) error {
 
 		s.Find(".hide_list_item").EachWithBreak(func(i int, item *goquery.Selection) bool {
 			subject = strings.TrimSpace(item.Find(".dt").Text())
+			subject = CapitalizeFirst(subject)
 			price = strings.TrimSpace(item.Find(".dd").Text())
 			return false // только первый элемент
 		})
@@ -69,17 +81,19 @@ func LoadAndParse(url string, city string) error {
 			rating_float, _ = strconv.ParseFloat(ratingStr, 64)
 		}
 
-		teacher := database.Teacher{
-			Name:      name,
-			Subject:   subject,
-			Level:     level,
-			Price:     price,
-			City:      city,
-			Rating:    rating_float,
-			AvatarURL: avatar,
-			Link:      link,
+		if !(name == "" || subject == "" || avatar == "" || link == "") {
+			teacher := database.Teacher{
+				Name:      name,
+				Subject:   subject,
+				Level:     level,
+				Price:     price,
+				City:      city,
+				Rating:    rating_float,
+				AvatarURL: avatar,
+				Link:      link,
+			}
+			database.AddTeacher(teacher)
 		}
-		database.AddTeacher(teacher)
 	})
 
 	return nil
@@ -182,6 +196,7 @@ func TeacherParser() {
 			continue
 		}
 	}
+	database.DeleteOldTeachers()
 }
 
 func StartTeacherParserTicker(t int) {

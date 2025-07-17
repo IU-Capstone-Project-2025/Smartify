@@ -517,3 +517,25 @@ func GetAllTeachers() ([]Teacher, error) {
 	log.Printf("Successfully retrieved %d teachers", len(teachers))
 	return teachers, nil
 }
+
+func DeleteOldTeachers() error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	collection := mongoClient.Database("smartify").Collection("teachers")
+	oneDayAgo := time.Now().Add(-24 * time.Hour)
+
+	filter := bson.M{
+		"timestamp": bson.M{
+			"$lt": oneDayAgo,
+		},
+	}
+
+	result, err := collection.DeleteMany(ctx, filter)
+	if err != nil {
+		return fmt.Errorf("Error when deleting: %w", err)
+	}
+
+	fmt.Printf("Deleted documents: %d\n", result.DeletedCount)
+	return nil
+}

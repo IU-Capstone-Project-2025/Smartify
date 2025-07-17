@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'teacher_detail_page.dart';
+import 'package:smartify/pages/api_server/api_server.dart';
 
 class TeachersListPage extends StatefulWidget {
   const TeachersListPage({Key? key}) : super(key: key);
@@ -24,7 +25,8 @@ class _TeachersListPageState extends State<TeachersListPage> {
   }
 
   Future<void> _loadTeachers() async {
-    final String jsonString = await rootBundle.loadString('assets/teachers.json');
+    //final String jsonString = await rootBundle.loadString('assets/teachers.json');
+    final String jsonString = await TeacherMeneger.loadSavedJsonTeachers();
     final List<dynamic> jsonList = jsonDecode(jsonString);
     setState(() {
       _allTeachers = jsonList.cast<Map<String, dynamic>>();
