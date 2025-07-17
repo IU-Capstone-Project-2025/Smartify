@@ -384,7 +384,6 @@ class TeacherMeneger {
 
   static Future<String> loadSavedJsonTeachers() async {
     try {
-      UpdateTeachers();
       final directory = await getApplicationDocumentsDirectory();
       final file = File('${directory.path}/$fileName');
       String jsonString = await file.readAsString();

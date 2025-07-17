@@ -14,6 +14,29 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
+var examSubjects = []string{
+	"русский язык",
+	"математика",
+	"информатика",
+	"физика",
+	"химия",
+	"биология",
+	"обществознание",
+	"история",
+	"география",
+	"английский язык",
+	"немецкий язык",
+	"французский язык",
+	"испанский язык",
+	"китайский язык",
+	"литература",
+}
+
+var examNames = []string{
+	"ЕГЭ",
+	"ОГЭ",
+}
+
 type DataInfo struct {
 	Name   string `json:"name"`
 	Link   string `json:"link"`
@@ -29,6 +52,21 @@ func CapitalizeFirst(s string) string {
 	runes := []rune(s)
 	runes[0] = unicode.ToUpper(runes[0])
 	return string(runes)
+}
+
+func IsValidExamSubject(input string) bool {
+	normalized := strings.ToLower(strings.TrimSpace(input))
+	for _, subject := range examSubjects {
+		if subject == normalized {
+			return true
+		}
+	}
+	for _, name := range examNames {
+		if strings.Contains(input, name) {
+			return true
+		}
+	}
+	return false
 }
 
 func LoadAndParse(url string, city string) error {
@@ -70,9 +108,8 @@ func LoadAndParse(url string, city string) error {
 
 		s.Find(".hide_list_item").EachWithBreak(func(i int, item *goquery.Selection) bool {
 			subject = strings.TrimSpace(item.Find(".dt").Text())
-			subject = CapitalizeFirst(subject)
 			price = strings.TrimSpace(item.Find(".dd").Text())
-			return false // только первый элемент
+			return false
 		})
 
 		var rating_float float64
@@ -81,7 +118,8 @@ func LoadAndParse(url string, city string) error {
 			rating_float, _ = strconv.ParseFloat(ratingStr, 64)
 		}
 
-		if !(name == "" || subject == "" || avatar == "" || link == "") {
+		if !(name == "" || avatar == "" || link == "" || IsValidExamSubject(subject)) {
+			subject = CapitalizeFirst(subject)
 			teacher := database.Teacher{
 				Name:      name,
 				Subject:   subject,
@@ -93,6 +131,8 @@ func LoadAndParse(url string, city string) error {
 				Link:      link,
 			}
 			database.AddTeacher(teacher)
+		} else {
+			database.DeleteTeacher(name)
 		}
 	})
 

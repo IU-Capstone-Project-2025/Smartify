@@ -25,6 +25,7 @@ class _TeachersListPageState extends State<TeachersListPage> {
   }
 
   Future<void> _loadTeachers() async {
+    TeacherMeneger.UpdateTeachers();
     //final String jsonString = await rootBundle.loadString('assets/teachers.json');
     final String jsonString = await TeacherMeneger.loadSavedJsonTeachers();
     final List<dynamic> jsonList = jsonDecode(jsonString);

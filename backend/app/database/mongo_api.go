@@ -539,3 +539,29 @@ func DeleteOldTeachers() error {
 	fmt.Printf("Deleted documents: %d\n", result.DeletedCount)
 	return nil
 }
+
+func DeleteTeacher(name string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	collection := mongoClient.Database("smartify").Collection("teachers")
+
+	filter := bson.M{"name": name}
+
+	var existing Teacher
+	err := collection.FindOne(ctx, filter).Decode(&existing)
+	if err == mongo.ErrNoDocuments {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+
+	_, err = collection.DeleteOne(ctx, filter)
+	if err != nil {
+		return fmt.Errorf("Error when deleting: %w", err)
+	}
+
+	fmt.Printf("Deleted teacher: %s\n", name)
+	return nil
+}
