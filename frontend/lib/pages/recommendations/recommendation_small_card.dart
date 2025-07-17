@@ -17,13 +17,14 @@ class RecommendationSmallCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // распределение по всей высоте
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Верхняя текстовая часть
+            /// ВЕРХНЯЯ ЧАСТЬ
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /// Название профессии
                 Text(
                   recommendation.name,
                   style: const TextStyle(
@@ -33,6 +34,19 @@ class RecommendationSmallCard extends StatelessWidget {
                   ),
                   softWrap: true,
                 ),
+
+                /// Сфера (subsphere)
+                const SizedBox(height: 2),
+                Text(
+                  recommendation.subsphere,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: Colors.white70,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+
+                /// Короткое описание
                 const SizedBox(height: 4),
                 Text(
                   recommendation.description,
@@ -47,11 +61,13 @@ class RecommendationSmallCard extends StatelessWidget {
                 ),
               ],
             ),
+
+            /// НИЖНЯЯ ЧАСТЬ
             const SizedBox(height: 4),
-            // Нижняя часть
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                /// Процент совпадения
                 Text(
                   "${recommendation.score.round()}%",
                   style: const TextStyle(
@@ -60,6 +76,8 @@ class RecommendationSmallCard extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
+
+                /// Кнопка перехода к деталям
                 IconButton(
                   icon: const Icon(
                     Icons.play_circle_rounded,

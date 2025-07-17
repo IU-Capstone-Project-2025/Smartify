@@ -18,9 +18,73 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/commit_code_reset_password": {
+        "/add_tutor": {
             "post": {
-                "description": "Просто говорит привет, а точнее \"ok\"",
+                "description": "Доступно только аутентифицированным пользователям с ролью тьютора. Обновляет или создает запись тьютора.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tutor"
+                ],
+                "summary": "Добавление/обновление информации о тьюторе",
+                "parameters": [
+                    {
+                        "description": "Данные тьютора для обновления",
+                        "name": "tutor_data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/database.Tutor"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешное обновление данных",
+                        "schema": {
+                            "$ref": "#/definitions/api.Tutor_succes"
+                        }
+                    },
+                    "400": {
+                        "description": "Невалидные данные или JSON",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "401": {
+                        "description": "Пользователь не аутентифицирован",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "403": {
+                        "description": "Пользователь не является тьютором",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "405": {
+                        "description": "Метод не разрешен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера (БД и т.д.)",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
+            }
+        },
+        "/checkTokens": {
+            "post": {
+                "description": "Проверяет срок действия access и refresh токенов",
                 "consumes": [
                     "application/json"
                 ],
@@ -30,13 +94,95 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Функция проверки доступности",
-                "responses": {}
+                "summary": "Проверка валидности токенов",
+                "parameters": [
+                    {
+                        "description": "Пара токенов для проверки",
+                        "name": "tokens",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.Tokens_answer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Токены валидны",
+                        "schema": {
+                            "$ref": "#/definitions/api.Success_answer"
+                        }
+                    },
+                    "400": {
+                        "description": "Невалидный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "401": {
+                        "description": "Токены невалидны или просрочены",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "405": {
+                        "description": "Метод не разрешен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
+            }
+        },
+        "/commit_code_reset_password": {
+            "post": {
+                "description": "Валидирует код для сброса пароля, отправленный на email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Проверка кода подтверждения",
+                "parameters": [
+                    {
+                        "description": "Email и код подтверждения",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.Code_verification"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Код подтвержден",
+                        "schema": {
+                            "$ref": "#/definitions/api.Success_answer"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный код или пользователь не найден",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "405": {
+                        "description": "Метод не разрешен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
             }
         },
         "/forgot_password": {
             "post": {
-                "description": "Отправляет код подтверждения на email",
+                "description": "Отправляет код подтверждения на email пользователя для восстановления пароля",
                 "consumes": [
                     "application/json"
                 ],
@@ -47,12 +193,164 @@ const docTemplate = `{
                     "auth"
                 ],
                 "summary": "Запрос на сброс пароля",
-                "responses": {}
+                "parameters": [
+                    {
+                        "description": "Email пользователя",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.Email_struct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Код подтверждения отправлен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Success_answer"
+                        }
+                    },
+                    "400": {
+                        "description": "Невалидный запрос или пользователь не найден",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "405": {
+                        "description": "Метод не разрешен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_tutor": {
+            "get": {
+                "description": "Возвращает полную информацию о текущем аутентифицированном тьюторе",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tutor"
+                ],
+                "summary": "Получение информации о тьюторе",
+                "responses": {
+                    "200": {
+                        "description": "Данные тьютора",
+                        "schema": {
+                            "$ref": "#/definitions/database.Tutor"
+                        }
+                    },
+                    "401": {
+                        "description": "Пользователь не аутентифицирован",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "403": {
+                        "description": "Пользователь не является тьютором",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера (БД и т.д.)",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
+            }
+        },
+        "/gettrackers": {
+            "post": {
+                "description": "Возвращает список трекеров для аутентифицированного пользователя. Требуется валидный access token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trackers"
+                ],
+                "summary": "Получение трекеров пользователя",
+                "parameters": [
+                    {
+                        "description": "Запрос с access token",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.Get_trackers_request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ с трекерами",
+                        "schema": {
+                            "$ref": "#/definitions/api.Trackers"
+                        }
+                    },
+                    "304": {
+                        "description": "Данные не были изменены (Not Modified)",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "400": {
+                        "description": "Невалидный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ (невалидный токен)",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "405": {
+                        "description": "Метод не разрешен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
+            }
+        },
+        "/hello": {
+            "get": {
+                "description": "Возвращает статус \"ok\" если сервер работает",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "utils"
+                ],
+                "summary": "Проверка доступности сервера",
+                "responses": {
+                    "200": {
+                        "description": "Сервер доступен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Success_answer"
+                        }
+                    },
+                    "405": {
+                        "description": "Метод не разрешен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
             }
         },
         "/login": {
             "post": {
-                "description": "Вход по email и паролю, возвращает JWT-токен",
+                "description": "Проверяет учетные данные пользователя и возвращает пару JWT-токенов (access и refresh)",
                 "consumes": [
                     "application/json"
                 ],
@@ -65,26 +363,92 @@ const docTemplate = `{
                 "summary": "Аутентификация пользователя",
                 "parameters": [
                     {
-                        "description": "Email и пароль",
+                        "description": "Email и пароль пользователя",
                         "name": "credentials",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/database.User"
+                            "$ref": "#/definitions/api.User_email_password"
                         }
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "Успешная аутентификация, возвращает токены",
+                        "schema": {
+                            "$ref": "#/definitions/api.Tokens_answer"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные учетные данные или невалидный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "405": {
+                        "description": "Метод не разрешен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера (генерация токенов, проблемы с БД)",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "description": "Деактивирует refresh token, завершая сессию пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Выход из системы",
+                "parameters": [
+                    {
+                        "description": "Refresh token для деактивации",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.Refresh_token"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный выход",
+                        "schema": {
+                            "$ref": "#/definitions/api.Success_answer"
+                        }
+                    },
+                    "400": {
+                        "description": "Невалидный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "405": {
+                        "description": "Метод не разрешен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
             }
         },
         "/questionnaire": {
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Доступно только аутентифицированным пользователям",
+                "description": "Создает новую анкету пользователя и возвращает рекомендации профессий на основе ML. Требуется аутентификация (JWT токен в заголовке Authorization)",
                 "consumes": [
                     "application/json"
                 ],
@@ -95,12 +459,54 @@ const docTemplate = `{
                     "questionnaire"
                 ],
                 "summary": "Создание новой анкеты",
-                "responses": {}
+                "parameters": [
+                    {
+                        "description": "Данные анкеты",
+                        "name": "questionnaire",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/database.Questionnaire"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ с рекомендациями профессий",
+                        "schema": {
+                            "$ref": "#/definitions/api.ProfessionPredResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Невалидные данные анкеты",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Пользователь не аутентифицирован",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "405": {
+                        "description": "Метод не разрешен",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера (БД, ML модель и т.д.)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/refresh_token": {
             "post": {
-                "description": "Возвращает новую пару access/refresh токенов",
+                "description": "Возвращает новую пару access/refresh токенов по валидному refresh токену. Старый refresh токен становится недействительным.",
                 "consumes": [
                     "application/json"
                 ],
@@ -110,13 +516,55 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Обновление JWT-токена",
-                "responses": {}
+                "summary": "Обновление JWT-токенов",
+                "parameters": [
+                    {
+                        "description": "Refresh token для обновления",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.Refresh_token"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Новая пара токенов",
+                        "schema": {
+                            "$ref": "#/definitions/api.Tokens_answer"
+                        }
+                    },
+                    "400": {
+                        "description": "Невалидный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "401": {
+                        "description": "Невалидный или просроченный refresh token",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "405": {
+                        "description": "Метод не разрешен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера (генерация токенов, БД)",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
             }
         },
         "/registration_codevalidation": {
             "post": {
-                "description": "Валидирует код, отправленный на email",
+                "description": "Валидирует код, отправленный на email пользователя",
                 "consumes": [
                     "application/json"
                 ],
@@ -124,15 +572,45 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "registration"
                 ],
                 "summary": "Проверка кода подтверждения",
-                "responses": {}
+                "parameters": [
+                    {
+                        "description": "Email и код подтверждения",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.Code_verification"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Код подтвержден",
+                        "schema": {
+                            "$ref": "#/definitions/api.Success_answer"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный код или пользователь не найден",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "405": {
+                        "description": "Метод не разрешен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
             }
         },
         "/registration_emailvalidation": {
             "post": {
-                "description": "Проверяет email и отправляет код подтверждения",
+                "description": "Проверяет валидность email и отправляет код подтверждения. Email не должен быть уже зарегистрирован.",
                 "consumes": [
                     "application/json"
                 ],
@@ -140,15 +618,51 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "registration"
                 ],
-                "summary": "Отправка email для регистрации",
-                "responses": {}
+                "summary": "Валидация email при регистрации",
+                "parameters": [
+                    {
+                        "description": "Email пользователя",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.Email_struct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Код подтверждения отправлен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Success_answer"
+                        }
+                    },
+                    "400": {
+                        "description": "Невалидный email или запрос",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "409": {
+                        "description": "Пользователь уже существует",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера (генерация кода, отправка email)",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
             }
         },
         "/registration_password": {
             "post": {
-                "description": "Завершает регистрацию, сохраняя пароль",
+                "description": "Сохраняет пароль пользователя и выдает токены доступа",
                 "consumes": [
                     "application/json"
                 ],
@@ -156,15 +670,51 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "registration"
                 ],
-                "summary": "Установка пароля",
-                "responses": {}
+                "summary": "Завершение регистрации",
+                "parameters": [
+                    {
+                        "description": "Email и пароль пользователя",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.User_email_password"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Токены доступа",
+                        "schema": {
+                            "$ref": "#/definitions/api.Tokens_answer"
+                        }
+                    },
+                    "400": {
+                        "description": "Невалидные данные или пользователь не найден",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "405": {
+                        "description": "Метод не разрешен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера (БД, генерация токенов)",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
             }
         },
         "/reset_password": {
             "post": {
-                "description": "Меняет пароль после подтверждения кода",
+                "description": "Устанавливает новый пароль после успешной проверки кода подтверждения",
                 "consumes": [
                     "application/json"
                 ],
@@ -175,13 +725,404 @@ const docTemplate = `{
                     "auth"
                 ],
                 "summary": "Установка нового пароля",
-                "responses": {}
+                "parameters": [
+                    {
+                        "description": "Email и новый пароль",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.Update_password"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Пароль успешно изменен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Success_answer"
+                        }
+                    },
+                    "400": {
+                        "description": "Невалидный запрос или ошибка обновления пароля",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "405": {
+                        "description": "Метод не разрешен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
+            }
+        },
+        "/savetrackers": {
+            "post": {
+                "description": "Сохраняет трекеры пользователя на сервере для синхронизации между устройствами. Требуется валидный access token и корректная метка времени.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trackers"
+                ],
+                "summary": "Сохранение трекеров пользователя",
+                "parameters": [
+                    {
+                        "description": "Данные для сохранения (токен, трекеры и метка времени)",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.Tracker_save"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Трекеры успешно сохранены",
+                        "schema": {
+                            "$ref": "#/definitions/api.Success_answer"
+                        }
+                    },
+                    "304": {
+                        "description": "Данные не были изменены (Not Modified)",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "400": {
+                        "description": "Невалидный запрос (некорректные данные или формат времени)",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ (невалидный токен)",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    },
+                    "405": {
+                        "description": "Метод не разрешен",
+                        "schema": {
+                            "$ref": "#/definitions/api.Error_answer"
+                        }
+                    }
+                }
+            }
+        },
+        "/update_university_json": {
+            "get": {
+                "description": "Возвращает файл universities.json со всеми университетами из базы данных в структурированном формате для скачивания",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "universities"
+                ],
+                "summary": "Получение списка университетов в формате JSON",
+                "responses": {
+                    "200": {
+                        "description": "JSON файл с данными университетов",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "additionalProperties": true
+                            }
+                        },
+                        "headers": {
+                            "Content-Disposition": {
+                                "type": "string",
+                                "description": "attachment; filename=universities.json"
+                            },
+                            "Content-Type": {
+                                "type": "string",
+                                "description": "application/json"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - Only GET method allowed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error - Failed to generate or send file",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         }
     },
     "definitions": {
-        "database.User": {
-            "type": "object"
+        "api.Code_verification": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.Email_struct": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.Error_answer": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.Get_trackers_request": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.ProfessionPredResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "negatives": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "positives": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "score": {
+                    "type": "number"
+                },
+                "subsphere": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.Refresh_token": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.Success_answer": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.Tokens_answer": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.Tracker_save": {
+            "type": "object",
+            "properties": {
+                "timestamp": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "trackers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "api.Trackers": {
+            "type": "object",
+            "properties": {
+                "trackers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "api.Tutor_succes": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.Update_password": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "newPassword": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.User_email_password": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "database.Questionnaire": {
+            "type": "object",
+            "properties": {
+                "avg_grade": {
+                    "type": "string"
+                },
+                "class": {
+                    "type": "string"
+                },
+                "favorite_subjects": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "hard_subjects": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "interests": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "mbti_scores": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "region": {
+                    "type": "string"
+                },
+                "subject_scores": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "timestamp": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "work_preferences": {
+                    "$ref": "#/definitions/database.WorkPreferences"
+                }
+            }
+        },
+        "database.Tutor": {
+            "type": "object",
+            "properties": {
+                "cource": {
+                    "type": "integer"
+                },
+                "interests": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "timestamp": {
+                    "type": "string"
+                },
+                "university": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "database.WorkPreferences": {
+            "type": "object",
+            "properties": {
+                "exclude": {
+                    "type": "string"
+                },
+                "place": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "style": {
+                    "type": "string"
+                }
+            }
         }
     }
 }`
@@ -189,7 +1130,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "213.226.112.206:22025",
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Smartify Backend API",

@@ -12,6 +12,7 @@ import (
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/auth"
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/database"
 	_ "github.com/IU-Capstone-Project-2025/Smartify/backend/app/docs"
+	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/parsers"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
@@ -22,11 +23,14 @@ import (
 // @contact.name   Smartify Working Mail
 // @contact.email  projectsmartifyapp@gmail.com
 
-// @host      localhost:8080
+// @host      213.226.112.206:22025
 // @BasePath  /api
 
 func main() {
-	http.Handle("/swagger/", httpSwagger.WrapHandler)
+
+	mux := http.NewServeMux()
+
+	mux.Handle("/swagger/", httpSwagger.WrapHandler)
 
 	// Проверка работы
 	// @Summary Проверка работоспособности API
@@ -35,7 +39,7 @@ func main() {
 	// @Produce      plain
 	// @Success      200  {string}  string  "ok"
 	// @Router       /hello [get]
-	http.HandleFunc("/api/hello", api.HelloHandler)
+	mux.HandleFunc("/api/hello", api.HelloHandler)
 
 	// Вход в аккаунт
 	// @Summary      Аутентификация пользователя
@@ -47,7 +51,7 @@ func main() {
 	// @Success      200          {object}  api.LoginResponse
 	// @Failure      400          {object}  api.ErrorResponse
 	// @Router       /login [post]
-	http.HandleFunc("/api/login", api.LoginHandler)
+	mux.HandleFunc("/api/login", api.LoginHandler)
 
 	// Регистрация аккаунта
 	// @Summary      Отправка email для регистрации
@@ -59,7 +63,7 @@ func main() {
 	// @Success      200    {object}  api.EmailResponse
 	// @Failure      400    {object}  api.ErrorResponse
 	// @Router       /registration_emailvalidation [post]
-	http.HandleFunc("/api/registration_emailvalidation", api.RegistrationHandler_EmailValidation)
+	mux.HandleFunc("/api/registration_emailvalidation", api.RegistrationHandler_EmailValidation)
 
 	// @Summary      Проверка кода подтверждения
 	// @Description  Валидирует код, отправленный на email
@@ -70,7 +74,7 @@ func main() {
 	// @Success      200   {object}  api.ValidationResponse
 	// @Failure      400   {object}  api.ErrorResponse
 	// @Router       /registration_codevalidation [post]
-	http.HandleFunc("/api/registration_codevalidation", api.RegistrationHandler_CodeValidation)
+	mux.HandleFunc("/api/registration_codevalidation", api.RegistrationHandler_CodeValidation)
 
 	// @Summary      Установка пароля
 	// @Description  Завершает регистрацию, сохраняя пароль
@@ -81,7 +85,7 @@ func main() {
 	// @Success      200       {object}  api.RegistrationResponse
 	// @Failure      400       {object}  api.ErrorResponse
 	// @Router       /registration_password [post]
-	http.HandleFunc("/api/registration_password", api.RegistrationHandler_Password)
+	mux.HandleFunc("/api/registration_password", api.RegistrationHandler_Password)
 
 	// Восстановление пароля
 	// @Summary      Запрос на сброс пароля
@@ -93,7 +97,7 @@ func main() {
 	// @Success      200    {object}  api.EmailResponse
 	// @Failure      400    {object}  api.ErrorResponse
 	// @Router       /forgot_password [post]
-	http.HandleFunc("/api/forgot_password", api.PasswordRecovery_ForgotPassword)
+	mux.HandleFunc("/api/forgot_password", api.PasswordRecovery_ForgotPassword)
 
 	// @Summary      Подтверждение кода для сброса пароля
 	// @Description  Проверяет код и разрешает смену пароля
@@ -104,7 +108,7 @@ func main() {
 	// @Success      200   {object}  api.ValidationResponse
 	// @Failure      400   {object}  api.ErrorResponse
 	// @Router       /commit_code_reset_password [post]
-	http.HandleFunc("/api/reset_password", api.PasswordRecovery_ResetPassword)
+	mux.HandleFunc("/api/reset_password", api.PasswordRecovery_ResetPassword)
 
 	// @Summary      Установка нового пароля
 	// @Description  Меняет пароль после подтверждения кода
@@ -115,7 +119,7 @@ func main() {
 	// @Success      200           {object}  api.PasswordResetResponse
 	// @Failure      400           {object}  api.ErrorResponse
 	// @Router       /reset_password [post]
-	http.HandleFunc("/api/commit_code_reset_password", api.PasswordRecovery_CommitCode)
+	mux.HandleFunc("/api/commit_code_reset_password", api.PasswordRecovery_CommitCode)
 
 	// Обновление токена
 	// @Summary      Обновление JWT-токена
@@ -127,7 +131,7 @@ func main() {
 	// @Success      200            {object}  api.LoginResponse
 	// @Failure      400            {object}  api.ErrorResponse
 	// @Router       /refresh_token [post]
-	http.HandleFunc("/api/refresh_token", api.RefreshHandler)
+	mux.HandleFunc("/api/refresh_token", api.RefreshHandler)
 
 	// Добавление анкеты
 	// @Summary      Создание новой анкеты
@@ -142,24 +146,30 @@ func main() {
 	// @Failure      401            {object}  api.ErrorResponse
 	// @Router       /questionnaire [post]
 	//http.HandleFunc("/api/questionnaire", api.AddQuestionnaireHandler)
-	http.Handle("/api/questionnaire", auth.Access(http.HandlerFunc(api.AddQuestionnaireHandler)))
+	mux.Handle("/api/questionnaire", auth.Access(http.HandlerFunc(api.AddQuestionnaireHandler)))
 
 	//Добавление или обновление tutor
-	http.Handle("/api/add_tutor", auth.Access(http.HandlerFunc(api.ChangeTutorInformation)))
+	mux.Handle("/api/add_tutor", auth.Access(http.HandlerFunc(api.ChangeTutorInformation)))
 
 	//Получение информации о tutor
-	http.Handle("/api/get_tutor", auth.Access(http.HandlerFunc(api.GetTutorInformation)))
+	mux.Handle("/api/get_tutor", auth.Access(http.HandlerFunc(api.GetTutorInformation)))
 
-	// Для подтверждения по ссылке
-	/* -----------------------------------------------------------------------
-		http.Handle("/reset_password_page/",
-			http.StripPrefix("/reset_password_page/",
-				http.FileServer(http.Dir("html_pages/reset_password_page"))))
+	// Возварщяет учителей
+	mux.Handle("/api/get_teachers", auth.Access(http.HandlerFunc(api.GetTeachersHandler)))
 
-		http.Handle("/success_page/",
-			http.StripPrefix("/success_page/",
-				http.FileServer(http.Dir("html_pages/success_page"))))
-	------------------------------------------------------------------------ */
+	// Возварщяет университеты
+	mux.HandleFunc("/api/update_university_json", api.RequestToUpdate)
+
+	// Сохраняет трекеры
+	mux.HandleFunc("/api/savetrackers", api.SaveTrackers)
+
+	// Сохраняет трекеры
+	mux.HandleFunc("/api/gettrackers", api.GetTrackers)
+
+	// Проверяет токены на актуальность
+	mux.HandleFunc("/api/checktokens", api.TokenCheck)
+
+	corsMux := EnableCORS(mux)
 
 	// Init database
 	db, err := sql.Open("postgres", fmt.Sprintf(
@@ -190,6 +200,30 @@ func main() {
 		}
 	}
 
+	parsers.StartTeacherParserTicker(24)
+
 	log.Println("Server started on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8080", corsMux))
+}
+
+// EnableCORS добавляет CORS-заголовки к каждому ответу
+func EnableCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Разрешаем запросы с любого origin (для разработки)
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
+		// Разрешаем методы
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+
+		// Разрешаем заголовки
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		// Для preflight-запросов (OPTIONS)
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }
