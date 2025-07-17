@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smartify/pages/authorization/authorization_page.dart';
 import 'package:smartify/pages/sign/sign_up_page.dart';
 import 'package:smartify/pages/nav/nav_page.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 void main() {
   runApp(const SmartifyApp());
@@ -25,7 +26,7 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white, // убрано для поддержки темы
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -53,10 +54,10 @@ class WelcomePage extends StatelessWidget {
               ),
               Column(
                 children: [
-                  const Text(
-                    'Открой свой потенциал, отслеживай свой прогресс.',
+                  Text(
+                    AppLocalizations.of(context)!.welcome,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       color: Colors.black87,
                     ),
@@ -82,9 +83,9 @@ class WelcomePage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Создать аккаунт',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      child: Text(
+                        AppLocalizations.of(context)!.login,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),

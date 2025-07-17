@@ -3,6 +3,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:smartify/pages/authorization/authorization_page.dart';
 import 'package:smartify/pages/welcome/welcome_page.dart';
 import 'package:smartify/pages/api_server/api_server.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -36,15 +37,12 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: true,
         elevation: 0,
-        backgroundColor: Colors.white,
         foregroundColor: Colors.black,
-        title: const Text(
-          'Создать новый аккаунт',
-          style: TextStyle(
+        title: Text(AppLocalizations.of(context)!.createAccount,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
@@ -127,7 +125,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 setState(() => currentStep = 1);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Ошибка с почтой!")),
+                  SnackBar(content: Text(AppLocalizations.of(context)!.emailError)),
                 );
               }
             },
@@ -138,7 +136,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text("Создать аккаунт", style: TextStyle(color: Colors.white)),
+            child: Text(AppLocalizations.of(context)!.createAccount, style: const TextStyle(color: Colors.white)),
           ),
         ),
         const Spacer(),
@@ -147,11 +145,11 @@ class _SignUpPageState extends State<SignUpPage> {
                 padding: const EdgeInsets.only(bottom: 24),
                 child: Text.rich(
                   TextSpan(
-                    text: 'Используя Smartify, вы соглашаетесь с\n',
+                    text: AppLocalizations.of(context)!.usingSmartify + '\n',
                     style: const TextStyle(fontSize: 12),
                     children: [
                       TextSpan(
-                        text: 'Условиями пользования и Политикой конфиденциальности..',
+                        text: AppLocalizations.of(context)!.termsOfUseAndPrivacyPolicy,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
@@ -251,11 +249,11 @@ class _SignUpPageState extends State<SignUpPage> {
                 setState(() => currentStep = 2);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Неверный код или ошибка подключения")),
+                  SnackBar(content: Text(AppLocalizations.of(context)!.invalidCodeOrConnectionError)),
                 );
               }
             },
-            child: const Text("Подтвердить почту", style: TextStyle(color: Colors.white)),
+            child: Text(AppLocalizations.of(context)!.confirmEmail, style: const TextStyle(color: Colors.white)),
           ),
         ),
         const SizedBox(height: 20),
@@ -268,13 +266,13 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
             ); // <-- This closing parenthesis was missing
           },
-          child: const Text.rich(
+          child: Text.rich(
             TextSpan(
-              text: "Указали не ту почту? ",
+              text: AppLocalizations.of(context)!.didNotReceiveEmail + ' ',
               children: [
                 TextSpan(
-                  text: "Отправить на другой адрес",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  text: AppLocalizations.of(context)!.sendToAnotherAddress,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -286,11 +284,11 @@ class _SignUpPageState extends State<SignUpPage> {
                 padding: const EdgeInsets.only(bottom: 24),
                 child: Text.rich(
                   TextSpan(
-                    text: 'Используя Smartify, вы соглашаетесь с\n',
+                    text: AppLocalizations.of(context)!.usingSmartify + '\n',
                     style: const TextStyle(fontSize: 12),
                     children: [
                       TextSpan(
-                        text: 'Условиями пользования и Политикой конфиденциальности.',
+                        text: AppLocalizations.of(context)!.termsOfUseAndPrivacyPolicy,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
@@ -374,7 +372,7 @@ Widget _buildPasswordStep() {
                 setState(() => currentStep = 3); 
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                 SnackBar(content: Text("Ошибка регистрации")),
+                 SnackBar(content: Text(AppLocalizations.of(context)!.registrationError)),
                 );
               }
             }
@@ -386,7 +384,7 @@ Widget _buildPasswordStep() {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             disabledBackgroundColor: const Color(0xFFB2DFDB),
           ),
-          child: const Text("Продолжить"),
+          child: Text(AppLocalizations.of(context)!.continueText),
         ),
       ),
       const Spacer(),
@@ -395,11 +393,11 @@ Widget _buildPasswordStep() {
                 padding: const EdgeInsets.only(bottom: 24),
                 child: Text.rich(
                   TextSpan(
-                    text: 'Используя Smartify, вы соглашаетесь с\n',
+                    text: AppLocalizations.of(context)!.usingSmartify + '\n',
                     style: const TextStyle(fontSize: 12),
                     children: [
                       TextSpan(
-                        text: 'Условиями пользования и Политикой конфиденциальности.',
+                        text: AppLocalizations.of(context)!.termsOfUseAndPrivacyPolicy,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
@@ -469,11 +467,11 @@ Widget _buildPasswordStep() {
         padding: const EdgeInsets.only(bottom: 24),
         child: Text.rich(
           TextSpan(
-            text: 'Используя Smartify, вы соглашаетесь с\n',
+            text: AppLocalizations.of(context)!.usingSmartify + '\n',
             style: const TextStyle(fontSize: 12),
             children: [
               TextSpan(
-                text: 'Условиями пользования и Политикой конфиденциальности.',
+                text: AppLocalizations.of(context)!.termsOfUseAndPrivacyPolicy,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),

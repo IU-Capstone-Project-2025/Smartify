@@ -4,18 +4,23 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:smartify/pages/tests/prof_test_page.dart';
 import 'package:smartify/pages/professions/professionCard.dart';
 import 'package:smartify/pages/professions/profDetPage.dart';
-import 'package:smartify/l10n/app_localizations.dart';
 
-class ProfessionsPage extends StatefulWidget {
-  const ProfessionsPage({super.key});
+class SphereProfessionsPage extends StatefulWidget {
+  final String sphere;
+  final String subsphere;
+
+  const SphereProfessionsPage({
+    super.key,
+    required this.sphere,
+    required this.subsphere,
+  });
 
   @override
-  State<ProfessionsPage> createState() => _ProfessionsPageState();
+  State<SphereProfessionsPage> createState() => _SphereProfessionsPageState();
 }
 
-class _ProfessionsPageState extends State<ProfessionsPage> {
+class _SphereProfessionsPageState extends State<SphereProfessionsPage> {
   List<dynamic> professions = [];
-  List<dynamic> filteredProfessions = [];
 
   @override
   void initState() {
@@ -28,23 +33,17 @@ class _ProfessionsPageState extends State<ProfessionsPage> {
       final String jsonString =
           await rootBundle.loadString('assets/professions.json');
       final List<dynamic> data = json.decode(jsonString);
+
+      final filtered = data.where((item) =>
+          item['sphere'] == widget.sphere &&
+          item['subsphere'] == widget.subsphere).toList();
+
       setState(() {
-        professions = data;
-        filteredProfessions = data;
+        professions = filtered;
       });
     } catch (e) {
-      debugPrint(AppLocalizations.of(context)!.loadDataError + ': $e');
+      debugPrint('Ошибка при загрузке данных: $e');
     }
-  }
-
-  void filterSearch(String query) {
-    final lowerQuery = query.toLowerCase();
-    setState(() {
-      filteredProfessions = professions.where((profession) {
-        final name = (profession['name'] ?? '').toString().toLowerCase();
-        return name.contains(lowerQuery);
-      }).toList();
-    });
   }
 
   @override
@@ -54,10 +53,10 @@ class _ProfessionsPageState extends State<ProfessionsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        title: Text(widget.subsphere),
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        title: Image.asset('logo.png', height: 50),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
@@ -67,27 +66,6 @@ class _ProfessionsPageState extends State<ProfessionsPage> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                // Поиск
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: TextField(
-                    onChanged: filterSearch,
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context)!.searchProfessionHint,
-                      prefixIcon: const Icon(Icons.search),
-                      contentPadding:
-                          const EdgeInsets.symmetric(vertical: 12),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(32),
-                        borderSide: const BorderSide(color: Colors.teal),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(32),
-                        borderSide: const BorderSide(color: Colors.teal),
-                      ),
-                    ),
-                  ),
-                ),
                 // Кнопка анкеты
                 Padding(
                   padding:
@@ -105,22 +83,22 @@ class _ProfessionsPageState extends State<ProfessionsPage> {
                         ),
                       );
                     },
-                    child: Center(
+                    child: const Center(
                       child: Text(
-                        AppLocalizations.of(context)!.takeQuestionnaire,
-                        style: const TextStyle(color: Colors.white, fontSize: 16),
+                        'Пройти анкетирование',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
                   ),
                 ),
-                // Список ProfessionCard
+                // Список профессий
                 Expanded(
                   child: ListView.builder(
                     padding: const EdgeInsets.all(16),
-                    itemCount: filteredProfessions.length,
+                    itemCount: professions.length,
                     itemBuilder: (context, index) {
-                      final prof = filteredProfessions[index];
-                      final title = prof['name'] ?? AppLocalizations.of(context)!.noTitle;
+                      final prof = professions[index];
+                      final title = prof['name'] ?? 'Без названия';
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12.0),

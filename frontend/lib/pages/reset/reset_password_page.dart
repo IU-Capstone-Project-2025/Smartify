@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:smartify/pages/authorization/authorization_page.dart';
 import 'package:smartify/pages/api_server/api_server.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -70,16 +71,16 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white, // убрано для поддержки темы
       appBar: AppBar(
         automaticallyImplyLeading: currentStep != 3,
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white, // убрано для поддержки темы
         foregroundColor: Colors.black,
         elevation: 0,
         centerTitle: true,
-        title: const Text(
-          'Сбросить пароль',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        title: Text(
+          AppLocalizations.of(context)!.resetPassword,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
       ),
       body: Padding(
@@ -119,8 +120,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         Center(
           child: Column(
             children: [
-              const Text(
-                "Введите вашу почту 1 / 3",
+               Text(
+                AppLocalizations.of(context)!.enterYourEmail,
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -129,13 +130,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           ),
         ),
         const SizedBox(height: 40),
-        const Text("Почта", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        Text(AppLocalizations.of(context)!.email, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
         const SizedBox(height: 8),
         TextField(
           controller: emailController,
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            hintText: "example@example",
+            hintText: AppLocalizations.of(context)!.exampleEmail,
             hintStyle: const TextStyle(color: Colors.grey),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -156,7 +157,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 _nextStep();
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Ошибка с почтой!")),
+                  SnackBar(content: Text(AppLocalizations.of(context)!.emailError)),
                 );
               }
             },
@@ -167,7 +168,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text("Отправить", style: TextStyle(color: Colors.white)),
+            child: Text(AppLocalizations.of(context)!.send, style: const TextStyle(color: Colors.white)),
           ),
         ),
       ],
@@ -183,8 +184,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         ),
         const SizedBox(height: 16),
         const SizedBox(height: 10),
-        const Text(
-          "Подтвердите вашу почту 2 / 3",
+         Text(
+          AppLocalizations.of(context)!.confirmYourEmail,
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
@@ -201,7 +202,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         ),
         const SizedBox(height: 30),
         Text(
-          "Мы отправили пятизначный код на\n${emailController.text}, введите его ниже:",
+          AppLocalizations.of(context)!.weSentCodeTo + '\n${emailController.text}, ' + AppLocalizations.of(context)!.enterItBelow,
           style: const TextStyle(fontSize: 15),
           textAlign: TextAlign.center,
         ),
@@ -212,8 +213,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start, // aligns everything to the left
               children: [
-                const Text(
-                  "Код",
+                 Text(
+                  AppLocalizations.of(context)!.code,
                   style: TextStyle(fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 8), // spacing between label and pin field
@@ -263,11 +264,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 _nextStep();
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Неверный код или ошибка подключения")),
+                  SnackBar(content: Text(AppLocalizations.of(context)!.invalidCodeOrConnectionError)),
                 );
               }
             },
-            child: const Text("Подтвердить почту", style: TextStyle(color: Colors.white)),
+            child: Text(AppLocalizations.of(context)!.confirmEmail, style: const TextStyle(color: Colors.white)),
           ),
         ),
         const SizedBox(height: 20),
@@ -280,13 +281,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               ),
             );
           },
-          child: const Text.rich(
+          child: Text.rich(
             TextSpan(
-              text: "Указали не ту почту? ",
+              text: AppLocalizations.of(context)!.didNotReceiveEmail + ' ',
               children: [
                 TextSpan(
-                  text: "Отправить на другой адрес",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  text: AppLocalizations.of(context)!.sendToAnotherAddress,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -316,8 +317,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       Center(
         child: Column(
           children: [
-            const Text(
-              "Придумайте новый пароль 3 / 3",
+             Text(
+              AppLocalizations.of(context)!.chooseNewPassword,
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
@@ -326,7 +327,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         ),
       ),
       const SizedBox(height: 30),
-      const Text("Пароль", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+       Text(AppLocalizations.of(context)!.password, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
       const SizedBox(height: 8),
       TextField(
         controller: passwordController,
@@ -352,9 +353,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         ),
       ),
       const SizedBox(height: 16),
-      _buildCriteria("Минимум 8 символов", hasMinLength),
-      _buildCriteria("Хотя бы одна цифра (0-9)", hasNumber),
-      _buildCriteria("Хотя бы один специальный символ (например: ! @ # % ^ & * ( ) - _ + = )", hasSymbol),
+      _buildCriteria(AppLocalizations.of(context)!.min8Characters, hasMinLength),
+      _buildCriteria(AppLocalizations.of(context)!.atLeastOneDigit, hasNumber),
+      _buildCriteria(AppLocalizations.of(context)!.atLeastOneSpecialCharacter, hasSymbol),
       const Spacer(),
       SizedBox(
         width: double.infinity,
@@ -366,7 +367,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 _nextStep();
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Ошибка регистрации")),
+                  SnackBar(content: Text(AppLocalizations.of(context)!.registrationError)),
                 );
               }
             }
@@ -378,7 +379,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             disabledBackgroundColor: const Color(0xFFB2DFDB),
           ),
-          child: const Text("Продолжить"),
+          child: Text(AppLocalizations.of(context)!.continueText),
         ),
       ),
     ],
@@ -404,14 +405,14 @@ return Column(
           children: [
             const Icon(Icons.check, size: 40, color: Color.fromRGBO(21, 203, 189, 1)),
             const SizedBox(height: 24),
-            const Text(
-              "Ваш пароль был успешно обновлён!",
+             Text(
+              AppLocalizations.of(context)!.passwordSuccessfullyUpdated,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            const Text(
-              "Исследуйте мир образования одним кликом.",
+             Text(
+              AppLocalizations.of(context)!.exploreEducationWithOneClick,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey),
             ),
@@ -431,7 +432,7 @@ return Column(
                 minimumSize: const Size.fromHeight(48),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text("Войти", style: TextStyle(color: Colors.white)),
+              child: Text(AppLocalizations.of(context)!.login, style: const TextStyle(color: Colors.white)),
             ),
           ],
         ),
@@ -454,11 +455,11 @@ return Column(
       padding: const EdgeInsets.only(bottom: 12),
       child: Text.rich(
         TextSpan(
-          text: 'Используя Smartify, вы соглашаетесь с\n',
+          text: AppLocalizations.of(context)!.usingSmartify + '\n',
           style: const TextStyle(fontSize: 12),
           children: [
             TextSpan(
-              text: 'Условиями пользования и Политикой конфиденциальности.',
+              text: AppLocalizations.of(context)!.termsOfUseAndPrivacyPolicy,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],

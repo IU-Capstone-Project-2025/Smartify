@@ -231,10 +231,10 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white, // убрано для поддержки темы
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white, // убрано для поддержки темы
         leading: const BackButton(color: Colors.black),
         centerTitle: true,
         title: const Text("Фильтры", style: TextStyle(color: Colors.black)),

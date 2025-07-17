@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 import 'package:smartify/pages/welcome/welcome_page.dart';
 import 'package:smartify/pages/api_server/api_token.dart';
 import 'package:smartify/pages/api_server/api_save_data.dart';
+import '../../main.dart'; // путь до main.dart
 
 class SettingsSheet extends StatelessWidget {
   const SettingsSheet({super.key});
@@ -12,9 +14,9 @@ class SettingsSheet extends StatelessWidget {
       heightFactor: 0.95,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         child: Column(
           children: [
@@ -39,7 +41,6 @@ class SettingsSheet extends StatelessWidget {
             const SizedBox(height: 16),
             ListTile(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              tileColor: const Color(0xFFF5F5F5),
               leading: const CircleAvatar(
                 radius: 24,
                 backgroundImage: AssetImage('assets/user_avatar.jpg'),
@@ -58,27 +59,26 @@ class SettingsSheet extends StatelessWidget {
               onTap: () {},
             ),
             const SizedBox(height: 16),
-            _buildTile(Icons.language, 'Язык'),
-            _buildTile(Icons.help_outline, 'Помощь'),
-            _buildTile(Icons.privacy_tip_outlined, 'Политика конфиденциальности'),
-            _buildDarkModeTile(),
+            _buildLanguageTile(context),
+            _buildTile(Icons.help_outline, AppLocalizations.of(context)!.help),
+            _buildTile(Icons.privacy_tip_outlined, AppLocalizations.of(context)!.privacyPolicy),
+            _buildDarkModeTile(context),
             const Spacer(),
             ListTile(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              tileColor: const Color(0xFFF5F5F5),
               leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text('Выйти', style: TextStyle(color: Colors.red)),
+              title: Text(AppLocalizations.of(context)!.logout, style: const TextStyle(color: Colors.red)),
               onTap: () {
                 Navigator.pop(context);
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: const Text('Подтвердите выход'),
-                    content: const Text('Вы уверены, что хотите выйти?'),
+                    title: Text(AppLocalizations.of(context)!.confirmLogout),
+                    content: Text(AppLocalizations.of(context)!.areYouSureLogout),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text('Отмена'),
+                        child: Text(AppLocalizations.of(context)!.cancel),
                       ),
                       TextButton(
                         onPressed: () {
@@ -91,7 +91,7 @@ class SettingsSheet extends StatelessWidget {
                             ),
                           );
                         },
-                        child: const Text('Выйти'),
+                        child: Text(AppLocalizations.of(context)!.logout),
                       ),
                     ],
                   ),
@@ -111,7 +111,6 @@ class SettingsSheet extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        tileColor: const Color(0xFFF5F5F5),
         leading: Icon(icon, color: Colors.black),
         title: Text(label),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
@@ -120,21 +119,52 @@ class SettingsSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildDarkModeTile() {
+  Widget _buildLanguageTile(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        tileColor: const Color(0xFFF5F5F5),
-        leading: const Icon(Icons.nightlight_round_outlined, color: Colors.black),
-        title: const Text('Темная тема'),
-        trailing: Switch(
-          value: false,
-          onChanged: (value) {
-            // Add your theme toggle logic here
+        leading: const Icon(Icons.language, color: Colors.black),
+        title: Text(AppLocalizations.of(context)!.language),
+        trailing: DropdownButton<Locale>(
+          value: localeNotifier.value ?? Localizations.localeOf(context),
+          items: const [
+            DropdownMenuItem(
+              value: Locale('ru'),
+              child: Text('Русский'),
+            ),
+            DropdownMenuItem(
+              value: Locale('en'),
+              child: Text('English'),
+            ),
+          ],
+          onChanged: (locale) {
+            localeNotifier.value = locale;
           },
         ),
-        onTap: () {},
+      ),
+    );
+  }
+
+  Widget _buildDarkModeTile(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: ValueListenableBuilder<ThemeMode>(
+        valueListenable: themeModeNotifier,
+        builder: (context, mode, _) {
+          return ListTile(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            leading: const Icon(Icons.nightlight_round_outlined, color: Colors.black),
+            title: Text(AppLocalizations.of(context)!.darkTheme),
+            trailing: Switch(
+              value: mode == ThemeMode.dark,
+              onChanged: (value) {
+                themeModeNotifier.value = value ? ThemeMode.dark : ThemeMode.light;
+              },
+            ),
+            onTap: () {},
+          );
+        },
       ),
     );
   }
