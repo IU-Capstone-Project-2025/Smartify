@@ -47,7 +47,7 @@ jobs:
       - name: Deploy frontend to server
         run: |
           ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p ${FRONTEND_DIR}"
-          scp -r frontend/build/web/* $REMOTE_USER@$REMOTE_HOST:${FRONTEND_DIR}
+          scp -r frontend/build/web/* $REMOTE_USER@$REMOTE_HOST:${FRONTEND_DIR}/lib
           
       - name: Reload Nginx
         run: |
