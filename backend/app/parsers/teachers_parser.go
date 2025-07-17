@@ -32,11 +32,6 @@ var examSubjects = []string{
 	"литература",
 }
 
-var examNames = []string{
-	"ЕГЭ",
-	"ОГЭ",
-}
-
 type DataInfo struct {
 	Name   string `json:"name"`
 	Link   string `json:"link"`
@@ -58,11 +53,6 @@ func IsValidExamSubject(input string) bool {
 	normalized := strings.ToLower(strings.TrimSpace(input))
 	for _, subject := range examSubjects {
 		if subject == normalized {
-			return true
-		}
-	}
-	for _, name := range examNames {
-		if strings.Contains(input, name) {
 			return true
 		}
 	}
