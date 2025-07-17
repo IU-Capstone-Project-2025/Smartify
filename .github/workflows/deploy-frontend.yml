@@ -47,11 +47,10 @@ jobs:
       - name: Deploy frontend to server
         run: |
           ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p ${FRONTEND_DIR}"
-          scp -r frontend/build/web/* $REMOTE_USER@$REMOTE_HOST:${FRONTEND_DIR}/lib
+          scp -r frontend/build/web/* $REMOTE_USER@$REMOTE_HOST:${FRONTEND_DIR}
           
       - name: Reload Nginx
-        run: |
-          ssh $REMOTE_USER@$REMOTE_HOST "nginx -s reload"
+        run: ssh $REMOTE_USER@$REMOTE_HOST "nginx -s reload -c /home/ghrunner/nginx/nginx.conf"
           
       - name: Verify deployment
         run: |
