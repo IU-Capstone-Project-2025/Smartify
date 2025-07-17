@@ -94,8 +94,11 @@ class AuthService {
     final error = await ApiService.CheckTokens(accessToken, refreshToken);
 
     if (error != null && error == "Access Token is old") {
-      await AuthService.refreshAccessToken();
-      return 200;
+      final stts = await AuthService.refreshAccessToken();
+      if (stts != null) {
+        return 200;
+      }
+      return 401;
     }
 
     if (error != null) {
