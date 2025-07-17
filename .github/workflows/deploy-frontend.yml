@@ -1,0 +1,79 @@
+name: Deploy Flutter Frontend
+
+on:
+  push:
+    branches:
+      - main
+      - Back
+    #paths:
+    #  - 'frontend/**' 
+
+jobs:
+  deploy_frontend:
+    runs-on: [self-hosted]
+
+    env:
+      REMOTE_HOST: 213.226.112.206
+      REMOTE_USER: ghrunner
+      FRONTEND_DIR: /pro/www/smartify  
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.32.4
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ./frontend
+
+      - name: Build Flutter web
+        run: |
+          flutter create . --platforms web
+          flutter build web --release
+        working-directory: ./frontend
+
+      - name: Setup SSH client
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $REMOTE_HOST >> ~/.ssh/known_hosts
+
+      - name: Deploy frontend to server
+        run: |
+          # Создаем директорию на сервере
+          ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p ${FRONTEND_DIR}"
+          
+          # Копируем собранный фронтенд
+          scp -r frontend/build/web/* $REMOTE_USER@$REMOTE_HOST:${FRONTEND_DIR}
+
+          # Обновляем конфиг Nginx (если нужно)
+          ssh $REMOTE_USER@$REMOTE_HOST "
+            echo 'server {
+              listen 80;
+              server_name your-domain.com;
+              root ${FRONTEND_DIR};
+              index index.html;
+              
+              location / {
+                try_files \$uri \$uri/ /index.html;
+              }
+              
+              location /api {
+                proxy_pass http://localhost:8080;
+                proxy_set_header Host \$host;
+                proxy_set_header X-Real-IP \$remote_addr;
+              }
+            }' | sudo tee /etc/nginx/conf.d/smartify.conf
+            
+            sudo nginx -t && sudo systemctl reload nginx
+          "
+
+      - name: Clean up SSH key
+        if: always()
+        run: rm -f ~/.ssh/id_rsa
