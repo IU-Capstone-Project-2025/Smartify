@@ -6,16 +6,16 @@ on:
       - main
       - Back
     #paths:
-    #  - 'frontend/**' 
+    #  - 'frontend/**'
 
 jobs:
   deploy_frontend:
-    runs-on: [self-hosted]
+    runs-on: ubuntu-latest 
 
     env:
       REMOTE_HOST: 213.226.112.206
       REMOTE_USER: ghrunner
-      FRONTEND_DIR: /pro/www/smartify  
+      FRONTEND_DIR: /var/www/smartify
 
     steps:
       - name: Checkout code
@@ -31,10 +31,13 @@ jobs:
         run: flutter pub get
         working-directory: ./frontend
 
-      - name: Build Flutter web
+      - name: Build Flutter web (with increased memory)
         run: |
-          flutter create . --platforms web
-          flutter build web --release
+          # Увеличиваем лимит памяти для Node.js
+          export NODE_OPTIONS="--max-old-space-size=4096"
+          
+          # Собираем проект без повторного создания
+          flutter build web --release --verbose
         working-directory: ./frontend
 
       - name: Setup SSH client
@@ -46,33 +49,8 @@ jobs:
 
       - name: Deploy frontend to server
         run: |
-          # Создаем директорию на сервере
           ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p ${FRONTEND_DIR}"
-          
-          # Копируем собранный фронтенд
           scp -r frontend/build/web/* $REMOTE_USER@$REMOTE_HOST:${FRONTEND_DIR}
-
-          # Обновляем конфиг Nginx (если нужно)
-          ssh $REMOTE_USER@$REMOTE_HOST "
-            echo 'server {
-              listen 80;
-              server_name your-domain.com;
-              root ${FRONTEND_DIR};
-              index index.html;
-              
-              location / {
-                try_files \$uri \$uri/ /index.html;
-              }
-              
-              location /api {
-                proxy_pass http://localhost:8080;
-                proxy_set_header Host \$host;
-                proxy_set_header X-Real-IP \$remote_addr;
-              }
-            }' | sudo tee /etc/nginx/conf.d/smartify.conf
-            
-            sudo nginx -t && sudo systemctl reload nginx
-          "
 
       - name: Clean up SSH key
         if: always()
