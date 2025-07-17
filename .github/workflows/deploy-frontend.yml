@@ -51,23 +51,7 @@ jobs:
         run: |
           ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p ${FRONTEND_DIR}"
           scp -r frontend/build/web/* $REMOTE_USER@$REMOTE_HOST:${FRONTEND_DIR}
-
-      - name: Update Nginx config
-        run: |
-          ssh $REMOTE_USER@$REMOTE_HOST "
-            echo 'server {
-              listen 80 default_server;
-              server_name _;
-              root ${FRONTEND_DIR};
-              index index.html;
-              
-              location / {
-                try_files \$uri \$uri/ /index.html;
-              }
-            }' | sudo tee /etc/nginx/sites-available/default
-
-            sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
-            sudo nginx -t && sudo systemctl restart nginx
+          ssh $REMOTE_USER@$REMOTE_HOST "sudo systemctl reload nginx"
           
       - name: Verify deployment
         run: |
