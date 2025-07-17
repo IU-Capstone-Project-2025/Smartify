@@ -31,13 +31,10 @@ jobs:
         run: flutter pub get
         working-directory: ./frontend
 
-      - name: Build Flutter web (with increased memory)
+      - name: Build web
         run: |
-          # Увеличиваем лимит памяти для Node.js
-          export NODE_OPTIONS="--max-old-space-size=4096"
-          
-          # Собираем проект без повторного создания
-          flutter build web --release --verbose
+          flutter create . --platforms web
+          flutter build web --release 
         working-directory: ./frontend
 
       - name: Setup SSH client
@@ -51,7 +48,9 @@ jobs:
         run: |
           ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p ${FRONTEND_DIR}"
           scp -r frontend/build/web/* $REMOTE_USER@$REMOTE_HOST:${FRONTEND_DIR}
-          ssh $REMOTE_USER@$REMOTE_HOST "sudo systemctl reload nginx"
+          
+      - name: Reload Nginx
+        run: ssh $REMOTE_USER@$REMOTE_HOST "nginx -s reload -c /home/ghrunner/nginx/nginx.conf"
           
       - name: Verify deployment
         run: |
