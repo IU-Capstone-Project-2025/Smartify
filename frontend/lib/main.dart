@@ -15,6 +15,7 @@ final localeNotifier = ValueNotifier<Locale?>(null);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await AuthService.init();
   // ВРЕМЕННАЯ ОЧИСТКА — удалит все сохранённые токены!
   /*
   const storage = FlutterSecureStorage();

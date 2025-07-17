@@ -1,34 +1,60 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartify/pages/api_server/api_server.dart';
 
 class AuthService {
   static const FlutterSecureStorage _storage = FlutterSecureStorage();
+  static late final SharedPreferences _prefs;
   static final String _accessTokenKey = 'access_token';
   static final String _refreshTokenKey = 'refresh_token';
+
+  static Future<void> init() async {
+    if (kIsWeb) {
+      _prefs = await SharedPreferences.getInstance();
+    }
+  }
 
   // Сохранить токены
   static Future<void> saveTokens({
     required String accessToken,
     required String refreshToken,
   }) async {
-    await _storage.write(key: _accessTokenKey, value: accessToken);
-    await _storage.write(key: _refreshTokenKey, value: refreshToken);
+    if (kIsWeb) {
+      await _prefs.setString(_accessTokenKey, accessToken);
+      await _prefs.setString(_refreshTokenKey, refreshToken);
+    } else {
+      await _storage.write(key: _accessTokenKey, value: accessToken);
+      await _storage.write(key: _refreshTokenKey, value: refreshToken);
+    }
   }
 
   // Получить access-токен
   static Future<String?> getAccessToken() async {
+    if (kIsWeb) {
+      return _prefs.getString(_accessTokenKey);
+    }
     return await _storage.read(key: _accessTokenKey);
   }
 
   // Получить refresh-токен
   static Future<String?> getRefreshToken() async {
+    if (kIsWeb) {
+      return _prefs.getString(_refreshTokenKey);
+    }
     return await _storage.read(key: _refreshTokenKey);
   }
 
   // Удалить токены если пользователь выходит из аккаунта
   static Future<void> deleteTokens() async {
-    await _storage.delete(key: _accessTokenKey);
-    await _storage.delete(key: _refreshTokenKey);
+    if (kIsWeb) {
+      await _prefs.remove(_accessTokenKey);
+      await _prefs.remove(_refreshTokenKey);
+    } 
+    else {
+      await _storage.delete(key: _accessTokenKey);
+      await _storage.delete(key: _refreshTokenKey);
+    }
   }
 
   // Обновить access-токен с помощью refresh-токена
@@ -75,36 +101,48 @@ class AuthService {
   }
 
   static Future<bool> isAuthenticated() async {
-    final status = await isAuthenticatedServer();
-    if (status == -1) {
-      final token = await getAccessToken();
-      return token != null && token.isNotEmpty;
-    }
-    return status == 200;
-  }
-
-  static Future<int> isAuthenticatedServer() async {
+    // 1. Проверка наличия токенов в хранилище
     final accessToken = await getAccessToken();
     final refreshToken = await getRefreshToken();
-
-    if (accessToken == null || refreshToken == null || accessToken.isEmpty || refreshToken.isEmpty) {
-      return 401;
+    
+    if (accessToken == null || refreshToken == null) {
+      print('Tokens not found in storage');
+      return false;
     }
 
-    final error = await ApiService.CheckTokens(accessToken, refreshToken);
+    // 2. Проверка формата токенов (опционально)
+    if (accessToken.isEmpty || refreshToken.isEmpty) {
+      print('Empty tokens found');
+      await deleteTokens();
+      return false;
+    }
 
-    if (error != null && error == "Access Token is old") {
-      final stts = await AuthService.refreshAccessToken();
-      if (stts != null) {
-        return 200;
+    try {
+      // 3. Проверка токенов на сервере
+      final error = await ApiService.CheckTokens(accessToken, refreshToken);
+      
+      if (error == null) {
+        return true; // Оба токена валидны
       }
-      return 401;
-    }
 
-    if (error != null) {
-      return -1;
-    }
+      // 4. Обработка случая, когда access token устарел
+      if (error == "Access Token is old") {
+        final refreshSuccess = await refreshTokens();
+        if (refreshSuccess) {
+          return true; // Токены успешно обновлены
+        }
+        print('Failed to refresh tokens');
+        return false;
+      }
 
-    return 200;
+      // 5. Другие ошибки (например, неверный refresh token)
+      print('Token validation error: $error');
+      await deleteTokens(); // Очищаем невалидные токены
+      return false;
+
+    } catch (e) {
+      print('Authentication check failed: $e');
+      return false;
+    }
   }
 }
