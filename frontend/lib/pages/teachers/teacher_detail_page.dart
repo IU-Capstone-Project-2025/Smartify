@@ -55,12 +55,32 @@ class TeacherDetailPage extends StatelessWidget {
                   bottomLeft: Radius.circular(32),
                   bottomRight: Radius.circular(32),
                 ),
-                child: Image.asset(
-                  'assets/user_avatar.jpg',
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                ),
+                child: (teacher['avatarurl']?.toString() ?? '').startsWith('http') || (teacher['avatarurl']?.toString() ?? '').startsWith('https')
+                    ? Image.network(
+                        teacher['avatarurl']?.toString() ?? '',
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.person, color: Colors.grey, size: 50),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) => Image.asset(
+                          'assets/user_avatar.jpg',
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
+                      )
+                    : Image.asset(
+                        'assets/user_avatar.jpg',
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
               ),
             ),
             // Карточка с данными

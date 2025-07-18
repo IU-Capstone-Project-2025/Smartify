@@ -14,10 +14,8 @@ class UniversityFilterPage extends StatefulWidget {
 
 class _UniversityFilterPageState extends State<UniversityFilterPage> {
   List<String> allRegions = [];
-  final List<String> allFaculties = ['ИТ', 'Экономика', 'Медицина'];
 
   List<String> selectedRegions = [];
-  List<String> selectedFaculties = [];
 
   double minRating = 0.0;
   double budgetPlaces = 0.0;
@@ -26,7 +24,6 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
   bool hasMilitary = false;
 
   final GlobalKey regionKey = GlobalKey();
-  final GlobalKey facultiesKey = GlobalKey();
 
   @override
   void initState() {
@@ -35,7 +32,6 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
     final filter = widget.currentFilter;
     if (filter != null) {
       selectedRegions = List.from(filter.regions);
-      selectedFaculties = List.from(filter.faculties);
       minRating = filter.minRating;
       budgetPlaces = filter.budgetPlaces;
       hasDorm = filter.hasDorm;
@@ -60,7 +56,6 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
   void clearFilters() {
     setState(() {
       selectedRegions = [];
-      selectedFaculties = [];
       minRating = 0.0;
       budgetPlaces = 0.0;
       hasDorm = false;
@@ -75,7 +70,6 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
       budgetPlaces: budgetPlaces,
       hasDorm: hasDorm,
       hasMilitary: hasMilitary,
-      faculties: selectedFaculties,
     );
     Navigator.pop(context, newFilter);
   }
@@ -303,18 +297,7 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
               });
             }),
 
-            buildFilterButton("Факультеты", () {
-              showOptionsPopup(allFaculties, selectedFaculties, (newList) {
-                setState(() {
-                  selectedFaculties = newList;
-                });
-              }, facultiesKey);
-            }, key: facultiesKey),
-            buildSelectedChips(selectedFaculties, (faculty) {
-              setState(() {
-                selectedFaculties.remove(faculty);
-              });
-            }),
+
 
             const SizedBox(height: 24),
 
