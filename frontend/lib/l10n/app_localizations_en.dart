@@ -270,4 +270,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createAccount => 'Create account';
+
+  @override
+  String get contactUs => 'Contact us';
+
+  @override
+  String get faq => 'FAQ';
+
+  @override
+  String get commonQuestions => 'Frequently asked questions';
+
+  @override
+  String get reportProblem => 'Report a problem';
+
+  @override
+  String get describeIssue => 'Describe the issue';
 }

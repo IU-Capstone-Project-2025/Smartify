@@ -269,4 +269,19 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get createAccount => 'Создать аккаунт';
+
+  @override
+  String get contactUs => 'Связаться с нами';
+
+  @override
+  String get faq => 'FAQ';
+
+  @override
+  String get commonQuestions => 'Часто задаваемые вопросы';
+
+  @override
+  String get reportProblem => 'Сообщить о проблеме';
+
+  @override
+  String get describeIssue => 'Опишите проблему';
 }
