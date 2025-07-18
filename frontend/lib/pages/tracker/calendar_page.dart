@@ -15,6 +15,21 @@ class _CalendarPageState extends State<CalendarPage> {
   DateTime _selectedDate = DateTime.now();
   late Future<void> _localeFuture;
   late final List<DateTime> _dateRange;
+  
+  // Set of dates with at least one incomplete task deadline
+  Set<DateTime> get _datesWithDeadlines {
+    final Set<DateTime> result = {};
+    for (final subject in SubjectsManager().subjects) {
+      for (final task in subject.tasks) {
+        if (task.deadline != null && !(task.isCompleted ?? false)) {
+          // Only date part
+          final d = DateTime(task.deadline!.year, task.deadline!.month, task.deadline!.day);
+          result.add(d);
+        }
+      }
+    }
+    return result;
+  }
 
   @override
   void initState() {
@@ -110,6 +125,9 @@ class _CalendarPageState extends State<CalendarPage> {
                     itemBuilder: (context, index) {
                       DateTime date = _dateRange[index];
                       bool isSelected = isSameDay(date, _selectedDate);
+                      // Only date part for comparison
+                      final onlyDate = DateTime(date.year, date.month, date.day);
+                      bool hasDeadline = _datesWithDeadlines.contains(onlyDate);
                       return GestureDetector(
                         onTap: () {
                           setState(() {
@@ -122,6 +140,15 @@ class _CalendarPageState extends State<CalendarPage> {
                           decoration: BoxDecoration(
                             color: isSelected ? const Color(0xFF26977F) : Colors.transparent,
                             borderRadius: BorderRadius.circular(12),
+                            boxShadow: hasDeadline
+                                ? [
+                                    BoxShadow(
+                                      color: Colors.orange.withOpacity(0.7),
+                                      blurRadius: 12,
+                                      spreadRadius: 1,
+                                    ),
+                                  ]
+                                : [],
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -252,6 +279,7 @@ class _CalendarPageState extends State<CalendarPage> {
     String? selectedSubjectTitle = SubjectsManager().subjects.isNotEmpty ? SubjectsManager().subjects[0].title : null;
     String taskTitle = '';
     TimeOfDay selectedTime = const TimeOfDay(hour: 12, minute: 0);
+    bool showError = false;
     showCupertinoDialog(
       context: context,
       builder: (ctx) {
@@ -306,12 +334,24 @@ class _CalendarPageState extends State<CalendarPage> {
                   const SizedBox(height: 8),
                   CupertinoTextField(
                     placeholder: 'Название задания',
-                    onChanged: (val) => taskTitle = val,
+                    onChanged: (val) {
+                      taskTitle = val;
+                      if (showError && val.trim().isNotEmpty) {
+                        setStateDialog(() {
+                          showError = false;
+                        });
+                      }
+                    },
                     decoration: const BoxDecoration(
                       color: Colors.transparent,
                     ),
                     style: const TextStyle(color: Colors.black),
                     padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                    placeholderStyle: TextStyle(
+                      color: showError ? Colors.red : Colors.grey,
+                      fontSize: showError ? 18 : 14,
+                      fontWeight: showError ? FontWeight.bold : FontWeight.normal,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   SizedBox(
@@ -351,6 +391,10 @@ class _CalendarPageState extends State<CalendarPage> {
                       SubjectsManager().saveAll();
                       setState(() {});
                       Navigator.of(ctx).pop();
+                    } else if (taskTitle.trim().isEmpty) {
+                      setStateDialog(() {
+                        showError = true;
+                      });
                     }
                   },
                 ),

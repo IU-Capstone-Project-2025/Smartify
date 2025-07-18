@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'teacher_offer_sent_page.dart';
 
 class TeacherOfferPage extends StatefulWidget {
   final Map<String, dynamic> teacher;
@@ -119,6 +120,12 @@ class _TeacherOfferPageState extends State<TeacherOfferPage> {
                 ),
                 onPressed: () {
                   // TODO: обработка отправки заявки
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const TeacherOfferSentPage(),
+                    ),
+                  );
                 },
                 child: const Text('Отправить заявку', style: TextStyle(fontSize: 16)),
               ),

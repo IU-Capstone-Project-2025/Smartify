@@ -206,21 +206,42 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", corsMux))
 }
 
-// EnableCORS добавляет CORS-заголовки к каждому ответу
 func EnableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Разрешаем запросы с любого origin (для разработки)
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		allowedOrigins := []string{
+			"http://213.226.112.206:22030", // Сайт (фронтенд)
+		}
+
+		origin := r.Header.Get("Origin")
+		isAllowed := false
+
+		for _, allowed := range allowedOrigins {
+			if origin == allowed {
+				isAllowed = true
+				break
+			}
+		}
+
+		if isAllowed {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+		}
 
 		// Разрешаем методы
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
 
-		// Разрешаем заголовки
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		// Разрешаем ВСЕ необходимые заголовки (включая кастомные)
+		w.Header().Set("Access-Control-Allow-Headers",
+			"Content-Type, Authorization, access_token, X-Requested-With")
+
+		// Разрешаем куки и авторизационные заголовки
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		// Кеширование preflight-запроса (опционально)
+		w.Header().Set("Access-Control-Max-Age", "86400")
 
 		// Для preflight-запросов (OPTIONS)
 		if r.Method == "OPTIONS" {
-			w.WriteHeader(http.StatusOK)
+			w.WriteHeader(http.StatusNoContent)
 			return
 		}
 

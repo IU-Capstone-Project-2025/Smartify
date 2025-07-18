@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartify/pages/universities/filter.dart';
 import 'package:smartify/pages/universities/filter_page.dart';
 import 'package:smartify/pages/universities/uniDetPAge.dart';
@@ -8,6 +9,44 @@ import 'package:smartify/pages/universities/universityCard.dart';
 import 'package:smartify/pages/api_server/api_server.dart';
 import 'favorite_uni_card.dart';
 import 'package:smartify/l10n/app_localizations.dart';
+
+class FavoriteUniversitiesManager {
+  static final _storage = SharedPreferences.getInstance();
+
+  // Сохраняет список избранных университетов в строку JSON
+  static Future<bool> SaveFavorities(List<Map> uni) async {
+    try {
+      final json = GetJSON(uni);
+      final storage = await _storage;
+      storage.setString("favorite_universities", json);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static String GetJSON(List<Map> favorites) {
+    return jsonEncode(favorites);
+  }
+
+  static Future<List<Map<String, dynamic>>> loadFavoriteUniversities() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString('favorite_universities');
+    
+    if (jsonString == null || jsonString.isEmpty) {
+      return [];
+    }
+    
+    final List<dynamic> decoded = jsonDecode(jsonString);
+    return decoded.cast<Map<String, dynamic>>();
+    
+  } catch (e) {
+    print('Error loading favorite universities: $e');
+    return [];
+  }
+}
+}
 
 class UniversityPage extends StatefulWidget {
   const UniversityPage({super.key});
@@ -30,7 +69,9 @@ class _UniversityPageState extends State<UniversityPage> {
 
   Future<void> loadUniversityData() async {
     final List data = await UniversitiesMeneger.loadSavedJson();
+    final List<Map> fvrtUni = await FavoriteUniversitiesManager.loadFavoriteUniversities();
     setState(() {
+      favoriteUniversities = fvrtUni;
       universities = data;
       filteredUniversities = data;
     });
@@ -90,6 +131,7 @@ class _UniversityPageState extends State<UniversityPage> {
         favoriteUniversities.add(university);
       }
     });
+    FavoriteUniversitiesManager.SaveFavorities(favoriteUniversities);
   }
 
   @override

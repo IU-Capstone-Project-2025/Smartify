@@ -5,19 +5,85 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/database"
 	"github.com/PuerkitoBio/goquery"
 )
+
+var examSubjects = []string{
+	"русский язык",
+	"математика",
+	"информатика",
+	"физика",
+	"химия",
+	"биология",
+	"обществознание",
+	"история",
+	"география",
+	"английский язык",
+	"немецкий язык",
+	"французский язык",
+	"испанский язык",
+	"китайский язык",
+	"литература",
+}
 
 type DataInfo struct {
 	Name   string `json:"name"`
 	Link   string `json:"link"`
 	Rating string `json:"rating"`
 	Avatar string `json:"avatar"`
+}
+
+func CapitalizeFirst(s string) string {
+	if s == "" {
+		return s
+	}
+
+	runes := []rune(s)
+	runes[0] = unicode.ToUpper(runes[0])
+	return string(runes)
+}
+
+func IsValidExamSubject(input string) bool {
+	normalized := strings.ToLower(strings.TrimSpace(input))
+	for _, subject := range examSubjects {
+		if subject == normalized {
+			return true
+		}
+	}
+	return false
+}
+
+func ExtractFirstInt(raw string) (int, bool) {
+	clean := strings.ToLower(raw)
+	clean = strings.Map(func(r rune) rune {
+		if !unicode.IsSpace(r) {
+			return r
+		}
+		return -1
+	}, clean)
+
+	re := regexp.MustCompile(`\d+`)
+	match := re.FindString(clean)
+
+	if match == "" {
+		log.Println("Integer price isn't found")
+		return 0, false
+	}
+
+	num, err := strconv.Atoi(match)
+	if err != nil {
+		log.Println("Error when converting %q в int: %v", match, err)
+		return 0, false
+	}
+
+	return num, true
 }
 
 func LoadAndParse(url string, city string) error {
@@ -60,7 +126,7 @@ func LoadAndParse(url string, city string) error {
 		s.Find(".hide_list_item").EachWithBreak(func(i int, item *goquery.Selection) bool {
 			subject = strings.TrimSpace(item.Find(".dt").Text())
 			price = strings.TrimSpace(item.Find(".dd").Text())
-			return false // только первый элемент
+			return false
 		})
 
 		var rating_float float64
@@ -69,17 +135,24 @@ func LoadAndParse(url string, city string) error {
 			rating_float, _ = strconv.ParseFloat(ratingStr, 64)
 		}
 
-		teacher := database.Teacher{
-			Name:      name,
-			Subject:   subject,
-			Level:     level,
-			Price:     price,
-			City:      city,
-			Rating:    rating_float,
-			AvatarURL: avatar,
-			Link:      link,
+		pr, t := ExtractFirstInt(price)
+
+		if !(name == "" || avatar == "" || link == "" || !IsValidExamSubject(subject) || !t) {
+			subject = CapitalizeFirst(subject)
+			teacher := database.Teacher{
+				Name:      name,
+				Subject:   subject,
+				Level:     level,
+				Price:     pr,
+				City:      city,
+				Rating:    rating_float,
+				AvatarURL: avatar,
+				Link:      link,
+			}
+			database.AddTeacher(teacher)
+		} else {
+			database.DeleteTeacher(name)
 		}
-		database.AddTeacher(teacher)
 	})
 
 	return nil
@@ -182,6 +255,7 @@ func TeacherParser() {
 			continue
 		}
 	}
+	database.DeleteOldTeachers()
 }
 
 func StartTeacherParserTicker(t int) {
