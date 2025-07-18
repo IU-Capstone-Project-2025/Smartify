@@ -83,4 +83,10 @@
   "takeQuestionnaire": "Пройти анкетирование",
   "noTitle": "Без названия",
   "createAccount": "Создать аккаунт"
+  "help": "Помощь",
+  "contactUs": "Связаться с нами",
+  "faq": "Часто задаваемые вопросы",
+  "commonQuestions": "Часто задаваемые вопросы",
+  "reportProblem": "Сообщить о проблеме",
+  "describeIssue": "Опишите проблему"
 } 
