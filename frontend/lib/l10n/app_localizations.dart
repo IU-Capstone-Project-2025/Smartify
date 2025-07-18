@@ -616,6 +616,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create account'**
   String get createAccount;
+
+  String get contactUs;
+  String get faq;
+  String get commonQuestions;
+  String get reportProblem;
+  String get describeIssue;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

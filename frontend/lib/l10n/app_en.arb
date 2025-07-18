@@ -86,4 +86,10 @@
   "takeQuestionnaire": "Take questionnaire",
   "noTitle": "No title",
   "createAccount": "Create account"
+  "help": "Help",
+  "contactUs": "Contact us via",
+  "faq": "FAQ",
+  "commonQuestions": "Frequently asked questions",
+  "reportProblem": "Report a problem",
+  "describeIssue": "Describe the issue"
 } 
