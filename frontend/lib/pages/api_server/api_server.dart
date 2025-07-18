@@ -390,11 +390,13 @@ class TeacherMeneger {
       return jsonString;
     } catch (e) {
       print("Блин, не работает походу $e");
+      print("Загружаем из базового файла..."); // Отладочная информация
       return await loadInitialJsonTeachers();
     }
   }
   static Future<String> loadInitialJsonTeachers() async {
-    return await rootBundle.loadString('assets/$fileName');
+    String jsonString = await rootBundle.loadString('assets/$fileName');
+    return jsonString;
   }
 }
 

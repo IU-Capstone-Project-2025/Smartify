@@ -212,13 +212,14 @@ class _TeachersListPageState extends State<TeachersListPage> {
                     itemCount: _filteredTeachers.length,
                     itemBuilder: (context, index) {
                       final teacher = _filteredTeachers[index];
+                      final avatarUrl = teacher['avatarurl']?.toString() ?? 'assets/user_avatar.jpg';
                       return _TeacherCard(
                         name: teacher['name'] ?? '',
                         subject: teacher['subject'] ?? '',
                         experience: teacher['level'] ?? '',
                         rating: teacher['rating']?.toString() ?? '',
                         price: teacher['price']?.toString() ?? '',
-                        avatar: 'assets/user_avatar.jpg',
+                        avatar: avatarUrl,
                         onDetail: () {
                           Navigator.push(
                             context,
@@ -325,11 +326,40 @@ class _TeacherCard extends StatelessWidget {
         ],
       ),
       child: Row(
-        children: [
-          CircleAvatar(
-            backgroundImage: AssetImage(avatar),
-            radius: 28,
-          ),
+                  children: [
+            CircleAvatar(
+              radius: 28,
+              child: ClipOval(
+                child: avatar.startsWith('http') || avatar.startsWith('https')
+                    ? Image.network(
+                        avatar,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.person, color: Colors.grey),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.person, color: Colors.grey),
+                          );
+                        },
+                      )
+                    : Image.asset(
+                        avatar,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.person, color: Colors.grey),
+                          );
+                        },
+                      ),
+              ),
+            ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
