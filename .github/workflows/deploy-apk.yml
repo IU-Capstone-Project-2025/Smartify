@@ -2,9 +2,6 @@ name: Deploy APK to GitHub Releases
 
 on:
   push:
-    branches:
-      - main
-      - Back
     tags:
       - 'v*'
 
