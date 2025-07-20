@@ -50,7 +50,21 @@ jobs:
           scp -r frontend/build/web/* $REMOTE_USER@$REMOTE_HOST:${FRONTEND_DIR}
           
       - name: Reload Nginx
-        run: ssh $REMOTE_USER@$REMOTE_HOST "nginx -s reload -c /home/ghrunner/nginx/nginx.conf"
+        run: |
+          ssh $REMOTE_USER@$REMOTE_HOST "
+            # Check status of Nginx
+            if ! pgrep -x nginx > /dev/null; then
+              echo 'Nginx is not running, starting...'
+              nginx -c /home/ghrunner/nginx/nginx.conf
+            else
+              echo 'Nginx already works, reload...'
+              nginx -s reload -c /home/ghrunner/nginx/nginx.conf || (
+                echo 'Failed to reload, restart...'
+                nginx -s stop || true
+                nginx -c /home/ghrunner/nginx/nginx.conf
+              )
+            fi
+          "
           
       - name: Verify deployment
         run: |
