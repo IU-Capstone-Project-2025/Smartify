@@ -22,9 +22,13 @@ import (
 // @Failure      500      {object}  Error_answer   "Ошибка сервера (генерация токенов, БД)"
 // @Router       /refresh_token [post]
 func RefreshHandler(w http.ResponseWriter, r *http.Request) {
+	// Log new refresh token request
 	log.Println("New refresh request!")
+
+	// Set response content type to JSON
 	w.Header().Set("Content-Type", "application/json")
 
+	// Verify request method is POST
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		json.NewEncoder(w).Encode(Error_answer{
@@ -35,7 +39,10 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req Refresh_token
+
+	// Decode JSON request body
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		// Handle invalid JSON request
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Invalid request",
@@ -44,8 +51,10 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Parse and validate refresh token
 	claims, err := auth.ParseToken(req.RefreshToken)
 	if err != nil {
+		// Handle invalid token format
 		log.Println("Invalid refresh token type 1!")
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(Error_answer{
@@ -55,8 +64,10 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check if token exists in database and matches user
 	valid, userID, err := database.IsRefreshTokenValid(req.RefreshToken, db)
 	if err != nil || !valid || claims.UserID != userID {
+		// Handle invalid/expired token or user mismatch
 		log.Println("Invalid refresh token type 2!")
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(Error_answer{
@@ -66,10 +77,13 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Delete old refresh token from database
 	database.DeleteRefreshToken(req.RefreshToken, db)
 
+	// Generate new token pair
 	accessToken, newRefreshToken, err := auth.GenerateTokens(userID)
 	if err != nil {
+		// Handle token generation failure
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Could not generate tokens",
@@ -78,8 +92,10 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Store new refresh token in database
 	database.StoreRefreshToken(userID, newRefreshToken, db)
 
+	// Return new token pair
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(Tokens_answer{
 		AccessToken:  accessToken,
@@ -99,8 +115,14 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 // @Router       /logout [post]
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	var req Refresh_token
+
+	// Decode refresh token from request body
 	json.NewDecoder(r.Body).Decode(&req)
+
+	// Delete refresh token from database
 	database.DeleteRefreshToken(req.RefreshToken, db)
+
+	// Return success response
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(Success_answer{
 		Status: "OK",

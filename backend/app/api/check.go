@@ -16,7 +16,9 @@ import (
 // @Failure      405 {object} Error_answer   "Метод не разрешен"
 // @Router       /hello [get]
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
+	// Check if request method is GET
 	if r.Method != http.MethodGet {
+		// Return 405 Method Not Allowed if not GET
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Method not allowed",
@@ -25,13 +27,16 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Log server health check request
 	log.Println("New check")
 
+	// Prepare success response structure
 	response := Success_answer{
 		Status: "ok",
 		Code:   http.StatusOK,
 	}
 
+	// Set response headers and encode JSON response
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
@@ -49,7 +54,9 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 // @Failure      405     {object}  Error_answer   "Метод не разрешен"
 // @Router       /checkTokens [post]
 func TokenCheck(w http.ResponseWriter, r *http.Request) {
+	// Verify request method is POST
 	if r.Method != http.MethodPost {
+		// Return error if method is not POST
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Method not allowed",
@@ -59,9 +66,10 @@ func TokenCheck(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var tokens Tokens_answer
-	// Декодируем json сообщение
+	// Parse JSON body into tokens structure
 	err := json.NewDecoder(r.Body).Decode(&tokens)
 	if err != nil {
+		// Handle JSON parsing error
 		log.Println("Cannot decode request")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(Error_answer{
@@ -71,8 +79,10 @@ func TokenCheck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Validate refresh token first
 	err = auth.ValidateRefreshToken(tokens.RefreshToken)
 	if err != nil {
+		// Handle invalid refresh token
 		log.Println("Refresh token is old: " + err.Error())
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(Error_answer{
@@ -82,8 +92,10 @@ func TokenCheck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Validate access token
 	err = auth.ValidateAccessToken(tokens.AccessToken)
 	if err != nil {
+		// Handle invalid access token
 		log.Println("Access token is old: " + err.Error())
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(Error_answer{
@@ -93,10 +105,13 @@ func TokenCheck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Prepare success response for valid tokens
 	response := Success_answer{
 		Status: "ok",
 		Code:   http.StatusOK,
 	}
+
+	// Send successful validation response
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)

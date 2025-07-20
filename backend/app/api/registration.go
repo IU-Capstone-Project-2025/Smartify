@@ -16,8 +16,11 @@ import (
 )
 
 var db *sql.DB
+
+// Map to store temporary users during registration with their verification codes
 var temporary_users = make(map[string]string)
 
+// Initialize database connection
 func InitDatabase(db_ *sql.DB) {
 	db = db_
 }
@@ -34,14 +37,18 @@ func InitDatabase(db_ *sql.DB) {
 // @Failure      500     {object}  Error_answer    "Ошибка сервера (генерация кода, отправка email)"
 // @Router       /registration_emailvalidation [post]
 func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request) {
+	// Log registration attempt
 	log.Println("Registration:")
+
+	// Set response content type to JSON
 	w.Header().Set("Content-Type", "application/json")
 
 	var email Email_struct
 
-	// Try to decode message
+	// Decode JSON request body
 	err := json.NewDecoder(r.Body).Decode(&email)
 	if err != nil {
+		// Handle JSON decoding error
 		log.Println("Cannot decode request")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(Error_answer{
@@ -51,10 +58,10 @@ func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Print Message
+	// Log received email (for debugging)
 	log.Printf("User: %s", email.Email)
 
-	// Check if the mail is valid
+	// Validate email format
 	if !database.IsValidEmail(email.Email) {
 		log.Printf("Not valid Email")
 		w.WriteHeader(http.StatusBadRequest)
@@ -65,7 +72,7 @@ func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Check if the mail was used
+	// Check if email is already registered
 	if err := database.CheckUser(email.Email, db); err != nil {
 		log.Printf("User already exists")
 		w.WriteHeader(http.StatusConflict)
@@ -76,7 +83,7 @@ func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Generate number
+	// Generate 5-digit verification code
 	number, err := Generate5DigitCode()
 	if err != nil {
 		log.Printf("Cannot generate code: %s", err)
@@ -88,10 +95,10 @@ func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Add user in map
+	// Store email and code in temporary map
 	temporary_users[email.Email] = number
 
-	// Send number to email (3 attempts)
+	// Send verification code via email (with 3 retry attempts)
 	api_email.EmailQueue <- api_email.EmailTask{
 		To:      email.Email,
 		Subject: "Email Validation",
@@ -99,7 +106,7 @@ func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request)
 		Retries: 3,
 	}
 
-	// Send successful answer
+	// Return success response
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(Success_answer{
 		Status: "ok",
@@ -118,14 +125,18 @@ func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request)
 // @Failure      405     {object}  Error_answer        "Метод не разрешен"
 // @Router       /registration_codevalidation [post]
 func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) {
+	// Log code validation attempt
 	log.Println("Registration-CodeValidation:")
+
+	// Set response content type to JSON
 	w.Header().Set("Content-Type", "application/json")
 
 	var user Code_verification
 
-	// Декодируем json сообщение
+	// Decode JSON request body
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
+		// Handle JSON decoding error
 		log.Println("Cannot decode request")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(Error_answer{
@@ -135,7 +146,7 @@ func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// Проверяем сущетсвоание пользователя
+	// Check if user exists in temporary storage
 	if _, exists := temporary_users[user.Email]; !exists {
 		log.Printf("User does not exists")
 		w.WriteHeader(http.StatusBadRequest)
@@ -146,7 +157,7 @@ func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// Проверяем код
+	// Verify the provided code matches stored code
 	if user.Code != temporary_users[user.Email] {
 		log.Printf("Code does not equal")
 		w.WriteHeader(http.StatusBadRequest)
@@ -157,7 +168,7 @@ func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// Отправляем успешный ответ
+	// Return success response if code matches
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(Success_answer{
 		Status: "ok",
@@ -177,14 +188,18 @@ func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) 
 // @Failure      500     {object}  Error_answer          "Ошибка сервера (БД, генерация токенов)"
 // @Router       /registration_password [post]
 func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
+	// Log password registration attempt
 	log.Println("Registration-Password:")
+
+	// Set response content type to JSON
 	w.Header().Set("Content-Type", "application/json")
 
 	var user_request User_email_password
 
-	// Декодируем json сообщение
+	// Decode JSON request body
 	err := json.NewDecoder(r.Body).Decode(&user_request)
 	if err != nil {
+		// Handle JSON decoding error
 		log.Println("Cannot decode request")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(Error_answer{
@@ -194,7 +209,7 @@ func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Проверяем сущетсвоание пользователя
+	// Verify user exists in temporary storage
 	if _, exists := temporary_users[user_request.Email]; !exists {
 		log.Printf("User does not exists")
 		w.WriteHeader(http.StatusBadRequest)
@@ -205,14 +220,16 @@ func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Prepare user data for database
 	var user database.User
 	user.Email = user_request.Email
 	user.Password_hash = user_request.Password
 	user.Created_at = time.Now().Format("2000-01-02 12:00")
 
-	// Добавляем пользователя в базу данных
+	// Add new user to database
 	err = database.Add_new_user(user, db)
 	if err != nil {
+		// Handle database error
 		log.Printf("Error with database")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(Error_answer{
@@ -221,9 +238,11 @@ func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
+	// Remove user from temporary storage
 	delete(temporary_users, user_request.Email)
 
-	// Находим пользовтеля в db, чтобы получить его id
+	// Retrieve user from database to get assigned ID
 	err = database.FindUserByEmail(user_request.Email, &user, db)
 	if err != nil {
 		log.Printf("Error with database")
@@ -235,9 +254,10 @@ func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Генерируем accessToken и refreshToken
+	// Generate JWT tokens
 	accessToken, refreshToken, err := auth.GenerateTokens(user.ID)
 	if err != nil {
+		// Handle token generation error
 		log.Printf("Cannot generate tokens: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(Error_answer{
@@ -247,9 +267,10 @@ func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Сохраняем refreshToken
+	// Store refresh token in database
 	err = database.StoreRefreshToken(user.ID, refreshToken, db)
 	if err != nil {
+		// Handle token storage error
 		log.Printf("Cannot store refresh token: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(Error_answer{
@@ -259,17 +280,18 @@ func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Prepare token response
 	resp := Tokens_answer{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
 
-	// Send successful answer
+	// Return tokens to client
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(resp)
 }
 
-// Функция для генерации 5-значного числа (с ведущими нулями в том числе)
+// Generates a random 5-digit code (including leading zeros)
 func Generate5DigitCode() (string, error) {
 	max := big.NewInt(100000)
 	n, err := rand.Int(rand.Reader, max)

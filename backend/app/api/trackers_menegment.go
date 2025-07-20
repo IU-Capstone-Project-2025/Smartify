@@ -22,6 +22,7 @@ import (
 // @Failure      405      {object}  Error_answer      "Метод не разрешен"
 // @Router       /savetrackers [post]
 func SaveTrackers(w http.ResponseWriter, r *http.Request) {
+	// Only allow POST requests
 	if r.Method != http.MethodPost {
 		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Method not allowed",
@@ -30,6 +31,7 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Decode request body into Tracker_save struct
 	var request Tracker_save
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
@@ -42,6 +44,7 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Parse and validate JWT token
 	claim, err := auth.ParseToken(request.Token)
 	if err != nil {
 		log.Println("Cannot decode request: " + err.Error())
@@ -53,6 +56,7 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Parse timestamp from request
 	parsedTime, err := request.GetParsedTime()
 	if err != nil {
 		log.Println("Invalid time format" + err.Error())
@@ -64,11 +68,13 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Prepare tracker data for database
 	var userTr database.User_trackers
 	userTr.UserID = claim.UserID
 	userTr.Trackers = request.Trackers
 	userTr.TimeStamp = parsedTime
 
+	// Save trackers to database
 	err = database.AddTrackers(userTr)
 	if err != nil {
 		log.Println("Cannot decode request")
@@ -79,6 +85,8 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
+	// Return success response
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(Success_answer{
 		Status: "ok",
@@ -99,6 +107,7 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 // @Failure      405      {object}  Error_answer          "Метод не разрешен"
 // @Router       /gettrackers [post]
 func GetTrackers(w http.ResponseWriter, r *http.Request) {
+	// Only allow POST requests
 	if r.Method != http.MethodPost {
 		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Method not allowed",
@@ -107,6 +116,7 @@ func GetTrackers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Decode request body into Get_trackers_request struct
 	var request Get_trackers_request
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
@@ -119,6 +129,7 @@ func GetTrackers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Parse and validate JWT token
 	claim, err := auth.ParseToken(request.Token)
 	if err != nil {
 		log.Println("Cannot decode request: " + err.Error())
@@ -130,9 +141,11 @@ func GetTrackers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Prepare user data for database query
 	var userTr database.User_trackers
 	userTr.UserID = claim.UserID
 
+	// Retrieve trackers from database
 	trackers, err := database.GetTrackers(userTr)
 	if err != nil {
 		log.Println("Cannot decode request")
@@ -143,6 +156,8 @@ func GetTrackers(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
+	// Return trackers in response
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(Trackers{
 		Trackers: trackers.Trackers,

@@ -7,12 +7,16 @@ import (
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/database"
 )
 
+// This function was written for the future so there is no Swagger documentation YET
+// AddUniversityHandler handles adding a new university to the database
 func AddUniversityHandler(w http.ResponseWriter, r *http.Request) {
+	// Only allow POST requests
 	if r.Method != http.MethodPost {
 		http.Error(w, "Only POST allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
+	// Decode the JSON request body into a map
 	var data map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
@@ -20,12 +24,14 @@ func AddUniversityHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Add the university to the database
 	err1 := database.AddUniversity(data)
 	if err1 != nil {
 		http.Error(w, "Database error: "+err1.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	// Return success response with 201 Created status
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{"status": "University added"})
 }
@@ -41,13 +47,14 @@ func AddUniversityHandler(w http.ResponseWriter, r *http.Request) {
 // @Header 200 {string} Content-Type "application/json"
 // @Router /update_university_json [get]
 func RequestToUpdate(w http.ResponseWriter, r *http.Request) {
+	// Retrieve all universities from database
 	universities, err := database.GetAllUniversities()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Преобразуем данные в нужный формат
+	// Transform data into export format
 	var exportData []map[string]interface{}
 	for _, uni := range universities {
 		item := map[string]interface{}{
@@ -75,11 +82,11 @@ func RequestToUpdate(w http.ResponseWriter, r *http.Request) {
 		exportData = append(exportData, item)
 	}
 
-	// Устанавливаем заголовки для скачивания файла
+	// Set download headers
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Content-Disposition", "attachment; filename=universities.json")
 
-	// Кодируем данные в JSON с отступами
+	// Encode data to JSON with pretty printing
 	encoder := json.NewEncoder(w)
 	encoder.SetIndent("", "  ")
 	if err := encoder.Encode(exportData); err != nil {
