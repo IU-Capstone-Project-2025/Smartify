@@ -1,5 +1,7 @@
+// Package parsers contains logic for parsing and updating teacher data from external sources.
 package parsers
 
+// Importing necessary packages
 import (
 	"encoding/json"
 	"fmt"
@@ -15,6 +17,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
+// List of allowed exam subjects used to validate input
 var examSubjects = []string{
 	"русский язык",
 	"математика",
@@ -40,6 +43,7 @@ type DataInfo struct {
 	Avatar string `json:"avatar"`
 }
 
+// CapitalizeFirst returns the input string with the first character in uppercase
 func CapitalizeFirst(s string) string {
 	if s == "" {
 		return s
@@ -50,6 +54,7 @@ func CapitalizeFirst(s string) string {
 	return string(runes)
 }
 
+// IsValidExamSubject checks if the input string is one of the allowed exam subjects
 func IsValidExamSubject(input string) bool {
 	normalized := strings.ToLower(strings.TrimSpace(input))
 	for _, subject := range examSubjects {
@@ -60,6 +65,7 @@ func IsValidExamSubject(input string) bool {
 	return false
 }
 
+// ExtractFirstInt extracts the first integer from a string and returns it
 func ExtractFirstInt(raw string) (int, bool) {
 	clean := strings.ToLower(raw)
 	clean = strings.Map(func(r rune) rune {
@@ -86,6 +92,7 @@ func ExtractFirstInt(raw string) (int, bool) {
 	return num, true
 }
 
+// LoadAndParse performs the actual parsing of the page for a given city
 func LoadAndParse(url string, city string) error {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -94,13 +101,15 @@ func LoadAndParse(url string, city string) error {
 	}
 	defer resp.Body.Close()
 
+	// Parse the HTML document using goquery
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return err
 	}
 
+	// Iterate over each teacher card
 	doc.Find(".short.shadow.master").Each(func(i int, s *goquery.Selection) {
-		// Читаем data-info
+		// Read the data-info attribute which contains JSON with teacher details
 		dataInfoRaw, exists := s.Attr("data-info")
 		if !exists {
 			return
@@ -119,10 +128,12 @@ func LoadAndParse(url string, city string) error {
 
 		var subject, price string
 
+		// Extract education level
 		level := strings.TrimSpace(
 			s.Find(".btn-a.has-icon").First().Text(),
 		)
 
+		// Find the first subject and price from the teacher card
 		s.Find(".hide_list_item").EachWithBreak(func(i int, item *goquery.Selection) bool {
 			subject = strings.TrimSpace(item.Find(".dt").Text())
 			price = strings.TrimSpace(item.Find(".dd").Text())
@@ -137,6 +148,7 @@ func LoadAndParse(url string, city string) error {
 
 		pr, t := ExtractFirstInt(price)
 
+		// Validate all parsed fields and store them in DB if valid
 		if !(name == "" || avatar == "" || link == "" || !IsValidExamSubject(subject) || !t) {
 			subject = CapitalizeFirst(subject)
 			teacher := database.Teacher{
@@ -158,6 +170,7 @@ func LoadAndParse(url string, city string) error {
 	return nil
 }
 
+// TeacherParser iterates over the list of cities and parses teacher data from each corresponding page
 func TeacherParser() {
 	cities := map[string]string{
 		"Адыгея":              "http://adygeya.repetitors.info/repetitor/?nav=page-1-size-",

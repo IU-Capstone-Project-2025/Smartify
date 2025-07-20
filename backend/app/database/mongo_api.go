@@ -497,7 +497,6 @@ func GetAllTeachers() ([]Teacher, error) {
 
 	var teachers []Teacher
 
-	// Обрабатываем документы по одному
 	for cursor.Next(ctx) {
 		var t Teacher
 		if err := cursor.Decode(&t); err != nil {
