@@ -50,7 +50,7 @@ jobs:
           scp -r frontend/build/web/* $REMOTE_USER@$REMOTE_HOST:${FRONTEND_DIR}
           
       - name: Reload Nginx
-        run: ssh $REMOTE_USER@$REMOTE_HOST "nginx -s reload -c 
+        run: ssh $REMOTE_USER@$REMOTE_HOST "nginx -s reload -c"
           
       - name: Verify deployment
         run: |
