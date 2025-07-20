@@ -268,16 +268,20 @@ func TeacherParser() {
 			continue
 		}
 	}
+	// Clean up old entries in the database
 	database.DeleteOldTeachers()
 }
 
+// StartTeacherParserTicker runs TeacherParser periodically based on the given interval in hours
 func StartTeacherParserTicker(t int) {
 	interval := time.Duration(t) * time.Hour
 
+	// Initial run
 	go TeacherParser()
 
 	ticker := time.NewTicker(interval)
 
+	// Run periodically in a goroutine
 	go func() {
 		for {
 			select {
