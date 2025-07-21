@@ -33,7 +33,7 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
     } else {
       // Failed to log in
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка входа')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.loginError)),
       );
     }
     
@@ -46,31 +46,34 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         elevation: 0,
-        // backgroundColor: Colors.white, // убрано для поддержки темы
-        foregroundColor: Colors.black,
-        title: const Text(
-          'Вход в аккаунт',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+        foregroundColor: null,
+        title: Text(
+          AppLocalizations.of(context)!.loginToAccount,
+          style: Theme.of(context).textTheme.titleLarge,
         ),
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF54D0C0) : Colors.black,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Почта',
+            Text(
+              AppLocalizations.of(context)!.email,
               style: TextStyle(fontWeight: FontWeight.w500),
             ),
             SizedBox(height: 6),
             TextField(
               controller:  _emailController,
               decoration: InputDecoration(
-                hintText: 'Почта',
+                hintText: AppLocalizations.of(context)!.email,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -78,8 +81,8 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
               keyboardType: TextInputType.emailAddress,
             ),
             SizedBox(height: 16),
-            const Text(
-              'Пароль',
+            Text(
+              AppLocalizations.of(context)!.password,
               style: TextStyle(fontWeight: FontWeight.w500),
             ),
             SizedBox(height: 6),
@@ -87,7 +90,7 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
               controller: _passwordController,
               obscureText: _obscurePassword,
               decoration: InputDecoration(
-                hintText: 'Введите пароль',
+                hintText: AppLocalizations.of(context)!.enterPassword,
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscurePassword
@@ -118,8 +121,8 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  'Войти', // Жёстко прописываем текст
+                child: Text(
+                  AppLocalizations.of(context)!.login,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
@@ -136,8 +139,8 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                     ),
                   );
                 },
-                child: const Text(
-                  'Создать аккаунт',
+                child: Text(
+                  AppLocalizations.of(context)!.createAccount,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
@@ -153,8 +156,8 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                         ),
                   );
                 },
-                child: const Text(
-                  'Забыли пароль?',
+                child: Text(
+                  AppLocalizations.of(context)!.forgotPassword,
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
@@ -165,7 +168,7 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: Text.rich(
                   TextSpan(
-                    text: 'Пользуясь Smartify, вы соглашаетесь с условиями использования и политикой конфиденциальности.',
+                    text: AppLocalizations.of(context)!.termsAndPrivacy,
                   ),
                   textAlign: TextAlign.center,
                 ),

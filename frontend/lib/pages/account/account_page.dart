@@ -29,7 +29,7 @@ class SettingsSheet extends StatelessWidget {
           Row(
             children: [
               IconButton(
-                icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
+                icon: Icon(Icons.arrow_back, color: theme.brightness == Brightness.dark ? Color(0xFF54D0C0) : theme.iconTheme.color),
                 onPressed: () => Navigator.pop(context),
               ),
               const Spacer(),

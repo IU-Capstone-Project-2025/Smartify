@@ -25,8 +25,7 @@ class _ProfessionsPageState extends State<ProfessionsPage> {
 
   Future<void> loadProfessionData() async {
     try {
-      final String jsonString =
-          await rootBundle.loadString('assets/professions.json');
+      final String jsonString = await rootBundle.loadString('assets/professions.json');
       final List<dynamic> data = json.decode(jsonString);
       setState(() {
         professions = data;

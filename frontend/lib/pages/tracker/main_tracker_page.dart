@@ -14,16 +14,24 @@ class ProgressPage extends StatefulWidget {
 
 class _ProgressPageState extends State<ProgressPage> {
   final SubjectsManager taskManager = SubjectsManager();
+  bool _mounted = false;
 
   @override
   void initState() {
     super.initState();
+    _mounted = true;
     loadSavedSubjects();
+  }
+
+  @override
+  void dispose() {
+    _mounted = false;
+    super.dispose();
   }
 
   Future<void> loadSavedSubjects() async {
     await taskManager.loadAll();
-    setState(() {});
+    if (_mounted) setState(() {});
   }
 
   void _addSubject() {
@@ -99,7 +107,10 @@ class _ProgressPageState extends State<ProgressPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF54D0C0) : Colors.black,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },

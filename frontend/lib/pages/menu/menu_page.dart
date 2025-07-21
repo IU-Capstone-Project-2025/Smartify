@@ -8,11 +8,11 @@ class MenuPage  extends StatelessWidget{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.menu, style: const TextStyle(
-          color: Color.fromARGB(255, 168, 222, 170),
-          fontSize: 50 ,
-          fontWeight: FontWeight.w500
-        ),),
+        title: Text(
+          AppLocalizations.of(context)!.menu,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       ),
       body: Container(
         child: Text(AppLocalizations.of(context)!.body),

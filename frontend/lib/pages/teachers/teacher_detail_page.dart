@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'teacher_offer_page.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 class TeacherDetailPage extends StatelessWidget {
   final Map<String, dynamic> teacher;
@@ -19,14 +20,25 @@ class TeacherDetailPage extends StatelessWidget {
     final String experience = teacher['level'] ?? '';
     final String about = teacher['about'] ?? '';
 
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        title: Text(
+          name,
+          style: theme.textTheme.titleLarge,
+        ),
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
+        centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black54),
-          onPressed: () => Navigator.of(context).maybePop(),
+          icon: Icon(
+            Icons.arrow_back,
+            color: isDark ? Color(0xFF54D0C0) : Colors.black,
+          ),
+          onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
@@ -88,7 +100,7 @@ class TeacherDetailPage extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: theme.cardColor,
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
@@ -104,13 +116,13 @@ class TeacherDetailPage extends StatelessWidget {
                 children: [
                   Text(
                     name,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    style: theme.textTheme.titleLarge,
                     textAlign: TextAlign.center,
                   ),
                   if (email.isNotEmpty)
-                    Text(email, style: const TextStyle(color: Colors.black54, fontSize: 15)),
+                    Text('${AppLocalizations.of(context)!.email}: $email', style: theme.textTheme.bodyMedium),
                   if (phone.isNotEmpty)
-                    Text(phone, style: const TextStyle(color: Colors.black54, fontSize: 15)),
+                    Text('${AppLocalizations.of(context)!.phone}: $phone', style: theme.textTheme.bodyMedium),
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -121,7 +133,7 @@ class TeacherDetailPage extends StatelessWidget {
                             const Icon(Icons.location_on, size: 16, color: Colors.black45),
                             Text(
                               [city, country].where((e) => e.isNotEmpty).join(', '),
-                              style: const TextStyle(fontSize: 13, color: Colors.black54),
+                              style: theme.textTheme.bodyMedium,
                             ),
                             const SizedBox(width: 8),
                           ],
@@ -137,17 +149,17 @@ class TeacherDetailPage extends StatelessWidget {
                                   size: 18,
                                 )),
                             const SizedBox(width: 4),
-                            Text(rating, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                            Text(rating, style: theme.textTheme.bodyMedium),
                           ],
                         ),
                     ],
                   ),
                   const SizedBox(height: 18),
-                  _InfoBlock(title: 'Предметы', value: subjects),
+                  _InfoBlock(title: AppLocalizations.of(context)!.subjects, value: subjects),
                   const SizedBox(height: 10),
-                  _InfoBlock(title: 'Стаж', value: experience),
+                  _InfoBlock(title: AppLocalizations.of(context)!.experience, value: experience),
                   const SizedBox(height: 10),
-                  _InfoBlock(title: 'О себе', value: about),
+                  _InfoBlock(title: AppLocalizations.of(context)!.about, value: about),
                   const SizedBox(height: 18),
                   SizedBox(
                     width: double.infinity,
@@ -169,7 +181,7 @@ class TeacherDetailPage extends StatelessWidget {
                           ),
                         );
                       },
-                      child: const Text('Оставить заявку', style: TextStyle(fontSize: 16)),
+                      child: Text(AppLocalizations.of(context)!.leaveRequest, style: const TextStyle(fontSize: 16)),
                     ),
                   ),
                 ],

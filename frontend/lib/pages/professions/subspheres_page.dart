@@ -15,16 +15,24 @@ class SubspheresPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const highlightColor = Color(0xFF54D0C0);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(sphere),
-        backgroundColor: Colors.white,
+        title: Text(
+          sphere,
+          style: theme.textTheme.titleLarge,
+        ),
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(
+            Icons.arrow_back,
+            color: isDark ? highlightColor : Colors.black,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -64,6 +72,7 @@ class SubspheresPage extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: Card(
+                    color: theme.cardColor,
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -73,12 +82,12 @@ class SubspheresPage extends StatelessWidget {
                           horizontal: 16, vertical: 12),
                       title: Text(
                         sub,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: theme.textTheme.bodyLarge,
                       ),
-                      trailing: const Icon(Icons.arrow_forward_ios),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios,
+                        color: theme.iconTheme.color,
+                      ),
                       onTap: () {
                         Navigator.push(
                           context,

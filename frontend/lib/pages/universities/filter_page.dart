@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:smartify/pages/universities/filter.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 class UniversityFilterPage extends StatefulWidget {
   final UniversityFilter? currentFilter;
@@ -246,16 +247,26 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
       appBar: AppBar(
         elevation: 0,
         // backgroundColor: Colors.white, // убрано для поддержки темы
-        leading: const BackButton(color: Colors.black),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF54D0C0) : Colors.black,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
         centerTitle: true,
-        title: const Text("Фильтры", style: TextStyle(color: Colors.black)),
+        title: Text(
+          AppLocalizations.of(context)!.filters,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildFilterButton("Регион", () {
+            buildFilterButton(AppLocalizations.of(context)!.region, () {
               showOptionsPopup(allRegions, selectedRegions, (newList) {
                 setState(() {
                   selectedRegions = newList;
@@ -268,16 +279,16 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
               });
             }),
 
-            buildFilterButton("Рейтинг", () {
-              showSliderDialog("Рейтинг", minRating, 100, (value) {
+            buildFilterButton(AppLocalizations.of(context)!.rating, () {
+              showSliderDialog(AppLocalizations.of(context)!.rating, minRating, 100, (value) {
                 setState(() {
                   minRating = value;
                 });
               });
             }),
 
-            buildFilterButton("Бюджетных мест", () {
-              showSliderDialog("Бюджетных мест", budgetPlaces, 1000, (value) {
+            buildFilterButton(AppLocalizations.of(context)!.budgetPlaces, () {
+              showSliderDialog(AppLocalizations.of(context)!.budgetPlaces, budgetPlaces, 1000, (value) {
                 setState(() {
                   budgetPlaces = value;
                 });
@@ -285,13 +296,13 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
             }),
 
             // Обновлённый стиль "Общежитие" и "Военный центр"
-            buildToggleButton("Общежитие", hasDorm, () {
+            buildToggleButton(AppLocalizations.of(context)!.dormitory, hasDorm, () {
               setState(() {
                 hasDorm = !hasDorm;
               });
             }),
 
-            buildToggleButton("Военный уч. центр", hasMilitary, () {
+            buildToggleButton(AppLocalizations.of(context)!.militaryCenter, hasMilitary, () {
               setState(() {
                 hasMilitary = !hasMilitary;
               });
@@ -306,7 +317,7 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
               child: OutlinedButton.icon(
                 onPressed: clearFilters,
                 icon: const Icon(Icons.delete, color: Colors.red),
-                label: const Text("Очистить", style: TextStyle(color: Colors.red)),
+                label: Text(AppLocalizations.of(context)!.clear, style: const TextStyle(color: Colors.red)),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Colors.red),
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -321,7 +332,7 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
               child: ElevatedButton.icon(
                 onPressed: applyFilters,
                 icon: const Icon(Icons.search),
-                label: const Text("Поиск"),
+                label: Text(AppLocalizations.of(context)!.search),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFBFDAD9),
                   foregroundColor: Colors.black,
