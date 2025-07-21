@@ -9,19 +9,20 @@ import (
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/database"
 )
 
-// @Summary      Сохранение трекеров пользователя
-// @Description  Сохраняет трекеры пользователя на сервере для синхронизации между устройствами. Требуется валидный access token и корректная метка времени.
+// @Summary      Saving user trackers
+// @Description  Saves the user's trackers on the server for synchronization between devices. Requires valid access token and correct timestamp.
 // @Tags         trackers
 // @Accept       json
 // @Produce      json
-// @Param        request  body      Tracker_save      true  "Данные для сохранения (токен, трекеры и метка времени)"
-// @Success      200      {object}  Success_answer    "Трекеры успешно сохранены"
-// @Failure      304      {object}  Error_answer      "Данные не были изменены (Not Modified)"
-// @Failure      400      {object}  Error_answer      "Невалидный запрос (некорректные данные или формат времени)"
-// @Failure      401      {object}  Error_answer      "Неавторизованный доступ (невалидный токен)"
-// @Failure      405      {object}  Error_answer      "Метод не разрешен"
+// @Param        request  body      Tracker_save      true  "Data to be saved (token, trackers and timestamp)"
+// @Success      200      {object}  Success_answer    "Trackers successfully saved"
+// @Failure      304      {object}  Error_answer      "The data has not been modified (Not Modified)"
+// @Failure      400      {object}  Error_answer      "Invalid request (incorrect data or time format)"
+// @Failure      401      {object}  Error_answer      "Unauthorized access (invalid token)"
+// @Failure      405      {object}  Error_answer      "Method not allowed"
 // @Router       /savetrackers [post]
 func SaveTrackers(w http.ResponseWriter, r *http.Request) {
+	// Only allow POST requests
 	if r.Method != http.MethodPost {
 		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Method not allowed",
@@ -30,6 +31,7 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Decode request body into Tracker_save struct
 	var request Tracker_save
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
@@ -42,6 +44,7 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Parse and validate JWT token
 	claim, err := auth.ParseToken(request.Token)
 	if err != nil {
 		log.Println("Cannot decode request: " + err.Error())
@@ -53,6 +56,7 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Parse timestamp from request
 	parsedTime, err := request.GetParsedTime()
 	if err != nil {
 		log.Println("Invalid time format" + err.Error())
@@ -64,11 +68,13 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Prepare tracker data for database
 	var userTr database.User_trackers
 	userTr.UserID = claim.UserID
 	userTr.Trackers = request.Trackers
 	userTr.TimeStamp = parsedTime
 
+	// Save trackers to database
 	err = database.AddTrackers(userTr)
 	if err != nil {
 		log.Println("Cannot decode request")
@@ -79,6 +85,8 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
+	// Return success response
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(Success_answer{
 		Status: "ok",
@@ -86,19 +94,20 @@ func SaveTrackers(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// @Summary      Получение трекеров пользователя
-// @Description  Возвращает список трекеров для аутентифицированного пользователя. Требуется валидный access token.
+// @Summary      Retrieving user trackers
+// @Description  Returns a list of trackers for an authenticated user. Valid access token is required.
 // @Tags         trackers
 // @Accept       json
 // @Produce      json
-// @Param        request  body      Get_trackers_request  true  "Запрос с access token"
-// @Success      200      {object}  Trackers              "Успешный ответ с трекерами"
-// @Failure      304      {object}  Error_answer          "Данные не были изменены (Not Modified)"
-// @Failure      400      {object}  Error_answer          "Невалидный запрос"
-// @Failure      401      {object}  Error_answer          "Неавторизованный доступ (невалидный токен)"
-// @Failure      405      {object}  Error_answer          "Метод не разрешен"
+// @Param        request  body      Get_trackers_request  true  "Request with access token"
+// @Success      200      {object}  Trackers              "Successful response with trackers"
+// @Failure      304      {object}  Error_answer          "The data has not been modified (Not Modified)"
+// @Failure      400      {object}  Error_answer          "Invalid request"
+// @Failure      401      {object}  Error_answer          "Unauthorized access (invalid token)"
+// @Failure      405      {object}  Error_answer          "Method not allowed"
 // @Router       /gettrackers [post]
 func GetTrackers(w http.ResponseWriter, r *http.Request) {
+	// Only allow POST requests
 	if r.Method != http.MethodPost {
 		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Method not allowed",
@@ -107,6 +116,7 @@ func GetTrackers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Decode request body into Get_trackers_request struct
 	var request Get_trackers_request
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
@@ -119,6 +129,7 @@ func GetTrackers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Parse and validate JWT token
 	claim, err := auth.ParseToken(request.Token)
 	if err != nil {
 		log.Println("Cannot decode request: " + err.Error())
@@ -130,9 +141,11 @@ func GetTrackers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Prepare user data for database query
 	var userTr database.User_trackers
 	userTr.UserID = claim.UserID
 
+	// Retrieve trackers from database
 	trackers, err := database.GetTrackers(userTr)
 	if err != nil {
 		log.Println("Cannot decode request")
@@ -143,6 +156,8 @@ func GetTrackers(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
+	// Return trackers in response
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(Trackers{
 		Trackers: trackers.Trackers,

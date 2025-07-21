@@ -9,22 +9,27 @@ import (
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/database"
 )
 
-// @Summary      Аутентификация пользователя
-// @Description  Проверяет учетные данные пользователя и возвращает пару JWT-токенов (access и refresh)
+// @Summary      User Authentication
+// @Description  Validates user credentials and returns a pair of JWT tokens (access and refresh)
 // @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        credentials  body      User_email_password  true  "Email и пароль пользователя"
-// @Success      200         {object}  Tokens_answer         "Успешная аутентификация, возвращает токены"
-// @Failure      400         {object}  Error_answer          "Неверные учетные данные или невалидный запрос"
-// @Failure      405         {object}  Error_answer          "Метод не разрешен"
-// @Failure      500         {object}  Error_answer          "Ошибка сервера (генерация токенов, проблемы с БД)"
+// @Param        credentials  body      User_email_password  true  "User Email and Password"
+// @Success      200         {object}  Tokens_answer         "Successful authentication, returns tokens"
+// @Failure      400         {object}  Error_answer          "Invalid credentials or invalid request"
+// @Failure      405         {object}  Error_answer          "Method not allowed"
+// @Failure      500         {object}  Error_answer          "Server error (token generation, database problems)"
 // @Router       /login [post]
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	// Log new connection attempt
 	log.Println("New connection!")
+
+	// Set response content type to JSON
 	w.Header().Set("Content-Type", "application/json")
 
+	// Verify request method is POST
 	if r.Method != http.MethodPost {
+		// Return error if method is not POST
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		json.NewEncoder(w).Encode(Error_answer{
 			Error: "Method not allowed",
@@ -34,10 +39,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user User_email_password
-	// Try to decode message
+	// Attempt to decode JSON request body
 	err := json.NewDecoder(r.Body).Decode(&user)
 
 	if err != nil {
+		// Handle JSON decoding error
 		log.Println("Cannot decode request")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(Error_answer{
@@ -47,10 +53,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Print Message
+	// Log received credentials (for debugging, remove in production)
 	log.Printf("User: %s, %s", user.Email, user.Password)
 
-	// Find user in database
+	// Verify user credentials against database
 	var userDB database.User
 	err = database.FindAndCheckUser(user.Email, user.Password, &userDB, db)
 	if err != nil {
@@ -63,8 +69,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Generate new JWT tokens for authenticated user
 	accessToken, refreshToken, err := auth.GenerateTokens(userDB.ID)
 	if err != nil {
+		// Handle token generation failure
 		log.Printf("Cannot generate tokens: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(Error_answer{
@@ -74,8 +82,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Store refresh token in database
 	err = database.StoreRefreshToken(userDB.ID, refreshToken, db)
 	if err != nil {
+		// Handle token storage failure
 		log.Printf("Cannot store refresh token: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(Error_answer{
@@ -85,12 +95,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Prepare successful response with tokens
 	resp := Tokens_answer{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
 
-	// Send successful answer
+	// Send successful authentication response
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(resp)
 }

@@ -1,0 +1,38 @@
+name: Deploy APK to GitHub Releases (Android)
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.32.4
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ./frontend
+
+      - name: Build APK
+        run: flutter build apk --release
+        working-directory: ./frontend
+
+      - name: Upload APK to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          files: frontend/build/app/outputs/flutter-apk/app-release.apk
+          generate_release_notes: true

@@ -9,11 +9,15 @@ import 'package:path_provider/path_provider.dart';
 import 'package:smartify/pages/tracker/tracker_classes.dart';
 import 'package:smartify/pages/teachers/teacher_model.dart';
 
+// Main API service class for handling all network requests
 class ApiService {
-  //static const String _baseUrl = 'http://localhost:22025/api';
+  // Production server URL
   static const String _baseUrl = 'http://213.226.112.206:22025/api';
 
-  // Метод для входа
+  /// Authenticates user with email and password
+  /// @param email User's email address
+  /// @param password User's password
+  /// @return Future<bool> indicating login success
   static Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
@@ -35,12 +39,14 @@ class ApiService {
         return false;
       }
     } catch (e) {
-      print("Ошибка соединенея: $e");
+      print("Connection error: $e");
       return false;
     }
   }
 
-  // Валидация email при регистрации
+  /// Validates email during registration process
+  /// @param email Email to validate
+  /// @return Future<bool> indicating validation success
   static Future<bool> registration_emailValidation(String email)async {
     try {
       final response = await http.post(
@@ -57,12 +63,15 @@ class ApiService {
         return false;
       }
     } catch (e) {
-      print("Ошибка соединенея: $e");
+      print("Connection error: $e");
       return false;
     }
   }
 
-  // Валидация кода подтверждения
+  /// Validates registration verification code
+  /// @param email User's email
+  /// @param code Verification code to check
+  /// @return Future<bool> indicating code validity
   static Future<bool> registration_codeValidation(String email, String code)async {
     try {
       final response = await http.post(
@@ -81,12 +90,15 @@ class ApiService {
         return false;
       }
     } catch (e) {
-      print("Ошибка соединенея: $e");
+      print("Connection error: $e");
       return false;
     }
   }
 
-  // Установка пароля
+  /// Sets password during registration process
+  /// @param email User's email
+  /// @param password Password to set
+  /// @return Future<bool> indicating success
   static Future<bool> registration_password(String email, String password)async {
     try {
       final response = await http.post(
@@ -107,12 +119,14 @@ class ApiService {
         return false;
       }
     } catch (e) {
-      print("Ошибка соединенея: $e");
+      print("Connection error: $e");
       return false;
     }
   }
 
-  // Запрос на восстановление пароля
+  /// Initiates password recovery process
+  /// @param email Email for password recovery
+  /// @return Future<bool> indicating request success
   static Future<bool> forgot_password(String email) async {
     try {
       final response = await http.post(
@@ -129,10 +143,15 @@ class ApiService {
         return false;
       }
     } catch (e) {
-      print("Ошибка соединенея: $e");
+      print("Connection error: $e");
       return false;
     }
   }
+
+  /// Validates password reset code
+  /// @param email User's email
+  /// @param code Reset code to validate
+  /// @return Future<bool> indicating code validity
   static Future<bool> resetPassword_codeValidation(String email, String code)async {
     try {
       final response = await http.post(
@@ -152,10 +171,15 @@ class ApiService {
         return false;
       }
     } catch (e) {
-      print("Ошибка соединенея: $e");
+      print("Connection error: $e");
       return false;
     }
   }
+
+  /// Completes password reset process
+  /// @param email User's email
+  /// @param password New password to set
+  /// @return Future<bool> indicating reset success
   static Future<bool> resetPassword_resetPassword(String email, String password)async {
     try {
       final response = await http.post(
@@ -174,10 +198,14 @@ class ApiService {
         return false;
       }
     } catch (e) {
-      print("Ошибка соединенея: $e");
+      print("Connection error: $e");
       return false;
     }
   }
+
+  /// Refreshes access token using refresh token
+  /// @param refreshToken Refresh token string
+  /// @return Future<Map> containing new tokens or empty map on failure
   static Future<Map<String, String>> fetchNewAccessToken(String refreshToken) async {
     try {
       final response = await http.post(
@@ -196,11 +224,14 @@ class ApiService {
         return {};
       }
     } catch (e) {
-      print("Ошибка соединенея: $e");
+      print("Connection error: $e");
       return {};
     }
   }
-  // Метод для входа
+
+  /// Submits questionnaire and receives profession predictions
+  /// @param questionnaire Map of questionnaire data
+  /// @return Future<List<ProfessionPrediction>> list of predictions
   static Future<List<ProfessionPrediction>> AddQuestionnaire(Map<String, dynamic> questionnaire) async {
     try {
       final token = await AuthService.getAccessToken();
@@ -215,7 +246,7 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
-        print("Анкета успешно отправлена");
+        print("Questionnaire submitted successfully");
         final List<dynamic> data = json.decode(response.body);
         final predictions = data
           .map((item) => ProfessionPrediction.fromJson(item))
@@ -226,21 +257,26 @@ class ApiService {
 
         bool refreshSuccess = await AuthService.refreshTokens();
         if (!refreshSuccess) {
-          print("Не удалось обновить токены");
+          print("Failed to refresh tokens");
           return [];
         }
         return await AddQuestionnaire(questionnaire);
       } else {
-        print("Ошибка при отправке анкеты: ${response.statusCode}");
-        print("Ответ сервера: ${response.body}");
+        print("Questionnaire submission error: ${response.statusCode}");
+        print("Server response:${response.body}");
         return [];
       }
     } catch (e) {
-      print("Ошибка соединенея: $e");
+      print("Connection error: $e");
       return [];
     }
   }
-    static Future<bool> SaveTrackers(SubjectsManager subjectsManager, [int tries = 0]) async {
+
+  /// Saves tracker/subject data to server
+  /// @param subjectsManager Contains tracker data to save
+  /// @param tries Current retry attempt count (default 0)
+  /// @return Future<bool> indicating save success
+  static Future<bool> SaveTrackers(SubjectsManager subjectsManager, [int tries = 0]) async {
     try {
       final token = await AuthService.getAccessToken();
       final trackers = subjectsManager.getJSON();
@@ -272,11 +308,16 @@ class ApiService {
         return false;
       }
     } catch (e) {
-      print("Ошибка соединенея: $e");
+      print("Connection error: $e");
       return false;
     }
   }
 
+
+  /// Retrieves saved tracker data from server
+  /// @param subjectsManager Manager to potentially update
+  /// @param tries Current retry attempt count (default 0)
+  /// @return Future<List<String>?> list of trackers or null on failure
   static Future<List<String>?> GetTrackers(SubjectsManager subjectsManager, [int tries = 0]) async {
     try {
       final token = await AuthService.getAccessToken();
@@ -305,11 +346,15 @@ class ApiService {
         return null;
       }
     } catch (e) {
-      print("Ошибка соединенея: $e");
+      print("Connection error: $e");
       return null;
     }
   }
 
+  /// Validates token pair (access + refresh)
+  /// @param accessToken Current access token
+  /// @param refreshToken Current refresh token
+  /// @return Future<String?> error message or null if valid
   static Future<String?> CheckTokens(String accessToken, String refreshToken) async {
     try {
       final response = await http.post(
@@ -336,10 +381,78 @@ class ApiService {
   }
 }
 
+/// Manages teacher-related operations including:
+/// - Fetching teacher data from server
+/// - Caching teacher data locally
+/// - Loading teacher data from cache or assets
 class TeacherMeneger {
+  // Local filename for teachers data
   static const fileName = 'teachers.json';
 
+
+  /// Fetches latest teachers data from server and caches locally
+  /// @return Future<void>
   static Future<void> UpdateTeachers() async {
+    try {
+      final token = await AuthService.getAccessToken();
+
+      final response = await http.post(
+        Uri.parse('${ApiService._baseUrl}/get_teachers'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Access_token': token ?? '',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print("Response received");
+        final List<dynamic> data = json.decode(response.body);
+        // Save to local cache
+        final directory = await getApplicationDocumentsDirectory();
+        final file = File('${directory.path}/$fileName');
+        await file.writeAsBytes(response.bodyBytes);
+      } else if (response.statusCode == 401) {
+        print("Access token is invalid or expired. Trying to refresh...");
+
+        bool refreshSuccess = await AuthService.refreshTokens();
+        if (!refreshSuccess) {
+          print("Failed to refresh tokens");
+          return ;
+        }
+        return await UpdateTeachers();
+      } else {
+        print("Request error: ${response.statusCode}");
+        print("Server response: ${response.body}");
+        return ;
+      }
+    } catch (e) {
+      print("Connection error: $e");
+      return ;
+    }
+  }
+
+  /// Loads teachers data from local cache
+  /// @return Future<String> JSON string of teachers data  
+  static Future<String> loadSavedJsonTeachers() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/$fileName');
+      String jsonString = await file.readAsString();
+      return jsonString;
+    } catch (e) {
+      print("load failed: $e");
+      return await loadInitialJsonTeachers();
+    }
+  }
+
+  /// Loads initial teachers data from app assets
+  /// @return Future<String> JSON string of default teachers data
+  static Future<String> loadInitialJsonTeachers() async {
+    String jsonString = await rootBundle.loadString('assets/$fileName');
+    return jsonString;
+  }
+
+  static Future<String> UpdateTeachersAndReturn() async {
     try {
       final token = await AuthService.getAccessToken();
 
@@ -354,55 +467,58 @@ class TeacherMeneger {
       if (response.statusCode == 200) {
         print("Ответ получен");
         final List<dynamic> data = json.decode(response.body);
-        final directory = await getApplicationDocumentsDirectory();
-        final file = File('${directory.path}/$fileName');
-        await file.writeAsBytes(response.bodyBytes);
-        /*final teachers = data
-          .map((item) => Teacher.fromJson(item))
-          .toList();
-        return teachers;*/
-        return ;
+        return response.body;
       } else if (response.statusCode == 401) {
         print("Access token is invalid or expired. Trying to refresh...");
 
         bool refreshSuccess = await AuthService.refreshTokens();
         if (!refreshSuccess) {
           print("Не удалось обновить токены");
-          return ;
+          return "";
         }
-        return await UpdateTeachers();
+        return await UpdateTeachersAndReturn();
       } else {
         print("Ошибка при отправке запроса: ${response.statusCode}");
         print("Ответ сервера: ${response.body}");
-        return ;
+        return "";
       }
     } catch (e) {
       print("Ошибка соединенея: $e");
-      return ;
+      return "";
     }
   }
-
-  static Future<String> loadSavedJsonTeachers() async {
+  static Future<String> loadTeachers() async {
     try {
+      final String s = await UpdateTeachersAndReturn();
+      if (s.isNotEmpty) {
+        print("Successful direct return of teachers");
+        return s;
+      }
+
       final directory = await getApplicationDocumentsDirectory();
       final file = File('${directory.path}/$fileName');
       String jsonString = await file.readAsString();
       return jsonString;
     } catch (e) {
       print("Блин, не работает походу $e");
-      print("Загружаем из базового файла..."); // Отладочная информация
       return await loadInitialJsonTeachers();
     }
   }
-  static Future<String> loadInitialJsonTeachers() async {
-    String jsonString = await rootBundle.loadString('assets/$fileName');
-    return jsonString;
-  }
 }
 
+
+ /// Manages universities data including:
+ /// - Fetching latest data from server
+ /// - Caching data locally
+ /// - Loading from cache or assets
+
 class UniversitiesMeneger {
+  // Local filename for universities data
   static const fileName = 'universities.json';
   
+  /// Fetches latest universities data from server and caches locally
+  /// @return Future<void>
+
   static Future<void> GetUniversititesJSON() async {
     try {
       final token = await AuthService.getAccessToken();
@@ -419,15 +535,18 @@ class UniversitiesMeneger {
         final file = File('${directory.path}/$fileName');
         await file.writeAsBytes(response.bodyBytes);
       } else {
-        print("Ошибка при отправке анкеты: ${response.statusCode}");
-        print("Ответ сервера: ${response.body}");
+        print("Request error:  ${response.statusCode}");
+        print("Server response: ${response.body}");
         return;
       }
     } catch (e) {
-      print("Ошибка соединенея: $e");
+      print("Connection error: $e");
       return;
     }
   }
+
+  /// Loads universities data from local cache
+  /// @return Future<List<dynamic>> parsed JSON data
   static Future<List<dynamic>> loadSavedJson() async {
     try {
       final directory = await getApplicationDocumentsDirectory();
@@ -435,10 +554,12 @@ class UniversitiesMeneger {
       String jsonString = await file.readAsString();
       return jsonDecode(jsonString);
     } catch (e) {
-      print("Блин, не работает походу");
+      print("load failed");
       return await loadInitialJson();
     }
   }
+  /// Loads initial universities data from app assets
+  /// @return Future<List<dynamic>> parsed JSON data
   static Future<List<dynamic>> loadInitialJson() async {
     String jsonString = await rootBundle.loadString('assets/$fileName');
     return jsonDecode(jsonString);
