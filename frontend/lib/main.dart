@@ -98,6 +98,9 @@ class MyApp extends StatelessWidget {
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
               ],
+              builder: (context, child) {
+                return CenteredWrapper(child: child!);
+              },
               home: startWidget,
             );
           },
