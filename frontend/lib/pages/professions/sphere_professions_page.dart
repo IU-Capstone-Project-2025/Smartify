@@ -37,12 +37,10 @@ class _SphereProfessionsPageState extends State<SphereProfessionsPage> {
       String subsphere = widget.subsphere;
       final locale = Localizations.localeOf(context).languageCode;
       if (locale == 'en') {
-        // Найти русские эквиваленты для выбранных английских sphere/subsphere
         final String spheresRuStr = await rootBundle.loadString('assets/spheres_stats.json');
         final String spheresEnStr = await rootBundle.loadString('assets/spheres_stats_en.json');
         final List spheresRu = json.decode(spheresRuStr)['spheres'];
         final List spheresEn = json.decode(spheresEnStr)['spheres'];
-        // Найти индекс сферы и подсферы в английском файле
         final match = spheresEn.indexWhere((el) => el['sphere'] == widget.sphere && el['subsphere'] == widget.subsphere);
         if (match != -1) {
           sphere = spheresRu[match]['sphere'];

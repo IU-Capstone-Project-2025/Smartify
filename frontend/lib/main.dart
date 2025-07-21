@@ -22,9 +22,7 @@ void main() async {
 
   runApp(
     MyApp(
-      startWidget: CenteredWrapper(
-        child: isAuthenticated ? const DashboardPage() : const WelcomePage(),
-      ),
+      startWidget: isAuthenticated ? const DashboardPage() : const WelcomePage(),
     ),
   );
 }
