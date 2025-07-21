@@ -291,6 +291,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get takeQuestionnaire => 'Пройти анкетирование';
 
   @override
+  String get viewRecommendations => 'Посмотреть рекомендации';
+
+  @override
   String get noTitle => 'Без названия';
 
   @override

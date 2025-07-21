@@ -6,7 +6,6 @@ import 'package:xml/xml.dart';
 import 'package:smartify/pages/api_server/api_server.dart';
 import 'package:smartify/pages/api_server/api_save_prof.dart';
 import 'package:smartify/pages/recommendations/recommendation_screen.dart';
-import 'package:smartify/l10n/app_localizations.dart';
 
 void main() {
   runApp(const SmartifyApp());
@@ -110,8 +109,8 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
 
     if (!allFieldsFilled) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.requiredField),
+        const SnackBar(
+          content: Text("Не все поля заполнены"),
         ),
       );
       return;
@@ -213,15 +212,15 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.questionnaireError),
+          const SnackBar(
+            content: Text("Ошибка при отправке анкеты."),
           ),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("${AppLocalizations.of(context)!.questionnaireError}: ${e.toString()}"),
+          content: Text("Ошибка: ${e.toString()}"),
         ),
       );
     }
@@ -236,18 +235,11 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   @override
   void initState() {
     super.initState();
-    // Не используем context здесь!
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
     loadQuestions();
   }
 
   Future<void> loadQuestions() async {
-    String file = 'assets/profession_test.docx'; // всегда русский файл
-    final text = await extractDocxText(file);
+    final text = await extractDocxText('assets/profession_test.docx');
     final parsed = parseQuestions(text);
     setState(() => questions = parsed);
   }
@@ -369,8 +361,6 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   }
 
   Widget buildQuestion(int index, Question question) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     Widget content;
 
     switch (question.type) {
@@ -397,7 +387,10 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
           children: [
             Text(
               question.text,
-              style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
             ...question.options!
                 .where((o) => o != otherOption)
@@ -405,7 +398,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                   (option) => RadioListTile<String>(
                     activeColor: highlightColor,
                     title:
-                        Text(option, style: theme.textTheme.bodyMedium),
+                        Text(option, style: const TextStyle(color: Colors.black)),
                     value: option,
                     groupValue:
                         question.options!.contains(selected) ? selected : '',
@@ -428,20 +421,20 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                 },
                 title: Row(
                   children: [
-                    Text(
-                      AppLocalizations.of(context)!.other,
-                      style: theme.textTheme.bodyMedium,
+                    const Text(
+                      'Другое:',
+                      style: TextStyle(color: Colors.black),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: TextField(
                         controller: _textControllers[index],
-                        decoration: InputDecoration(
-                          hintText: AppLocalizations.of(context)!.yourOption,
+                        decoration: const InputDecoration(
+                          hintText: 'Ваш вариант',
                           isDense: true,
                           contentPadding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                          border: const OutlineInputBorder(),
+                          border: OutlineInputBorder(),
                         ),
                         onChanged: (value) {
                           answers[index] = value;
@@ -462,14 +455,14 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
         content = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(question.text, style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
+            Text(question.text, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
             ...question.options!.map((option) {
               final isChecked = selected.contains(option);
               final isLimitReached = !isChecked && selected.length >= max;
 
               return CheckboxListTile(
                 activeColor: highlightColor,
-                title: Text(option, style: theme.textTheme.bodyMedium),
+                title: Text(option, style: const TextStyle(color: Colors.black)),
                 value: isChecked,
                 onChanged: isLimitReached && !isChecked
                     ? null
@@ -489,8 +482,8 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
               Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  '${AppLocalizations.of(context)!.select}: ${selected.length} / $max',
-                  style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
+                  'Выбрано: ${selected.length} из $max',
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ),
           ],
@@ -504,7 +497,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
           children: [
             Text(
               '${question.text} (${question.scaleMin}–${question.scaleMax})',
-              style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
             ),
             Slider(
               activeColor: highlightColor,
@@ -521,46 +514,63 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
         break;
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        color: theme.cardColor,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: content,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (index == 0 || questions[index - 1].block != question.block)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(
+              question.block ?? '',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: highlightColor),
+            ),
+          ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (question.number != null)
+              Text('${question.number}. ', style: TextStyle(fontWeight: FontWeight.bold, color: highlightColor)),
+            Expanded(child: content),
+          ],
         ),
-      ),
+        const Divider(),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final highlightColor = const Color(0xFF54D0C0);
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context)!.questionnaire,
-          style: theme.textTheme.titleLarge,
-        ),
-        backgroundColor: theme.appBarTheme.backgroundColor,
-        elevation: 0,
+        title: Image.asset('logo.png', height: 50),
         centerTitle: true,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: isDark ? highlightColor : Colors.black,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
       ),
       body: questions.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
-              itemCount: questions.length,
-              itemBuilder: (context, index) => buildQuestion(index, questions[index]),
+              itemCount: questions.length + 1,
+              itemBuilder: (context, index) {
+                if (index == questions.length) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: highlightColor,
+                      ),
+                      onPressed: _submitQuestionnaire,
+                      child: const Text(
+                        'Завершить',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  );
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: buildQuestion(index, questions[index]),
+                );
+              },
             ),
     );
   }
