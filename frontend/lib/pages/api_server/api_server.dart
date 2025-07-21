@@ -450,6 +450,59 @@ class TeacherMeneger {
   static Future<String> loadInitialJsonTeachers() async {
     return await rootBundle.loadString('assets/$fileName');
   }
+
+  static Future<String> UpdateTeachersAndReturn() async {
+    try {
+      final token = await AuthService.getAccessToken();
+
+      final response = await http.post(
+        Uri.parse('${ApiService._baseUrl}/get_teachers'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Access_token': token ?? '',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print("Ответ получен");
+        final List<dynamic> data = json.decode(response.body);
+        return response.body;
+      } else if (response.statusCode == 401) {
+        print("Access token is invalid or expired. Trying to refresh...");
+
+        bool refreshSuccess = await AuthService.refreshTokens();
+        if (!refreshSuccess) {
+          print("Не удалось обновить токены");
+          return "";
+        }
+        return await UpdateTeachersAndReturn();
+      } else {
+        print("Ошибка при отправке запроса: ${response.statusCode}");
+        print("Ответ сервера: ${response.body}");
+        return "";
+      }
+    } catch (e) {
+      print("Ошибка соединенея: $e");
+      return "";
+    }
+  }
+  static Future<String> loadTeachers() async {
+    try {
+      final String s = await UpdateTeachersAndReturn();
+      if (s.isNotEmpty) {
+        print("Successful direct return of teachers");
+        return s;
+      }
+
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/$fileName');
+      String jsonString = await file.readAsString();
+      return jsonString;
+    } catch (e) {
+      print("Блин, не работает походу $e");
+      return await loadInitialJsonTeachers();
+    }
+  }
 }
 
 
