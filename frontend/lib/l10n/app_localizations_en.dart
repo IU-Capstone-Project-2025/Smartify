@@ -282,13 +282,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moreThanHundredTeachers => 'More than a hundred teachers';
 
   @override
-  String get loadDataError => 'Error loading data';
+  String get loadDataError => 'Failed to load data';
 
   @override
-  String get searchProfessionHint => 'Search profession...';
+  String get searchProfessionHint => 'Search for professions...';
 
   @override
-  String get takeQuestionnaire => 'Take questionnaire';
+  String get takeQuestionnaire => 'Take the questionnaire';
+
+  @override
+  String get viewRecommendations => 'View recommendations';
 
   @override
   String get noTitle => 'No title';

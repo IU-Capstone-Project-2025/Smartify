@@ -84,38 +84,37 @@ class _SphereProfessionsPageState extends State<SphereProfessionsPage> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: professions.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                // Кнопка анкеты
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: highlightColor,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const QuestionnairePage(),
-                        ),
-                      );
-                    },
-                    child: const Center(
-                      child: Text(
-                        'Пройти анкетирование',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                    ),
+      body: Column(
+        children: [
+          // Кнопка анкеты (всегда видна)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: highlightColor,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const QuestionnairePage(),
                   ),
+                );
+              },
+              child: const Center(
+                child: Text(
+                  'Пройти анкетирование',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
-                // Список профессий
-                Expanded(
-                  child: ListView.builder(
+              ),
+            ),
+          ),
+          // Список профессий или индикатор загрузки
+          Expanded(
+            child: professions.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: professions.length,
                     itemBuilder: (context, index) {
@@ -140,9 +139,9 @@ class _SphereProfessionsPageState extends State<SphereProfessionsPage> {
                       );
                     },
                   ),
-                ),
-              ],
-            ),
+          ),
+        ],
+      ),
     );
   }
 }

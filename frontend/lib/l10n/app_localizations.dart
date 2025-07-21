@@ -644,20 +644,26 @@ abstract class AppLocalizations {
   /// No description provided for @loadDataError.
   ///
   /// In en, this message translates to:
-  /// **'Error loading data'**
+  /// **'Failed to load data'**
   String get loadDataError;
 
   /// No description provided for @searchProfessionHint.
   ///
   /// In en, this message translates to:
-  /// **'Search profession...'**
+  /// **'Search for professions...'**
   String get searchProfessionHint;
 
   /// No description provided for @takeQuestionnaire.
   ///
   /// In en, this message translates to:
-  /// **'Take questionnaire'**
+  /// **'Take the questionnaire'**
   String get takeQuestionnaire;
+
+  /// No description provided for @viewRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'View recommendations'**
+  String get viewRecommendations;
 
   /// No description provided for @noTitle.
   ///
