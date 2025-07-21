@@ -13,6 +13,8 @@ import (
 )
 
 // Global variables for email service
+var db *sql.DB
+var temporary_users = make(map[string]string)
 var EmailQueue chan EmailTask // Channel for email tasks
 var wg sync.WaitGroup         // WaitGroup for tracking email goroutines
 
@@ -26,6 +28,7 @@ type EmailTask struct {
 
 // InitEmailApi initializes the email service with database connection
 func InitEmailApi(db_ *sql.DB) {
+	db = db_
 	// Initialize buffered email queue channel
 	EmailQueue = make(chan EmailTask, 100)
 	// Start email queue processor
