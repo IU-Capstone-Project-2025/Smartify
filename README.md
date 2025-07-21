@@ -63,7 +63,7 @@ The key feature is personalized recommendations make the journey clear and acces
 
 ## Launching the app
 
-Locally:
+1. Locally:
    ```sh
    git clone https://github.com/IU-Capstone-Project-2025/Smartify.git
    cd Smartify
@@ -71,9 +71,9 @@ Locally:
    cd frontend
    flutter run
    ```
-Using our [deployment](http://213.226.112.206:22030)
+2. Using our [deployment](http://213.226.112.206:22030)
 
-Or download our [apk](https://github.com/IU-Capstone-Project-2025/Smartify/releases/tag/v1.0.0)
+3. Or download our [apk](https://github.com/IU-Capstone-Project-2025/Smartify/releases/tag/v1.0.0)
 
 > Helping students make informed decisions — simply, clearly, and effectively.  
 **Smartify: Your personalized guide to the future.**
