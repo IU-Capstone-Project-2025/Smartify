@@ -12,8 +12,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Establishes a global MongoDB client reference
 var mongoClient *mongo.Client
 
+// Struct representing a minimal University with potential extra fields
 type University struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
 	Name      string             `bson:"name" json:"name"`
@@ -23,6 +25,7 @@ type University struct {
 	ExtraData map[string]interface{} `bson:",extraelements" json:"extra_data,omitempty"`
 }
 
+// Struct representing detailed university data from MongoDB
 type UniversityMongo struct {
 	ID                    primitive.ObjectID `bson:"_id" json:"id"`
 	Link                  string             `bson:"ссылка" json:"ссылка"`
@@ -48,6 +51,7 @@ type UniversityMongo struct {
 	TimeStamp             time.Time          `bson:"timestamp" json:"timestamp"`
 }
 
+// Represents a profession with characteristics relevant for career matching
 type Profession struct {
 	Name            string    `json:"name" bson:"name"`
 	Description     string    `json:"description" bson:"description"`
@@ -64,6 +68,7 @@ type Profession struct {
 	TimeStamp       time.Time `bson:"timestamp" json:"timestamp"`
 }
 
+// User-filled questionnaire model, used in career tests
 type Questionnaire struct {
 	UserID           int             `json:"user_id" bson:"user_id"`
 	Class            string          `json:"class" bson:"class"`
@@ -79,6 +84,7 @@ type Questionnaire struct {
 	TimeStamp        time.Time       `bson:"timestamp" json:"timestamp"`
 }
 
+// Preferences a user has about their ideal job
 type WorkPreferences struct {
 	Role    string `json:"role" bson:"role"`
 	Place   string `json:"place" bson:"place"`
@@ -86,12 +92,14 @@ type WorkPreferences struct {
 	Exclude string `json:"exclude" bson:"exclude"`
 }
 
+// Predicted profession recommendations for a user
 type ProfessionRec struct {
 	UserID           int                `json:"user_id" bson:"user_id"`
 	ProfessionPredic []ProfessionPredic `json:"profession_predic" bson:"profession_predic"`
 	TimeStamp        time.Time          `bson:"timestamp" json:"timestamp"`
 }
 
+// Individual prediction item for a profession
 type ProfessionPredic struct {
 	Name        string   `json:"name"`
 	Score       float64  `json:"score"`
@@ -101,6 +109,7 @@ type ProfessionPredic struct {
 	Subsphere   string   `json:"subsphere"`
 }
 
+// User's tutor preferences and data
 type Tutor struct {
 	UserID     int       `json:"user_id" bson:"user_id"`
 	Cource     int       `json:"cource" bson:"cource"`
@@ -109,12 +118,14 @@ type Tutor struct {
 	TimeStamp  time.Time `bson:"timestamp" json:"timestamp"`
 }
 
+// Tracker categories the user follows
 type User_trackers struct {
 	UserID    int       `json:"user_id" bson:"user_id"`
 	Trackers  []string  `json:"trackers" bson:"trackers"`
 	TimeStamp time.Time `bson:"timestamp" json:"timestamp"`
 }
 
+// Individual teacher's profile information
 type Teacher struct {
 	Name      string    `bson:"name" json:"name"`
 	Subject   string    `bson:"subject" json:"subject"`
@@ -127,6 +138,7 @@ type Teacher struct {
 	TimeStamp time.Time `bson:"timestamp" json:"timestamp"`
 }
 
+// Connects to MongoDB with a timeout and returns the client
 func ConnectMongo(uri string) (*mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -146,6 +158,7 @@ func ConnectMongo(uri string) (*mongo.Client, error) {
 	return client, nil
 }
 
+// Verifies that the MongoDB connection is alive
 func CheckConnection(client *mongo.Client) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -158,6 +171,7 @@ func CheckConnection(client *mongo.Client) error {
 	return nil
 }
 
+// Inserts a new university, separating known fields and extra data
 func AddUniversity(data map[string]interface{}) error {
 	collection := mongoClient.Database("smartify").Collection("universities")
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
@@ -192,6 +206,7 @@ func AddUniversity(data map[string]interface{}) error {
 	return nil
 }
 
+// Adds a profession or updates it if the timestamp is newer
 func AddProfession(profession Profession) error {
 	collection := mongoClient.Database("smartify").Collection("professions")
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
@@ -222,6 +237,7 @@ func AddProfession(profession Profession) error {
 	return nil
 }
 
+// Inserts or updates a user's career test questionnaire
 func AddQuestionnaire(questionnaire Questionnaire) error {
 	collection := mongoClient.Database("smartify").Collection("dataset_career_test")
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
@@ -256,6 +272,7 @@ func AddQuestionnaire(questionnaire Questionnaire) error {
 	return nil
 }
 
+// Adds or updates a profession recommendation result
 func AddProfessionRecommendation(p ProfessionRec) error {
 	collection := mongoClient.Database("smartify").Collection("profession_recommendation")
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
@@ -290,6 +307,7 @@ func AddProfessionRecommendation(p ProfessionRec) error {
 	return nil
 }
 
+// Adds or updates user tracker data
 func AddTrackers(ut User_trackers) error {
 	collection := mongoClient.Database("smartify").Collection("trackers")
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
@@ -320,6 +338,7 @@ func AddTrackers(ut User_trackers) error {
 	return nil
 }
 
+// Retrieves trackers data for a given user
 func GetTrackers(ut User_trackers) (User_trackers, error) {
 	collection := mongoClient.Database("smartify").Collection("trackers")
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
@@ -339,6 +358,7 @@ func GetTrackers(ut User_trackers) (User_trackers, error) {
 	return existing, nil
 }
 
+// Adds or updates a tutor's information
 func AddTutor(t Tutor) error {
 	collection := mongoClient.Database("smartify").Collection("tutors")
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
@@ -373,6 +393,7 @@ func AddTutor(t Tutor) error {
 	return nil
 }
 
+// Retrieves tutor data for a specific user
 func GetTutor(userID int) (Tutor, error) {
 	collection := mongoClient.Database("smartify").Collection("tutors")
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
@@ -394,6 +415,7 @@ func GetTutor(userID int) (Tutor, error) {
 	return existing, nil
 }
 
+// Fetches all university documents and parses them
 func GetAllUniversities() ([]UniversityMongo, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -443,6 +465,7 @@ func GetAllUniversities() ([]UniversityMongo, error) {
 	return universities, nil
 }
 
+// Adds or updates a teacher's profile
 func AddTeacher(t Teacher) error {
 	collection := mongoClient.Database("smartify").Collection("teachers")
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
@@ -477,6 +500,7 @@ func AddTeacher(t Teacher) error {
 	return nil
 }
 
+// Fetches all teachers stored in MongoDB
 func GetAllTeachers() ([]Teacher, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -517,6 +541,7 @@ func GetAllTeachers() ([]Teacher, error) {
 	return teachers, nil
 }
 
+// Deletes teachers whose data is older than 24 hours
 func DeleteOldTeachers() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -539,6 +564,7 @@ func DeleteOldTeachers() error {
 	return nil
 }
 
+// Deletes a teacher by name, if they exist
 func DeleteTeacher(name string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

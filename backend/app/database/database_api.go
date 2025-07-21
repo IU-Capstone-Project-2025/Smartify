@@ -12,6 +12,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// User represents a user object stored in the PostgreSQL database.
 type User struct {
 	ID            int
 	Email         string `json:"email"`
@@ -31,6 +32,8 @@ var (
 	ErrDuplicateUser = errors.New("database: user with such email already exists")
 )
 
+// CreateUsersTable ensures the "users" table exists in the database.
+// If it doesn't exist, the function creates it with required fields.
 func CreateUsersTable(database *sql.DB) error {
 	_, err := database.Exec(
 		`CREATE TABLE IF NOT EXISTS users (
@@ -50,12 +53,16 @@ func CreateUsersTable(database *sql.DB) error {
 	return err
 }
 
+// IsValidEmail validates the email format using a regular expression.
+// Returns true if the email is valid, false otherwise.
 func IsValidEmail(email string) bool {
 	regex := `^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$`
 	re := regexp.MustCompile(regex)
 	return re.MatchString(email)
 }
 
+// CheckUser checks if a user with the given email already exists in the database.
+// Returns ErrDuplicateUser if a user is found.
 func CheckUser(email string, database *sql.DB) error {
 	var id int
 	err := database.QueryRow("SELECT id FROM users WHERE email = $1", email).Scan(&id)
@@ -68,7 +75,8 @@ func CheckUser(email string, database *sql.DB) error {
 	return ErrDuplicateUser
 }
 
-// Функция для получшения данных о пользователе
+// FindUser retrieves full user information by email and plaintext password.
+// Returns ErrUserNotFound if no user matches, or a database error otherwise.
 func FindUser(email string, password string, user *User, database *sql.DB) error {
 	err := database.QueryRow(`
         SELECT id, email, password_hash, first_name, last_name, middle_name, 
@@ -97,6 +105,8 @@ func FindUser(email string, password string, user *User, database *sql.DB) error
 	return nil
 }
 
+// FindUser retrieves password hash by email and checks that the password is correct.
+// If not, return an error.
 func FindAndCheckUser(email string, password string, user *User, database *sql.DB) error {
 	err := database.QueryRow(`
         SELECT id, password_hash
@@ -122,6 +132,7 @@ func FindAndCheckUser(email string, password string, user *User, database *sql.D
 	return nil
 }
 
+// FindUserByID retrieves a user by their email.
 func FindUserByEmail(email string, user *User, database *sql.DB) error {
 	err := database.QueryRow(`
         SELECT id, email, password_hash, first_name, last_name, middle_name, 
@@ -181,12 +192,13 @@ func UpdateUsersPassword(email string, newPassword string, database *sql.DB) err
 	return nil
 }
 
+// FindUserByID retrieves a user by ID.
 func FindUserByID(ID int, user *User, database *sql.DB) error {
 	err := database.QueryRow(`
         SELECT id, email, password_hash, first_name, last_name, middle_name, 
                date_of_birth, created_at, last_login, is_active, user_role
         FROM users 
-        WHERE id = $1 and password_hash = $2`, ID).Scan(
+        WHERE id = $1`, ID).Scan(
 		&user.ID,
 		&user.Email,
 		&user.Password_hash,
@@ -209,6 +221,8 @@ func FindUserByID(ID int, user *User, database *sql.DB) error {
 	return nil
 }
 
+// PrepareUser performs pre-checks before inserting a user: table creation, email format validation,
+// and ensuring that no duplicate user exists.
 func PrepareUser(email string, database *sql.DB) error {
 	err := CreateUsersTable(database)
 	if err != nil {
@@ -224,16 +238,22 @@ func PrepareUser(email string, database *sql.DB) error {
 	return nil
 }
 
+// HashPassword generates a bcrypt hash from the plaintext password.
+// Returns the hashed string or an error.
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytes), err
 }
 
+// CheckPasswordHash compares a plaintext password with its bcrypt hash.
+// Returns true if they match, false otherwise.
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
 
+// Add_new_user hashes the user's password and inserts a new user with email and password hash into the database.
+// Only email and password are inserted; other fields are left NULL or set to defaults.
 func Add_new_user(user User, database *sql.DB) error {
 	log.Printf("Add user to db: %s, %s", user.Email, user.Password_hash)
 	h, err1 := HashPassword(user.Password_hash)
@@ -251,11 +271,13 @@ func Add_new_user(user User, database *sql.DB) error {
 	return nil
 }
 
+// ChangeUserInfo updates the first name, last name, middle name,
+// and user role for a given user ID.
 func ChangeUserInfo(user User, database *sql.DB) error {
 	log.Printf("Change user info in db: %s, %s", user.Email, user.Password_hash)
 	err := database.QueryRow(`
         update users set first_name = $2, last_name = $3, middle_name = $4, 
-               date_of_birth = $5, user_role = $5 WHERE id = $1`,
+               date_of_birth = $5, user_role = $6 WHERE id = $1`,
 		&user.ID,
 		&user.First_name,
 		&user.Last_name,
@@ -270,6 +292,7 @@ func ChangeUserInfo(user User, database *sql.DB) error {
 	return nil
 }
 
+// This function stores the refresh token into db
 func StoreRefreshToken(userID int, token string, database *sql.DB) error {
 	_, err := database.Exec(
 		`INSERT INTO refresh_tokens (user_id, token, expires_at)
@@ -280,6 +303,7 @@ func StoreRefreshToken(userID int, token string, database *sql.DB) error {
 	return err
 }
 
+// This function checks if the refresh token exists in db or not
 func IsRefreshTokenValid(token string, database *sql.DB) (bool, int, error) {
 	var userID int
 	err := database.QueryRow(
@@ -298,6 +322,7 @@ func IsRefreshTokenValid(token string, database *sql.DB) (bool, int, error) {
 	return true, userID, nil
 }
 
+// This function deletes the refresh token from db
 func DeleteRefreshToken(token string, database *sql.DB) error {
 	_, err := database.Exec(`DELETE FROM refresh_tokens WHERE token = $1`, token)
 	return err
