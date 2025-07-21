@@ -1,9 +1,9 @@
 # Smartify — AI-Powered Educational Platform for High School Students
 
 **Smartify** is an all-in-one educational platform that helps Russian high school students (grades 9–11) navigate their career path, choose the right university, prepare for the Unified State Exam (ЕГЭ), and find suitable tutors.  
-The key feature is **AI-based personalized recommendations** that make the journey clear and accessible for every student.
+The key feature is personalized recommendations make the journey clear and accessible for every student.
 
-## 🚀 Key Advantages
+### 1. 🚀 Key Advantages
 
 - **All-in-one solution** — no need to juggle multiple websites and tools  
 - **Personalized guidance** — specific career suggestions, not just general directions  
@@ -11,42 +11,42 @@ The key feature is **AI-based personalized recommendations** that make the journ
 
 ---
 
-## 🧩 Application Modules
-
-### 1. 🔍 Career Guidance Module
+### 2. 🔍 Career Guidance Page
 
 - Interactive questionnaire covering interests, school performance, and hobbies  
-- AI-powered analysis suggests **specific careers** (e.g., _pediatric surgeon_ instead of just _medic_)  
+- Analysis suggests **specific careers** (e.g., _pediatric surgeon_ instead of just _medic_)  
 - Shows required subjects for admission right away  
 - Includes reasoning behind the career choice to help students understand the fit
+- You can find out information about spheres, subspheres and their specific professions in more detail
 
 ---
 
-### 2. 🎓 University Selection Module
+### 3. 🎓 University Selection Page
 
-- Filter universities by region, tuition (budget/paid), and field of study  
 - Compare universities by:
-  - Entrance scores
-  - Education costs
-  - National rankings
+  - Region
+  - Raiting
+  - Number of budget places
+  - Dormitory
+  - Military center
 
 ---
 
-### 3. 📚 Exam Preparation Module
+### 4. 📚 Exam Preparation Page
 
 - Based on the chosen career and university, recommends:
   - Required subjects
-  - Weekly study plan (hours per subject)
-- Built-in mini-tests to assess current knowledge  
+  - Weekly study plan (in future)
 - Progress tracker to monitor preparation
+- Built-in mini-tests to assess current knowledge (in future)
 
 ---
 
-### 4. 👩‍🏫 Tutors & Mentors Module
+### 5. 👩‍🏫 Tutors & Mentors Page
 
 - Find tutors using flexible filters:
   - Subject
-  - Teaching style (e.g., friendly, strict, structured)
+  - Teaching style
 - Browse detailed tutor profiles, including:
   - Background and experience
   - University they attended
@@ -57,30 +57,23 @@ The key feature is **AI-based personalized recommendations** that make the journ
 
 - Sync personalized study schedule with **Google Calendar**  
 - **Score prediction** based on current knowledge and progress  
-- Links to **free official resources** (FIPI, Yandex.Education, etc.)
-
----
-
-## 🧠 Powered by AI
-
-We use AI not just for buzz — but for real insights:
-- Matching careers with individual traits
-- Recommending optimal universities
-- Dynamically adjusting preparation plans
+- Links to **free official resources** (FIPI, Yandex.Education, etc.) (in future)
 
 ---
 
 ## Launching the app
 
-Build and start all services:
+Locally:
    ```sh
-   docker compose up --build
-   ```
-Starting the app:
-   ```sh
+   git clone https://github.com/IU-Capstone-Project-2025/Smartify.git
+   cd Smartify
+   docker-compose up --build
    cd frontend
    flutter run
    ```
+Using our [deployment](http://213.226.112.206:22030)
+
+Or download our [apk](https://github.com/IU-Capstone-Project-2025/Smartify/releases/tag/v1.0.0)
 
 > Helping students make informed decisions — simply, clearly, and effectively.  
 **Smartify: Your personalized guide to the future.**
