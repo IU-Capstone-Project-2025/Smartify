@@ -11,7 +11,7 @@ const docTemplate = `{
         "title": "{{.Title}}",
         "contact": {
             "name": "Smartify Working Mail",
-            "email": "projectsmartifyapp@gmail.com"
+            "email": "smartifyprojectapp@gmail.com"
         },
         "version": "{{.Version}}"
     },
@@ -20,7 +20,7 @@ const docTemplate = `{
     "paths": {
         "/add_tutor": {
             "post": {
-                "description": "Доступно только аутентифицированным пользователям с ролью тьютора. Обновляет или создает запись тьютора.",
+                "description": "Available only to authenticated users with the tutor role. Updates or creates a tutor record.",
                 "consumes": [
                     "application/json"
                 ],
@@ -30,10 +30,10 @@ const docTemplate = `{
                 "tags": [
                     "tutor"
                 ],
-                "summary": "Добавление/обновление информации о тьюторе",
+                "summary": "Adding/updating tutor information",
                 "parameters": [
                     {
-                        "description": "Данные тьютора для обновления",
+                        "description": "Tutor data to be updated",
                         "name": "tutor_data",
                         "in": "body",
                         "required": true,
@@ -44,37 +44,37 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Успешное обновление данных",
+                        "description": "Successful data update",
                         "schema": {
                             "$ref": "#/definitions/api.Tutor_succes"
                         }
                     },
                     "400": {
-                        "description": "Невалидные данные или JSON",
+                        "description": "Invalid data or JSON",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "401": {
-                        "description": "Пользователь не аутентифицирован",
+                        "description": "User not authenticated",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "403": {
-                        "description": "Пользователь не является тьютором",
+                        "description": "The user is not a tutor",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "405": {
-                        "description": "Метод не разрешен",
+                        "description": "Method not allowed",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "500": {
-                        "description": "Ошибка сервера (БД и т.д.)",
+                        "description": "Server error (database, etc.)",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
@@ -84,7 +84,7 @@ const docTemplate = `{
         },
         "/checkTokens": {
             "post": {
-                "description": "Проверяет срок действия access и refresh токенов",
+                "description": "Checks the expiration date of access and refresh tokens",
                 "consumes": [
                     "application/json"
                 ],
@@ -94,10 +94,10 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Проверка валидности токенов",
+                "summary": "Checking token validity",
                 "parameters": [
                     {
-                        "description": "Пара токенов для проверки",
+                        "description": "A couple of tokens to check out",
                         "name": "tokens",
                         "in": "body",
                         "required": true,
@@ -108,25 +108,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Токены валидны",
+                        "description": "The tokens are valid",
                         "schema": {
                             "$ref": "#/definitions/api.Success_answer"
                         }
                     },
                     "400": {
-                        "description": "Невалидный запрос",
+                        "description": "Invalid request",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "401": {
-                        "description": "Токены невалидны или просрочены",
+                        "description": "Tokens are invalid or expired",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "405": {
-                        "description": "Метод не разрешен",
+                        "description": "Method not allowed",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
@@ -136,7 +136,7 @@ const docTemplate = `{
         },
         "/commit_code_reset_password": {
             "post": {
-                "description": "Валидирует код для сброса пароля, отправленный на email",
+                "description": "Validates the password reset code sent to email",
                 "consumes": [
                     "application/json"
                 ],
@@ -146,10 +146,10 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Проверка кода подтверждения",
+                "summary": "Verifying the confirmation code",
                 "parameters": [
                     {
-                        "description": "Email и код подтверждения",
+                        "description": "Email and confirmation code",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -160,19 +160,19 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Код подтвержден",
+                        "description": "Code confirmed",
                         "schema": {
                             "$ref": "#/definitions/api.Success_answer"
                         }
                     },
                     "400": {
-                        "description": "Неверный код или пользователь не найден",
+                        "description": "Invalid code or user not found",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "405": {
-                        "description": "Метод не разрешен",
+                        "description": "Method not allowed",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
@@ -182,7 +182,7 @@ const docTemplate = `{
         },
         "/forgot_password": {
             "post": {
-                "description": "Отправляет код подтверждения на email пользователя для восстановления пароля",
+                "description": "Sends a confirmation code to the user's email for password recovery",
                 "consumes": [
                     "application/json"
                 ],
@@ -192,10 +192,10 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Запрос на сброс пароля",
+                "summary": "Password reset request",
                 "parameters": [
                     {
-                        "description": "Email пользователя",
+                        "description": "User Email",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -206,19 +206,19 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Код подтверждения отправлен",
+                        "description": "Confirmation code sent",
                         "schema": {
                             "$ref": "#/definitions/api.Success_answer"
                         }
                     },
                     "400": {
-                        "description": "Невалидный запрос или пользователь не найден",
+                        "description": "Invalid request or user not found",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "405": {
-                        "description": "Метод не разрешен",
+                        "description": "Method not allowed",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
@@ -226,37 +226,66 @@ const docTemplate = `{
                 }
             }
         },
+        "/get_teachers": {
+            "get": {
+                "description": "Retrieves a list of all teachers from the database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teachers"
+                ],
+                "summary": "Get all teachers",
+                "responses": {
+                    "200": {
+                        "description": "List of teachers",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/database.Teacher"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/get_tutor": {
             "get": {
-                "description": "Возвращает полную информацию о текущем аутентифицированном тьюторе",
+                "description": "Returns complete information about the current authenticated tutor",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "tutor"
                 ],
-                "summary": "Получение информации о тьюторе",
+                "summary": "Getting information about the tutor",
                 "responses": {
                     "200": {
-                        "description": "Данные тьютора",
+                        "description": "Tutor data",
                         "schema": {
                             "$ref": "#/definitions/database.Tutor"
                         }
                     },
                     "401": {
-                        "description": "Пользователь не аутентифицирован",
+                        "description": "User not authenticated",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "403": {
-                        "description": "Пользователь не является тьютором",
+                        "description": "The user is not a tutor",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "500": {
-                        "description": "Ошибка сервера (БД и т.д.)",
+                        "description": "Server error (database, etc.)",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
@@ -266,7 +295,7 @@ const docTemplate = `{
         },
         "/gettrackers": {
             "post": {
-                "description": "Возвращает список трекеров для аутентифицированного пользователя. Требуется валидный access token.",
+                "description": "Returns a list of trackers for an authenticated user. Valid access token is required.",
                 "consumes": [
                     "application/json"
                 ],
@@ -276,10 +305,10 @@ const docTemplate = `{
                 "tags": [
                     "trackers"
                 ],
-                "summary": "Получение трекеров пользователя",
+                "summary": "Retrieving user trackers",
                 "parameters": [
                     {
-                        "description": "Запрос с access token",
+                        "description": "Request with access token",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -290,31 +319,31 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Успешный ответ с трекерами",
+                        "description": "Successful response with trackers",
                         "schema": {
                             "$ref": "#/definitions/api.Trackers"
                         }
                     },
                     "304": {
-                        "description": "Данные не были изменены (Not Modified)",
+                        "description": "The data has not been modified (Not Modified)",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "400": {
-                        "description": "Невалидный запрос",
+                        "description": "Invalid request",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "401": {
-                        "description": "Неавторизованный доступ (невалидный токен)",
+                        "description": "Unauthorized access (invalid token)",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "405": {
-                        "description": "Метод не разрешен",
+                        "description": "Method not allowed",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
@@ -324,23 +353,23 @@ const docTemplate = `{
         },
         "/hello": {
             "get": {
-                "description": "Возвращает статус \"ok\" если сервер работает",
+                "description": "Returns the status “ok” if the server is running",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "utils"
                 ],
-                "summary": "Проверка доступности сервера",
+                "summary": "Checking server availability",
                 "responses": {
                     "200": {
-                        "description": "Сервер доступен",
+                        "description": "The server is available",
                         "schema": {
                             "$ref": "#/definitions/api.Success_answer"
                         }
                     },
                     "405": {
-                        "description": "Метод не разрешен",
+                        "description": "Method not allowed",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
@@ -350,7 +379,7 @@ const docTemplate = `{
         },
         "/login": {
             "post": {
-                "description": "Проверяет учетные данные пользователя и возвращает пару JWT-токенов (access и refresh)",
+                "description": "Validates user credentials and returns a pair of JWT tokens (access and refresh)",
                 "consumes": [
                     "application/json"
                 ],
@@ -360,10 +389,10 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Аутентификация пользователя",
+                "summary": "User Authentication",
                 "parameters": [
                     {
-                        "description": "Email и пароль пользователя",
+                        "description": "User Email and Password",
                         "name": "credentials",
                         "in": "body",
                         "required": true,
@@ -374,25 +403,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Успешная аутентификация, возвращает токены",
+                        "description": "Successful authentication, returns tokens",
                         "schema": {
                             "$ref": "#/definitions/api.Tokens_answer"
                         }
                     },
                     "400": {
-                        "description": "Неверные учетные данные или невалидный запрос",
+                        "description": "Invalid credentials or invalid request",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "405": {
-                        "description": "Метод не разрешен",
+                        "description": "Method not allowed",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "500": {
-                        "description": "Ошибка сервера (генерация токенов, проблемы с БД)",
+                        "description": "Server error (token generation, database problems)",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
@@ -402,7 +431,7 @@ const docTemplate = `{
         },
         "/logout": {
             "post": {
-                "description": "Деактивирует refresh token, завершая сессию пользователя",
+                "description": "Deactivates the refresh token, terminating the user session",
                 "consumes": [
                     "application/json"
                 ],
@@ -412,10 +441,10 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Выход из системы",
+                "summary": "Logout",
                 "parameters": [
                     {
-                        "description": "Refresh token для деактивации",
+                        "description": "Refresh token for deactivation",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -426,19 +455,19 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Успешный выход",
+                        "description": "Successful exit",
                         "schema": {
                             "$ref": "#/definitions/api.Success_answer"
                         }
                     },
                     "400": {
-                        "description": "Невалидный запрос",
+                        "description": "Invalid request",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "405": {
-                        "description": "Метод не разрешен",
+                        "description": "Method not allowed",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
@@ -448,7 +477,7 @@ const docTemplate = `{
         },
         "/questionnaire": {
             "post": {
-                "description": "Создает новую анкету пользователя и возвращает рекомендации профессий на основе ML. Требуется аутентификация (JWT токен в заголовке Authorization)",
+                "description": "Creates a new user profile and returns ML-based occupation recommendations. Authentication required (JWT token in Authorization header)",
                 "consumes": [
                     "application/json"
                 ],
@@ -458,10 +487,10 @@ const docTemplate = `{
                 "tags": [
                     "questionnaire"
                 ],
-                "summary": "Создание новой анкеты",
+                "summary": "Creating a new questionnaire",
                 "parameters": [
                     {
-                        "description": "Данные анкеты",
+                        "description": "Questionnaire data",
                         "name": "questionnaire",
                         "in": "body",
                         "required": true,
@@ -472,31 +501,31 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Успешный ответ с рекомендациями профессий",
+                        "description": "Successful response with recommendations of occupations",
                         "schema": {
                             "$ref": "#/definitions/api.ProfessionPredResponse"
                         }
                     },
                     "400": {
-                        "description": "Невалидные данные анкеты",
+                        "description": "Invalid questionnaire data",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "401": {
-                        "description": "Пользователь не аутентифицирован",
+                        "description": "User not authenticated",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "405": {
-                        "description": "Метод не разрешен",
+                        "description": "Method not allowed",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "500": {
-                        "description": "Ошибка сервера (БД, ML модель и т.д.)",
+                        "description": "Server error (database, ML model, etc.)",
                         "schema": {
                             "type": "string"
                         }
@@ -506,7 +535,7 @@ const docTemplate = `{
         },
         "/refresh_token": {
             "post": {
-                "description": "Возвращает новую пару access/refresh токенов по валидному refresh токену. Старый refresh токен становится недействительным.",
+                "description": "Returns a new access/refresh token pair using a valid refresh token. The old refresh token becomes invalid.",
                 "consumes": [
                     "application/json"
                 ],
@@ -516,10 +545,10 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Обновление JWT-токенов",
+                "summary": "JWT Token Update",
                 "parameters": [
                     {
-                        "description": "Refresh token для обновления",
+                        "description": "Refresh token to update",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -530,31 +559,31 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Новая пара токенов",
+                        "description": "A new pair of tokens",
                         "schema": {
                             "$ref": "#/definitions/api.Tokens_answer"
                         }
                     },
                     "400": {
-                        "description": "Невалидный запрос",
+                        "description": "Invalid request",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "401": {
-                        "description": "Невалидный или просроченный refresh token",
+                        "description": "Invalid or expired refresh token",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "405": {
-                        "description": "Метод не разрешен",
+                        "description": "Method not allowed",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "500": {
-                        "description": "Ошибка сервера (генерация токенов, БД)",
+                        "description": "Server error (token generation, database)",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
@@ -564,7 +593,7 @@ const docTemplate = `{
         },
         "/registration_codevalidation": {
             "post": {
-                "description": "Валидирует код, отправленный на email пользователя",
+                "description": "Validates the code sent to the user's email address",
                 "consumes": [
                     "application/json"
                 ],
@@ -574,10 +603,10 @@ const docTemplate = `{
                 "tags": [
                     "registration"
                 ],
-                "summary": "Проверка кода подтверждения",
+                "summary": "Verifying the confirmation code",
                 "parameters": [
                     {
-                        "description": "Email и код подтверждения",
+                        "description": "Email and confirmation code",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -588,19 +617,19 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Код подтвержден",
+                        "description": "Code confirmed",
                         "schema": {
                             "$ref": "#/definitions/api.Success_answer"
                         }
                     },
                     "400": {
-                        "description": "Неверный код или пользователь не найден",
+                        "description": "Invalid code or user not found",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "405": {
-                        "description": "Метод не разрешен",
+                        "description": "Method not allowed",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
@@ -610,7 +639,7 @@ const docTemplate = `{
         },
         "/registration_emailvalidation": {
             "post": {
-                "description": "Проверяет валидность email и отправляет код подтверждения. Email не должен быть уже зарегистрирован.",
+                "description": "Checks the validity of the email and sends a confirmation code. Email must not be already registered.",
                 "consumes": [
                     "application/json"
                 ],
@@ -620,10 +649,10 @@ const docTemplate = `{
                 "tags": [
                     "registration"
                 ],
-                "summary": "Валидация email при регистрации",
+                "summary": "Email validation during registration",
                 "parameters": [
                     {
-                        "description": "Email пользователя",
+                        "description": "User Email",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -634,25 +663,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Код подтверждения отправлен",
+                        "description": "Confirmation code sent",
                         "schema": {
                             "$ref": "#/definitions/api.Success_answer"
                         }
                     },
                     "400": {
-                        "description": "Невалидный email или запрос",
+                        "description": "Invalid email or request",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "409": {
-                        "description": "Пользователь уже существует",
+                        "description": "The user already exists",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "500": {
-                        "description": "Ошибка сервера (генерация кода, отправка email)",
+                        "description": "Server error (code generation, sending email)",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
@@ -662,7 +691,7 @@ const docTemplate = `{
         },
         "/registration_password": {
             "post": {
-                "description": "Сохраняет пароль пользователя и выдает токены доступа",
+                "description": "Saves the user password and issues access tokens",
                 "consumes": [
                     "application/json"
                 ],
@@ -672,10 +701,10 @@ const docTemplate = `{
                 "tags": [
                     "registration"
                 ],
-                "summary": "Завершение регистрации",
+                "summary": "Finalizing registration",
                 "parameters": [
                     {
-                        "description": "Email и пароль пользователя",
+                        "description": "User Email and Password",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -686,25 +715,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Токены доступа",
+                        "description": "Access tokens",
                         "schema": {
                             "$ref": "#/definitions/api.Tokens_answer"
                         }
                     },
                     "400": {
-                        "description": "Невалидные данные или пользователь не найден",
+                        "description": "Invalid data or user not found",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "405": {
-                        "description": "Метод не разрешен",
+                        "description": "Method not allowed",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "500": {
-                        "description": "Ошибка сервера (БД, генерация токенов)",
+                        "description": "Server error (database, token generation)",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
@@ -714,7 +743,7 @@ const docTemplate = `{
         },
         "/reset_password": {
             "post": {
-                "description": "Устанавливает новый пароль после успешной проверки кода подтверждения",
+                "description": "Sets a new password after successful verification of the confirmation code",
                 "consumes": [
                     "application/json"
                 ],
@@ -724,10 +753,10 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Установка нового пароля",
+                "summary": "Setting a new password",
                 "parameters": [
                     {
-                        "description": "Email и новый пароль",
+                        "description": "Email and new password",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -738,19 +767,19 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Пароль успешно изменен",
+                        "description": "Password successfully changed",
                         "schema": {
                             "$ref": "#/definitions/api.Success_answer"
                         }
                     },
                     "400": {
-                        "description": "Невалидный запрос или ошибка обновления пароля",
+                        "description": "Invalid password request or update error",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "405": {
-                        "description": "Метод не разрешен",
+                        "description": "Method not allowed",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
@@ -760,7 +789,7 @@ const docTemplate = `{
         },
         "/savetrackers": {
             "post": {
-                "description": "Сохраняет трекеры пользователя на сервере для синхронизации между устройствами. Требуется валидный access token и корректная метка времени.",
+                "description": "Saves the user's trackers on the server for synchronization between devices. Requires valid access token and correct timestamp.",
                 "consumes": [
                     "application/json"
                 ],
@@ -770,10 +799,10 @@ const docTemplate = `{
                 "tags": [
                     "trackers"
                 ],
-                "summary": "Сохранение трекеров пользователя",
+                "summary": "Saving user trackers",
                 "parameters": [
                     {
-                        "description": "Данные для сохранения (токен, трекеры и метка времени)",
+                        "description": "Data to be saved (token, trackers and timestamp)",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -784,31 +813,31 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Трекеры успешно сохранены",
+                        "description": "Trackers successfully saved",
                         "schema": {
                             "$ref": "#/definitions/api.Success_answer"
                         }
                     },
                     "304": {
-                        "description": "Данные не были изменены (Not Modified)",
+                        "description": "The data has not been modified (Not Modified)",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "400": {
-                        "description": "Невалидный запрос (некорректные данные или формат времени)",
+                        "description": "Invalid request (incorrect data or time format)",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "401": {
-                        "description": "Неавторизованный доступ (невалидный токен)",
+                        "description": "Unauthorized access (invalid token)",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
                     },
                     "405": {
-                        "description": "Метод не разрешен",
+                        "description": "Method not allowed",
                         "schema": {
                             "$ref": "#/definitions/api.Error_answer"
                         }
@@ -818,17 +847,17 @@ const docTemplate = `{
         },
         "/update_university_json": {
             "get": {
-                "description": "Возвращает файл universities.json со всеми университетами из базы данных в структурированном формате для скачивания",
+                "description": "Returns a universities.json file with all universities from the database in a structured format for downloading",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "universities"
                 ],
-                "summary": "Получение списка университетов в формате JSON",
+                "summary": "Getting the list of universities in JSON format",
                 "responses": {
                     "200": {
-                        "description": "JSON файл с данными университетов",
+                        "description": "JSON file with university data",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -848,7 +877,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad request - Only GET method allowed",
+                        "description": "Плохой запрос - разрешен только метод GET",
                         "schema": {
                             "type": "string"
                         }
@@ -887,9 +916,11 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
+                    "description": "HTTP status code",
                     "type": "integer"
                 },
                 "error": {
+                    "description": "Error message",
                     "type": "string"
                 }
             }
@@ -898,6 +929,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "token": {
+                    "description": "Authentication token (Access Token)",
                     "type": "string"
                 }
             }
@@ -943,9 +975,11 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
+                    "description": "HTTP status code",
                     "type": "integer"
                 },
                 "status": {
+                    "description": "Status message",
                     "type": "string"
                 }
             }
@@ -974,7 +1008,11 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "example": [
+                        "[tracker1",
+                        " tracker2]"
+                    ]
                 }
             }
         },
@@ -985,7 +1023,11 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "example": [
+                        "[tracker1",
+                        " tracker2]"
+                    ]
                 }
             }
         },
@@ -1081,6 +1123,38 @@ const docTemplate = `{
                 }
             }
         },
+        "database.Teacher": {
+            "type": "object",
+            "properties": {
+                "avatarurl": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
         "database.Tutor": {
             "type": "object",
             "properties": {
@@ -1129,12 +1203,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
+	Version:          "1.1",
 	Host:             "213.226.112.206:22025",
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Smartify Backend API",
-	Description:      "REST API для доступа внешним устройствам ко внутренней системе Smartify",
+	Description:      "REST API for external devices to access the internal Smartify system",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

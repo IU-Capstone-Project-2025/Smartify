@@ -25,16 +25,16 @@ func InitDatabase(db_ *sql.DB) {
 	db = db_
 }
 
-// @Summary      Валидация email при регистрации
-// @Description  Проверяет валидность email и отправляет код подтверждения. Email не должен быть уже зарегистрирован.
+// @Summary      Email validation during registration
+// @Description  Checks the validity of the email and sends a confirmation code. Email must not be already registered.
 // @Tags         registration
 // @Accept       json
 // @Produce      json
-// @Param        request  body      Email_struct    true  "Email пользователя"
-// @Success      200     {object}  Success_answer  "Код подтверждения отправлен"
-// @Failure      400     {object}  Error_answer    "Невалидный email или запрос"
-// @Failure      409     {object}  Error_answer    "Пользователь уже существует"
-// @Failure      500     {object}  Error_answer    "Ошибка сервера (генерация кода, отправка email)"
+// @Param        request  body      Email_struct    true  "User Email"
+// @Success      200     {object}  Success_answer  "Confirmation code sent"
+// @Failure      400     {object}  Error_answer    "Invalid email or request"
+// @Failure      409     {object}  Error_answer    "The user already exists"
+// @Failure      500     {object}  Error_answer    "Server error (code generation, sending email)"
 // @Router       /registration_emailvalidation [post]
 func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request) {
 	// Log registration attempt
@@ -114,15 +114,15 @@ func RegistrationHandler_EmailValidation(w http.ResponseWriter, r *http.Request)
 	})
 }
 
-// @Summary      Проверка кода подтверждения
-// @Description  Валидирует код, отправленный на email пользователя
+// @Summary      Verifying the confirmation code
+// @Description  Validates the code sent to the user's email address
 // @Tags         registration
 // @Accept       json
 // @Produce      json
-// @Param        request  body      Code_verification  true  "Email и код подтверждения"
-// @Success      200     {object}  Success_answer      "Код подтвержден"
-// @Failure      400     {object}  Error_answer        "Неверный код или пользователь не найден"
-// @Failure      405     {object}  Error_answer        "Метод не разрешен"
+// @Param        request  body      Code_verification  true  "Email and confirmation code"
+// @Success      200     {object}  Success_answer      "Code confirmed"
+// @Failure      400     {object}  Error_answer        "Invalid code or user not found"
+// @Failure      405     {object}  Error_answer        "Method not allowed"
 // @Router       /registration_codevalidation [post]
 func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) {
 	// Log code validation attempt
@@ -176,16 +176,16 @@ func RegistrationHandler_CodeValidation(w http.ResponseWriter, r *http.Request) 
 	})
 }
 
-// @Summary      Завершение регистрации
-// @Description  Сохраняет пароль пользователя и выдает токены доступа
+// @Summary      Finalizing registration
+// @Description  Saves the user password and issues access tokens
 // @Tags         registration
 // @Accept       json
 // @Produce      json
-// @Param        request  body      User_email_password  true  "Email и пароль пользователя"
-// @Success      200     {object}  Tokens_answer         "Токены доступа"
-// @Failure      400     {object}  Error_answer          "Невалидные данные или пользователь не найден"
-// @Failure      405     {object}  Error_answer          "Метод не разрешен"
-// @Failure      500     {object}  Error_answer          "Ошибка сервера (БД, генерация токенов)"
+// @Param        request  body      User_email_password  true  "User Email and Password"
+// @Success      200     {object}  Tokens_answer         "Access tokens"
+// @Failure      400     {object}  Error_answer          "Invalid data or user not found"
+// @Failure      405     {object}  Error_answer          "Method not allowed"
+// @Failure      500     {object}  Error_answer          "Server error (database, token generation)"
 // @Router       /registration_password [post]
 func RegistrationHandler_Password(w http.ResponseWriter, r *http.Request) {
 	// Log password registration attempt

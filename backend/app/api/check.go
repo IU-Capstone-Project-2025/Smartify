@@ -8,12 +8,12 @@ import (
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/auth"
 )
 
-// @Summary      Проверка доступности сервера
-// @Description  Возвращает статус "ok" если сервер работает
+// @Summary      Checking server availability
+// @Description  Returns the status “ok” if the server is running
 // @Tags         utils
 // @Produce      json
-// @Success      200 {object} Success_answer "Сервер доступен"
-// @Failure      405 {object} Error_answer   "Метод не разрешен"
+// @Success      200 {object} Success_answer "The server is available"
+// @Failure      405 {object} Error_answer   "Method not allowed"
 // @Router       /hello [get]
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	// Check if request method is GET
@@ -42,16 +42,16 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-// @Summary      Проверка валидности токенов
-// @Description  Проверяет срок действия access и refresh токенов
+// @Summary      Checking token validity
+// @Description  Checks the expiration date of access and refresh tokens
 // @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        tokens  body      Tokens_answer  true  "Пара токенов для проверки"
-// @Success      200     {object}  Success_answer "Токены валидны"
-// @Failure      400     {object}  Error_answer   "Невалидный запрос"
-// @Failure      401     {object}  Error_answer   "Токены невалидны или просрочены"
-// @Failure      405     {object}  Error_answer   "Метод не разрешен"
+// @Param        tokens  body      Tokens_answer  true  "A couple of tokens to check out"
+// @Success      200     {object}  Success_answer "The tokens are valid"
+// @Failure      400     {object}  Error_answer   "Invalid request"
+// @Failure      401     {object}  Error_answer   "Tokens are invalid or expired"
+// @Failure      405     {object}  Error_answer   "Method not allowed"
 // @Router       /checkTokens [post]
 func TokenCheck(w http.ResponseWriter, r *http.Request) {
 	// Verify request method is POST

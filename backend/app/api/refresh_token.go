@@ -9,17 +9,17 @@ import (
 	"github.com/IU-Capstone-Project-2025/Smartify/backend/app/database"
 )
 
-// @Summary      Обновление JWT-токенов
-// @Description  Возвращает новую пару access/refresh токенов по валидному refresh токену. Старый refresh токен становится недействительным.
+// @Summary      JWT Token Update
+// @Description  Returns a new access/refresh token pair using a valid refresh token. The old refresh token becomes invalid.
 // @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        request  body      Refresh_token  true  "Refresh token для обновления"
-// @Success      200      {object}  Tokens_answer  "Новая пара токенов"
-// @Failure      400      {object}  Error_answer   "Невалидный запрос"
-// @Failure      401      {object}  Error_answer   "Невалидный или просроченный refresh token"
-// @Failure      405      {object}  Error_answer   "Метод не разрешен"
-// @Failure      500      {object}  Error_answer   "Ошибка сервера (генерация токенов, БД)"
+// @Param        request  body      Refresh_token  true  "Refresh token to update"
+// @Success      200      {object}  Tokens_answer  "A new pair of tokens"
+// @Failure      400      {object}  Error_answer   "Invalid request"
+// @Failure      401      {object}  Error_answer   "Invalid or expired refresh token"
+// @Failure      405      {object}  Error_answer   "Method not allowed"
+// @Failure      500      {object}  Error_answer   "Server error (token generation, database)"
 // @Router       /refresh_token [post]
 func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	// Log new refresh token request
@@ -103,15 +103,15 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// @Summary      Выход из системы
-// @Description  Деактивирует refresh token, завершая сессию пользователя
+// @Summary      Logout
+// @Description  Deactivates the refresh token, terminating the user session
 // @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        request  body      Refresh_token  true  "Refresh token для деактивации"
-// @Success      200      {object}  Success_answer "Успешный выход"
-// @Failure      400      {object}  Error_answer   "Невалидный запрос"
-// @Failure      405      {object}  Error_answer   "Метод не разрешен"
+// @Param        request  body      Refresh_token  true  "Refresh token for deactivation"
+// @Success      200      {object}  Success_answer "Successful exit"
+// @Failure      400      {object}  Error_answer   "Invalid request"
+// @Failure      405      {object}  Error_answer   "Method not allowed"
 // @Router       /logout [post]
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	var req Refresh_token
