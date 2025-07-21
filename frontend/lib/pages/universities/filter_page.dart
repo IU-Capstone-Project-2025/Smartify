@@ -286,6 +286,18 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
                 });
               });
             }),
+            if (minRating > 0)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Chip(
+                  label: Text('${AppLocalizations.of(context)!.rating}: ${minRating.toStringAsFixed(1)}'),
+                  onDeleted: () => setState(() => minRating = 0),
+                  deleteIcon: const Icon(Icons.close, size: 18),
+                  backgroundColor: const Color(0xFFBFDAD9),
+                  labelStyle: const TextStyle(color: Colors.black),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                ),
+              ),
 
             buildFilterButton(AppLocalizations.of(context)!.budgetPlaces, () {
               showSliderDialog(AppLocalizations.of(context)!.budgetPlaces, budgetPlaces, 1000, (value) {
@@ -294,6 +306,18 @@ class _UniversityFilterPageState extends State<UniversityFilterPage> {
                 });
               }, step: 100);
             }),
+            if (budgetPlaces > 0)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Chip(
+                  label: Text('${AppLocalizations.of(context)!.budgetPlaces}: ${budgetPlaces.toInt()}'),
+                  onDeleted: () => setState(() => budgetPlaces = 0),
+                  deleteIcon: const Icon(Icons.close, size: 18),
+                  backgroundColor: const Color(0xFFBFDAD9),
+                  labelStyle: const TextStyle(color: Colors.black),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                ),
+              ),
 
             // Обновлённый стиль "Общежитие" и "Военный центр"
             buildToggleButton(AppLocalizations.of(context)!.dormitory, hasDorm, () {
