@@ -118,7 +118,7 @@ def determine_mbti(mbti_scores):
     # Формируем код MBTI, выбирая букву на основе среднего балла по шкале:
     # Средний балл >= 4 указывает на вторую букву в паре (I, N, F, J), иначе первую (E, S, T, P).
     mbti = '' 
-    mbti += 'I' if sum(e общего количества баллов по шкале EI >= 4, иначе 'E'.
+    mbti += 'I' if sum(ei) / len(ei) >= 4 else 'E' 
     mbti += 'N' if sum(sn) / len(sn) >= 4 else 'S' 
     mbti += 'F' if sum(tf) / len(tf) >= 4 else 'T' 
     mbti += 'J' if sum(jp) / len(jp) >= 4 else 'P' 
