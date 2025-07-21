@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'teachers_list_page.dart';
+import 'package:smartify/pages/nav/nav_page.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 class TeacherOfferSentPage extends StatelessWidget {
   const TeacherOfferSentPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        title: const Text(
-          'Заявка отправлена',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
+        title: Text(
+          AppLocalizations.of(context)!.offerSentTitle,
+          style: theme.textTheme.titleLarge,
         ),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        elevation: 0,
+        centerTitle: true,
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -30,16 +30,16 @@ class TeacherOfferSentPage extends StatelessWidget {
           children: [
             const Icon(Icons.check_circle_outline, size: 80, color: Color(0xFF3B6C5A)),
             const SizedBox(height: 24),
-            const Text(
-              'Ваша заявка на подбор преподавателя успешно отправлена!',
+            Text(
+              AppLocalizations.of(context)!.offerSentSuccess,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            const Text(
-              'Мы свяжемся с вами в ближайшее время.',
+            Text(
+              AppLocalizations.of(context)!.offerSentContactSoon,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey, fontSize: 16),
+              style: const TextStyle(color: Colors.grey, fontSize: 16),
             ),
             const SizedBox(height: 32),
             SizedBox(
@@ -47,7 +47,7 @@ class TeacherOfferSentPage extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => const TeachersListPage()),
+                    MaterialPageRoute(builder: (context) => const DashboardPage()),
                     (route) => false,
                   );
                 },
@@ -57,7 +57,7 @@ class TeacherOfferSentPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('На главную', style: TextStyle(fontSize: 16)),
+                child: Text(AppLocalizations.of(context)!.toMain, style: const TextStyle(fontSize: 16)),
               ),
             ),
           ],

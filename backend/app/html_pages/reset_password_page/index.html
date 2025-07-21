@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password | Smartify</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .app-link {
+            display: block;
+            margin-top: 20px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Reset Your Password</h1>
+    
+    <!-- Форма для ввода нового пароля -->
+    <div id="reset-form">
+        <div class="form-group">
+            <input type="password" id="new-password" placeholder="New Password" required>
+        </div>
+        <div class="form-group">
+            <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+        </div>
+        <button onclick="resetPassword()">Reset Password</button>
+        <p id="error-message" class="error"></p>
+    </div>
+
+    <!-- Кнопка "Открыть в приложении" (для мобильных) -->
+    <a id="app-link" class="app-link" href="#" style="display: none;">Open in App</a>
+
+    <script>
+        // Получаем токен из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        // Отправка нового пароля на сервер
+        async function resetPassword() {
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const errorElement = document.getElementById('error-message');
+
+            if (!newPassword || !confirmPassword) {
+                errorElement.textContent = "Please fill in all fields.";
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                errorElement.textContent = "Passwords do not match.";
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:22025/api/reset_password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, newPassword }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    window.location.href = "http://localhost:22025/success_page/"; // Перенаправляем на страницу входа
+                } else {
+                    errorElement.textContent = data.error || "Failed to reset password.";
+                }
+            } catch (error) {
+                errorElement.textContent = "Network error. Please try again.";
+            }
+        }
+    </script>
+</body>
+</html>

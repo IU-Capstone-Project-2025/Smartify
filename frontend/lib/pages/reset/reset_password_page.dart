@@ -74,14 +74,22 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       // backgroundColor: Colors.white, // убрано для поддержки темы
       appBar: AppBar(
         automaticallyImplyLeading: currentStep != 3,
-        // backgroundColor: Colors.white, // убрано для поддержки темы
-        foregroundColor: Colors.black,
+        foregroundColor: null,
         elevation: 0,
         centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.resetPassword,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: Theme.of(context).textTheme.titleLarge,
         ),
+        leading: currentStep != 3
+            ? IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF54D0C0) : Colors.black,
+                ),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
@@ -397,48 +405,49 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   }
 
   Widget _buildSuccessStep() {
-return Column(
-    children: [
-      Expanded(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.check, size: 40, color: Color.fromRGBO(21, 203, 189, 1)),
-            const SizedBox(height: 24),
-             Text(
-              AppLocalizations.of(context)!.passwordSuccessfullyUpdated,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-             Text(
-              AppLocalizations.of(context)!.exploreEducationWithOneClick,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AuthorizationPage(),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF54D0C0),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                minimumSize: const Size.fromHeight(48),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    final theme = Theme.of(context);
+    return Column(
+      children: [
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.check, size: 40, color: Color.fromRGBO(21, 203, 189, 1)),
+              const SizedBox(height: 24),
+              Text(
+                AppLocalizations.of(context)!.passwordSuccessfullyUpdated,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleLarge,
               ),
-              child: Text(AppLocalizations.of(context)!.login, style: const TextStyle(color: Colors.white)),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Text(
+                AppLocalizations.of(context)!.exploreEducationWithOneClick,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AuthorizationPage(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF54D0C0),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  minimumSize: const Size.fromHeight(48),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: Text(AppLocalizations.of(context)!.login, style: const TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
         ),
-      ),
-    ],
-  );
+      ],
+    );
   }
 
   ButtonStyle _buttonStyle() {

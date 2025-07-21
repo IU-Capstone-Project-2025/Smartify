@@ -40,14 +40,19 @@ class _SignUpPageState extends State<SignUpPage> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         elevation: 0,
-        foregroundColor: Colors.black,
-        title: const Text('Создать аккаунт',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+        foregroundColor: null,
+        title: Text(
+          AppLocalizations.of(context)!.createAccount,
+          style: Theme.of(context).textTheme.titleLarge,
         ),
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF54D0C0) : Colors.black,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -88,8 +93,8 @@ class _SignUpPageState extends State<SignUpPage> {
         Center(
           child: Column(
             children: [
-              const Text(
-                "Введите вашу почту 1 / 3",
+              Text(
+                AppLocalizations.of(context)!.enterYourEmail,
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
@@ -98,13 +103,13 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         SizedBox(height: 40),
-        const Text("Почта", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        Text(AppLocalizations.of(context)!.email, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
         SizedBox(height: 8),
         TextField(
           controller: emailController,
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            hintText: "example@example",
+            hintText: AppLocalizations.of(context)!.exampleEmail,
             hintStyle: const TextStyle(color: Colors.grey),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -125,7 +130,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 setState(() => currentStep = 1);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Ошибка почты')),
+                  SnackBar(content: Text(AppLocalizations.of(context)!.emailError)),
                 );
               }
             },
@@ -136,7 +141,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text('Создать аккаунт', style: TextStyle(color: Colors.white)),
+            child: Text(AppLocalizations.of(context)!.createAccount, style: const TextStyle(color: Colors.white)),
           ),
         ),
         const Spacer(),
@@ -145,7 +150,7 @@ class _SignUpPageState extends State<SignUpPage> {
             padding: const EdgeInsets.only(bottom: 24),
             child: Text.rich(
               TextSpan(
-                text: 'Пользуясь Smartify, вы соглашаетесь с условиями использования и политикой конфиденциальности.',
+                text: AppLocalizations.of(context)!.termsAndPrivacy,
                 style: const TextStyle(fontSize: 12),
               ),
               textAlign: TextAlign.center,
@@ -161,9 +166,9 @@ class _SignUpPageState extends State<SignUpPage> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const SizedBox(height: 10),
-        const Text(
-          "Подтвердите вашу почту 2 / 3",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        Text(
+          AppLocalizations.of(context)!.confirmYourEmail,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         SizedBox(height: 10),
@@ -179,7 +184,7 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
         SizedBox(height: 30),
         Text(
-          "Мы отправили пятизначный код на\n${emailController.text}, введите его ниже:",
+          "${AppLocalizations.of(context)!.weSentCodeTo}\n${emailController.text}, ${AppLocalizations.of(context)!.enterItBelow}",
           style: const TextStyle(fontSize: 15),
           textAlign: TextAlign.center,
         ),
@@ -189,9 +194,9 @@ class _SignUpPageState extends State<SignUpPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Код",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                Text(
+                  AppLocalizations.of(context)!.code,
+                  style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
                 SizedBox(height: 8),
                 PinCodeTextField(
@@ -242,7 +247,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 );
               }
             },
-            child: const Text('Подтвердить почту', style: TextStyle(color: Colors.white)),
+            child: Text(AppLocalizations.of(context)!.confirmEmail, style: const TextStyle(color: Colors.white)),
           ),
         ),
         SizedBox(height: 20),
@@ -255,13 +260,13 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
             );
           },
-          child: const Text.rich(
+          child: Text.rich(
             TextSpan(
-              text: 'Не получили письмо? ',
+              text: AppLocalizations.of(context)!.didNotReceiveEmail + ' ',
               children: [
                 TextSpan(
-                  text: 'Отправить на другой адрес',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  text: AppLocalizations.of(context)!.sendToAnotherAddress,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -273,7 +278,7 @@ class _SignUpPageState extends State<SignUpPage> {
             padding: const EdgeInsets.only(bottom: 24),
             child: Text.rich(
               TextSpan(
-                text: 'Пользуясь Smartify, вы соглашаетесь с условиями использования и политикой конфиденциальности.',
+                text: AppLocalizations.of(context)!.termsAndPrivacy,
                 style: const TextStyle(fontSize: 12),
               ),
               textAlign: TextAlign.center,
@@ -303,9 +308,9 @@ Widget _buildPasswordStep() {
       Center(
         child: Column(
           children: [
-            const Text(
-              "Придумайте ваш пароль 3 / 3",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)!.chooseNewPassword,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
             _buildProgressIndicator(2),
@@ -313,7 +318,7 @@ Widget _buildPasswordStep() {
         ),
       ),
       SizedBox(height: 30),
-      const Text("Пароль", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+      Text(AppLocalizations.of(context)!.password, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
       SizedBox(height: 8),
       TextField(
         controller: passwordController,
@@ -339,9 +344,9 @@ Widget _buildPasswordStep() {
         ),
       ),
       SizedBox(height: 16),
-      _buildCriteria("Минимум 8 символов", hasMinLength),
-      _buildCriteria("Хотя бы одна цифра (0-9)", hasNumber),
-      _buildCriteria("Хотя бы один специальный символ (например: ! @ # % ^ & * ( ) - _ + = )", hasSymbol),
+      _buildCriteria(AppLocalizations.of(context)!.min8Characters, hasMinLength),
+      _buildCriteria(AppLocalizations.of(context)!.atLeastOneDigit, hasNumber),
+      _buildCriteria(AppLocalizations.of(context)!.atLeastOneSpecialCharacter, hasSymbol),
       const Spacer(),
       SizedBox(
         width: double.infinity,
@@ -353,7 +358,7 @@ Widget _buildPasswordStep() {
                 setState(() => currentStep = 3); 
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                 const SnackBar(content: Text('Ошибка регистрации')),
+                 SnackBar(content: Text(AppLocalizations.of(context)!.registrationError)),
                 );
               }
             }
@@ -365,7 +370,7 @@ Widget _buildPasswordStep() {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             disabledBackgroundColor: const Color(0xFFB2DFDB),
           ),
-          child: const Text('Продолжить'),
+          child: Text(AppLocalizations.of(context)!.continueText),
         ),
       ),
       const Spacer(),
@@ -374,7 +379,7 @@ Widget _buildPasswordStep() {
             padding: const EdgeInsets.only(bottom: 24),
             child: Text.rich(
               TextSpan(
-                text: 'Пользуясь Smartify, вы соглашаетесь с условиями использования и политикой конфиденциальности.',
+                text: AppLocalizations.of(context)!.termsAndPrivacy,
                 style: const TextStyle(fontSize: 12),
               ),
               textAlign: TextAlign.center,
@@ -404,16 +409,16 @@ Widget _buildPasswordStep() {
           children: [
             const Icon(Icons.check, size: 40, color: Color.fromRGBO(21, 203, 189, 1)),
             SizedBox(height: 24),
-            const Text(
-              "Ваш аккаунт был успешно создан!",
+            Text(
+              AppLocalizations.of(context)!.successRegistration,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 12),
-            const Text(
-              "Исследуйте мир образования одним кликом.",
+            Text(
+              AppLocalizations.of(context)!.exploreEducationWithOneClick,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey),
+              style: const TextStyle(color: Colors.grey),
             ),
             SizedBox(height: 24),
             ElevatedButton(
@@ -431,7 +436,7 @@ Widget _buildPasswordStep() {
                 minimumSize: const Size.fromHeight(48),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text("Войти", style: TextStyle(color: Colors.white)),
+              child: Text(AppLocalizations.of(context)!.login, style: const TextStyle(color: Colors.white)),
             ),
           ],
         ),
@@ -440,7 +445,7 @@ Widget _buildPasswordStep() {
         padding: const EdgeInsets.only(bottom: 24),
         child: Text.rich(
           TextSpan(
-            text: 'Пользуясь Smartify, вы соглашаетесь с условиями использования и политикой конфиденциальности.',
+            text: AppLocalizations.of(context)!.termsAndPrivacy,
             style: const TextStyle(fontSize: 12),
           ),
           textAlign: TextAlign.center,

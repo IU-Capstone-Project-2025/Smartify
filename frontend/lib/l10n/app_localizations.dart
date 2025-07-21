@@ -275,6 +275,60 @@ abstract class AppLocalizations {
   /// **'Subject'**
   String get subject;
 
+  /// No description provided for @rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get rating;
+
+  /// No description provided for @price.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get price;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @minRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum rating'**
+  String get minRating;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// No description provided for @experience.
+  ///
+  /// In en, this message translates to:
+  /// **'Experience'**
+  String get experience;
+
+  /// No description provided for @ratingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get ratingLabel;
+
+  /// No description provided for @priceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get priceLabel;
+
   /// No description provided for @subjectFilterHere.
   ///
   /// In en, this message translates to:
@@ -338,7 +392,7 @@ abstract class AppLocalizations {
   /// No description provided for @editTask.
   ///
   /// In en, this message translates to:
-  /// **'Edit task'**
+  /// **'Edit Task'**
   String get editTask;
 
   /// No description provided for @save.
@@ -590,20 +644,26 @@ abstract class AppLocalizations {
   /// No description provided for @loadDataError.
   ///
   /// In en, this message translates to:
-  /// **'Error loading data'**
+  /// **'Failed to load data'**
   String get loadDataError;
 
   /// No description provided for @searchProfessionHint.
   ///
   /// In en, this message translates to:
-  /// **'Search profession...'**
+  /// **'Search for professions...'**
   String get searchProfessionHint;
 
   /// No description provided for @takeQuestionnaire.
   ///
   /// In en, this message translates to:
-  /// **'Take questionnaire'**
+  /// **'Take the questionnaire'**
   String get takeQuestionnaire;
+
+  /// No description provided for @viewRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'View recommendations'**
+  String get viewRecommendations;
 
   /// No description provided for @noTitle.
   ///
@@ -616,6 +676,480 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create account'**
   String get createAccount;
+
+  /// No description provided for @contactUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact us via'**
+  String get contactUs;
+
+  /// No description provided for @faq.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get faq;
+
+  /// No description provided for @commonQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequently asked questions'**
+  String get commonQuestions;
+
+  /// No description provided for @reportProblem.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a problem'**
+  String get reportProblem;
+
+  /// No description provided for @describeIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the issue'**
+  String get describeIssue;
+
+  /// No description provided for @filters.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get filters;
+
+  /// No description provided for @region.
+  ///
+  /// In en, this message translates to:
+  /// **'Region'**
+  String get region;
+
+  /// No description provided for @budgetPlaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget places'**
+  String get budgetPlaces;
+
+  /// No description provided for @dormitory.
+  ///
+  /// In en, this message translates to:
+  /// **'Dormitory'**
+  String get dormitory;
+
+  /// No description provided for @militaryCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Military center'**
+  String get militaryCenter;
+
+  /// No description provided for @clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @calendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendar;
+
+  /// No description provided for @addTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Task'**
+  String get addTask;
+
+  /// No description provided for @taskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Task Title'**
+  String get taskTitle;
+
+  /// No description provided for @taskDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get taskDescription;
+
+  /// No description provided for @monday.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get monday;
+
+  /// No description provided for @tuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday'**
+  String get tuesday;
+
+  /// No description provided for @wednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday'**
+  String get wednesday;
+
+  /// No description provided for @thursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday'**
+  String get thursday;
+
+  /// No description provided for @friday.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday'**
+  String get friday;
+
+  /// No description provided for @saturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday'**
+  String get saturday;
+
+  /// No description provided for @sunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunday'**
+  String get sunday;
+
+  /// No description provided for @noTasksForDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks for the selected date'**
+  String get noTasksForDate;
+
+  /// No description provided for @spheres.
+  ///
+  /// In en, this message translates to:
+  /// **'Spheres'**
+  String get spheres;
+
+  /// No description provided for @tutors.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutors'**
+  String get tutors;
+
+  /// No description provided for @signUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up'**
+  String get signUp;
+
+  /// No description provided for @successRegistration.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration successful!'**
+  String get successRegistration;
+
+  /// No description provided for @alreadyRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'Already registered?'**
+  String get alreadyRegistered;
+
+  /// No description provided for @registration.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration'**
+  String get registration;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @previous.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get previous;
+
+  /// No description provided for @question.
+  ///
+  /// In en, this message translates to:
+  /// **'Question'**
+  String get question;
+
+  /// No description provided for @answer.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer'**
+  String get answer;
+
+  /// No description provided for @requiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'Required field'**
+  String get requiredField;
+
+  /// No description provided for @questionnaire.
+  ///
+  /// In en, this message translates to:
+  /// **'Questionnaire'**
+  String get questionnaire;
+
+  /// No description provided for @loginError.
+  ///
+  /// In en, this message translates to:
+  /// **'Login error'**
+  String get loginError;
+
+  /// No description provided for @teacherOfferTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Teacher request'**
+  String get teacherOfferTitle;
+
+  /// No description provided for @teacherOfferSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your goals and find the perfect teacher'**
+  String get teacherOfferSubtitle;
+
+  /// No description provided for @enterSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter subject'**
+  String get enterSubject;
+
+  /// No description provided for @goal.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get goal;
+
+  /// No description provided for @enterGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your goal'**
+  String get enterGoal;
+
+  /// No description provided for @availableTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Available time'**
+  String get availableTime;
+
+  /// No description provided for @enterAvailableTime.
+  ///
+  /// In en, this message translates to:
+  /// **'When are you available?'**
+  String get enterAvailableTime;
+
+  /// No description provided for @format.
+  ///
+  /// In en, this message translates to:
+  /// **'Format'**
+  String get format;
+
+  /// No description provided for @enterFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Online, offline or both'**
+  String get enterFormat;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @enterDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about yourself or your wishes'**
+  String get enterDescription;
+
+  /// No description provided for @sendOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Send request'**
+  String get sendOffer;
+
+  /// No description provided for @offerSentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent'**
+  String get offerSentTitle;
+
+  /// No description provided for @offerSentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your teacher request has been sent successfully!'**
+  String get offerSentSuccess;
+
+  /// No description provided for @offerSentContactSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'We will contact you soon.'**
+  String get offerSentContactSoon;
+
+  /// No description provided for @toMain.
+  ///
+  /// In en, this message translates to:
+  /// **'To main page'**
+  String get toMain;
+
+  /// No description provided for @phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get phone;
+
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @leaveRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave a request'**
+  String get leaveRequest;
+
+  /// No description provided for @priceLessThan1000.
+  ///
+  /// In en, this message translates to:
+  /// **'Less than 1000'**
+  String get priceLessThan1000;
+
+  /// No description provided for @price1000to2000.
+  ///
+  /// In en, this message translates to:
+  /// **'1000–2000'**
+  String get price1000to2000;
+
+  /// No description provided for @price2000to3000.
+  ///
+  /// In en, this message translates to:
+  /// **'2000–3000'**
+  String get price2000to3000;
+
+  /// No description provided for @priceMoreThan3000.
+  ///
+  /// In en, this message translates to:
+  /// **'More than 3000'**
+  String get priceMoreThan3000;
+
+  /// No description provided for @subjectMath.
+  ///
+  /// In en, this message translates to:
+  /// **'Mathematics'**
+  String get subjectMath;
+
+  /// No description provided for @subjectPhysics.
+  ///
+  /// In en, this message translates to:
+  /// **'Physics'**
+  String get subjectPhysics;
+
+  /// No description provided for @subjectChemistry.
+  ///
+  /// In en, this message translates to:
+  /// **'Chemistry'**
+  String get subjectChemistry;
+
+  /// No description provided for @subjectBiology.
+  ///
+  /// In en, this message translates to:
+  /// **'Biology'**
+  String get subjectBiology;
+
+  /// No description provided for @subjectRussianLang.
+  ///
+  /// In en, this message translates to:
+  /// **'Russian Language'**
+  String get subjectRussianLang;
+
+  /// No description provided for @subjectLiterature.
+  ///
+  /// In en, this message translates to:
+  /// **'Literature'**
+  String get subjectLiterature;
+
+  /// No description provided for @subjectHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get subjectHistory;
+
+  /// No description provided for @subjectSocialStudies.
+  ///
+  /// In en, this message translates to:
+  /// **'Social Studies'**
+  String get subjectSocialStudies;
+
+  /// No description provided for @subjectInformatics.
+  ///
+  /// In en, this message translates to:
+  /// **'Informatics'**
+  String get subjectInformatics;
+
+  /// No description provided for @subjectEnglishLang.
+  ///
+  /// In en, this message translates to:
+  /// **'English Language'**
+  String get subjectEnglishLang;
+
+  /// No description provided for @subjectGeography.
+  ///
+  /// In en, this message translates to:
+  /// **'Geography'**
+  String get subjectGeography;
+
+  /// No description provided for @subjectGermanLang.
+  ///
+  /// In en, this message translates to:
+  /// **'German Language'**
+  String get subjectGermanLang;
+
+  /// No description provided for @subjectFrenchLang.
+  ///
+  /// In en, this message translates to:
+  /// **'French Language'**
+  String get subjectFrenchLang;
+
+  /// No description provided for @subjectSpanishLang.
+  ///
+  /// In en, this message translates to:
+  /// **'Spanish Language'**
+  String get subjectSpanishLang;
+
+  /// No description provided for @subjectMusic.
+  ///
+  /// In en, this message translates to:
+  /// **'Music'**
+  String get subjectMusic;
+
+  /// No description provided for @subjectDrawing.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawing'**
+  String get subjectDrawing;
+
+  /// No description provided for @subjectChineseLang.
+  ///
+  /// In en, this message translates to:
+  /// **'Chinese Language'**
+  String get subjectChineseLang;
+
+  /// No description provided for @notCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Not completed'**
+  String get notCompleted;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

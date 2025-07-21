@@ -4,6 +4,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'teacher_detail_page.dart';
 import 'package:smartify/pages/api_server/api_server.dart';
 import '../nav/nav_page.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 
 class TeachersListPage extends StatefulWidget {
@@ -37,6 +38,48 @@ class _TeachersListPageState extends State<TeachersListPage> {
     });
   }
 
+  String _translateSubject(String subject) {
+    final localizations = AppLocalizations.of(context)!;
+    switch (subject) {
+      case 'Математика':
+        return localizations.subjectMath;
+      case 'Физика':
+        return localizations.subjectPhysics;
+      case 'Химия':
+        return localizations.subjectChemistry;
+      case 'Биология':
+        return localizations.subjectBiology;
+      case 'Русский язык':
+        return localizations.subjectRussianLang;
+      case 'Литература':
+        return localizations.subjectLiterature;
+      case 'История':
+        return localizations.subjectHistory;
+      case 'Обществознание':
+        return localizations.subjectSocialStudies;
+      case 'Информатика':
+        return localizations.subjectInformatics;
+      case 'Английский язык':
+        return localizations.subjectEnglishLang;
+      case 'География':
+        return localizations.subjectGeography;
+      case 'Немецкий язык':
+        return localizations.subjectGermanLang;
+      case 'Французский язык':
+        return localizations.subjectFrenchLang;
+      case 'Испанский язык':
+        return localizations.subjectSpanishLang;
+      case 'Музыка':
+        return localizations.subjectMusic;
+      case 'Рисование':
+        return localizations.subjectDrawing;
+      case 'Китайский язык':
+        return localizations.subjectChineseLang;
+      default:
+        return subject;
+    }
+  }
+
   List<String> get _subjects => _allTeachers.map((t) => t['subject'] as String).toSet().toList();
   List<double> get _ratings {
     final ratings = _allTeachers
@@ -46,12 +89,16 @@ class _TeachersListPageState extends State<TeachersListPage> {
     ratings.sort((a, b) => b.compareTo(a));
     return ratings;
   }
-  final List<String> _priceRanges = [
-    'Меньше 1000',
-    '1000–2000',
-    '2000–3000',
-    'Больше 3000',
-  ];
+
+  List<String> get _priceRanges {
+    final localizations = AppLocalizations.of(context)!;
+    return [
+      localizations.priceLessThan1000,
+      localizations.price1000to2000,
+      localizations.price2000to3000,
+      localizations.priceMoreThan3000,
+    ];
+  }
 
   List<Map<String, dynamic>> get _filteredTeachers {
     return _allTeachers.where((t) {
@@ -61,19 +108,15 @@ class _TeachersListPageState extends State<TeachersListPage> {
       final price = int.tryParse(t['price']?.toString() ?? '') ?? 0;
       bool priceMatch = true;
       if (_selectedPriceRange != null) {
-        switch (_selectedPriceRange) {
-          case 'Меньше 1000':
-            priceMatch = price < 1000;
-            break;
-          case '1000–2000':
-            priceMatch = price >= 1000 && price <= 2000;
-            break;
-          case '2000–3000':
-            priceMatch = price > 2000 && price <= 3000;
-            break;
-          case 'Больше 3000':
-            priceMatch = price > 3000;
-            break;
+        final localizations = AppLocalizations.of(context)!;
+        if (_selectedPriceRange == localizations.priceLessThan1000) {
+          priceMatch = price < 1000;
+        } else if (_selectedPriceRange == localizations.price1000to2000) {
+          priceMatch = price >= 1000 && price <= 2000;
+        } else if (_selectedPriceRange == localizations.price2000to3000) {
+          priceMatch = price > 2000 && price <= 3000;
+        } else if (_selectedPriceRange == localizations.priceMoreThan3000) {
+          priceMatch = price > 3000;
         }
       }
       return subjectMatch && ratingMatch && priceMatch;
@@ -91,7 +134,7 @@ class _TeachersListPageState extends State<TeachersListPage> {
       builder: (context) {
         double tempValue = value;
         return AlertDialog(
-          title: const Text('Минимальный рейтинг', style: TextStyle(fontWeight: FontWeight.bold)),
+          title: Text(AppLocalizations.of(context)!.minRating, style: const TextStyle(fontWeight: FontWeight.bold)),
           content: StatefulBuilder(
             builder: (context, setStateDialog) {
               return SizedBox(
@@ -133,7 +176,7 @@ class _TeachersListPageState extends State<TeachersListPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Отмена'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: () {
@@ -144,7 +187,7 @@ class _TeachersListPageState extends State<TeachersListPage> {
                 backgroundColor: const Color(0xFF4CAF50),
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Применить'),
+              child: Text(AppLocalizations.of(context)!.apply),
             ),
           ],
         );
@@ -154,28 +197,24 @@ class _TeachersListPageState extends State<TeachersListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        title: Text(
+          AppLocalizations.of(context)!.tutors,
+          style: theme.textTheme.titleLarge,
+        ),
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black54),
-          onPressed: () {
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const DashboardPage()),
-              (route) => false,
-            );
-          },
-        ),
-        title: const Text(
-          'Репетиторы',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
+          icon: Icon(
+            Icons.arrow_back,
+            color: isDark ? Color(0xFF54D0C0) : Colors.black,
           ),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: _loading
@@ -187,43 +226,45 @@ class _TeachersListPageState extends State<TeachersListPage> {
                   child: Row(
                     children: [
                       _FilterButton(
-                        text: 'Предмет',
-                        value: _selectedSubject,
-                        onTap: () => _showFilterDialog('Предмет', _subjects, _selectedSubject, (val) => setState(() => _selectedSubject = val)),
+                        text: AppLocalizations.of(context)!.subject,
+                        value: _selectedSubject == null ? null : _translateSubject(_selectedSubject!),
+                        onTap: () => _showFilterDialog(AppLocalizations.of(context)!.subject, _subjects, _selectedSubject, (val) => setState(() => _selectedSubject = val)),
                       ),
                       const SizedBox(width: 8),
                       _FilterButton(
-                        text: 'Рейтинг',
+                        text: AppLocalizations.of(context)!.rating,
                         value: _selectedRating == null ? null : _selectedRating!.toStringAsFixed(1),
                         onTap: _showRatingSliderDialog,
                       ),
                       const SizedBox(width: 8),
                       _FilterButton(
-                        text: 'Цена',
+                        text: AppLocalizations.of(context)!.price,
                         value: _selectedPriceRange,
-                        onTap: () => _showFilterDialog('Цена', _priceRanges, _selectedPriceRange, (val) => setState(() => _selectedPriceRange = val)),
+                        onTap: () => _showFilterDialog(AppLocalizations.of(context)!.price, _priceRanges, _selectedPriceRange, (val) => setState(() => _selectedPriceRange = val)),
                       ),
                     ],
                   ),
                 ),
                 Expanded(
                   child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: _filteredTeachers.length,
                     itemBuilder: (context, index) {
                       final teacher = _filteredTeachers[index];
+                      final avatar = (teacher['avatarurl']?.toString() ?? '').isNotEmpty
+                        ? teacher['avatarurl'].toString()
+                        : 'assets/user_avatar.jpg';
                       return _TeacherCard(
                         name: teacher['name'] ?? '',
-                        subject: teacher['subject'] ?? '',
+                        subject: _translateSubject(teacher['subject'] ?? ''),
                         experience: teacher['level'] ?? '',
                         rating: teacher['rating']?.toString() ?? '',
                         price: teacher['price']?.toString() ?? '',
-                        avatar: 'assets/user_avatar.jpg',
+                        avatar: avatar,
                         onDetail: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => TeacherDetailPage(teacher: teacher),
+                              builder: (_) => TeacherDetailPage(teacher: teacher),
                             ),
                           );
                         },
@@ -244,11 +285,11 @@ class _TeachersListPageState extends State<TeachersListPage> {
           title: Text(label),
           children: [
             SimpleDialogOption(
-              child: const Text('Все'),
+              child: Text(AppLocalizations.of(context)!.all),
               onPressed: () => Navigator.pop(context, null),
             ),
             ...items.map((item) => SimpleDialogOption(
-                  child: Text(item),
+                  child: Text(_translateSubject(item)),
                   onPressed: () => Navigator.pop(context, item),
                 )),
           ],
@@ -310,11 +351,12 @@ class _TeacherCard extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -327,39 +369,56 @@ class _TeacherCard extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: AssetImage(avatar),
             radius: 28,
+            backgroundColor: theme.scaffoldBackgroundColor,
+            child: ClipOval(
+              child: avatar.startsWith('http') || avatar.startsWith('https')
+                  ? Image.network(
+                      avatar,
+                      fit: BoxFit.cover,
+                      width: 56,
+                      height: 56,
+                      errorBuilder: (context, error, stackTrace) => Image.asset('assets/user_avatar.jpg', fit: BoxFit.cover, width: 56, height: 56),
+                    )
+                  : Image.asset(
+                      avatar,
+                      fit: BoxFit.cover,
+                      width: 56,
+                      height: 56,
+                      errorBuilder: (context, error, stackTrace) => Image.asset('assets/user_avatar.jpg', fit: BoxFit.cover, width: 56, height: 56),
+                    ),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                Text(subject, style: TextStyle(color: Colors.grey[700], fontSize: 14)),
-                Text('Стаж: $experience', style: const TextStyle(fontSize: 12)),
+                Text(name, style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
+                Text(subject, style: theme.textTheme.bodyMedium),
+                Text('${AppLocalizations.of(context)!.experience}: $experience', style: theme.textTheme.bodySmall),
                 Row(
                   children: [
-                    Text('Рейтинг: $rating', style: const TextStyle(fontSize: 12)),
+                    Text('${AppLocalizations.of(context)!.ratingLabel}: $rating', style: theme.textTheme.bodySmall),
                     const SizedBox(width: 2),
                     const Icon(Icons.star, color: Colors.amber, size: 16),
                   ],
                 ),
-                Text('Цена: $price ₽', style: const TextStyle(fontSize: 12, color: Colors.black87)),
+                Text('${AppLocalizations.of(context)!.priceLabel}: $price ₽', style: theme.textTheme.bodySmall),
               ],
             ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE3F1ED),
-              foregroundColor: const Color(0xFF3B6C5A),
+              backgroundColor: theme.colorScheme.secondary.withOpacity(0.15),
+              foregroundColor: theme.colorScheme.secondary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
               elevation: 0,
             ),
             onPressed: onDetail,
-            child: const Text('Подробнее'),
+            child: Text(AppLocalizations.of(context)!.details),
           ),
         ],
       ),

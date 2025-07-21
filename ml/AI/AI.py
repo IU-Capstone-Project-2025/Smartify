@@ -1,8 +1,10 @@
 import json
 
 # ------------------------------------------ 
-# MBTI Descriptions 
+# Описание типов MBTI 
 # ------------------------------------------ 
+# Словарь, содержащий описания 16 типов личности по MBTI. 
+# Каждый тип включает код, название, описание и пример известной личности или персонажа.
 MBTI_DESCRIPTIONS = { 
     "INTJ": { 
         "name": "Стратег", 
@@ -89,9 +91,17 @@ MBTI_DESCRIPTIONS = {
 # ------------------------------------------ 
 # Определение MBTI 
 # ------------------------------------------ 
+# Функция для определения типа личности MBTI на основе ответов на вопросы.
+# Принимает словарь с баллами по вопросам (mbti_scores) и возвращает код MBTI (например, "INTJ").
 def determine_mbti(mbti_scores): 
+    # Вспомогательная функция для инверсии баллов (8 - score) для определённых вопросов.
     def invert(score): return 8 - score 
+    
+    # Множество вопросов, где баллы не инвертируются (прямые вопросы для шкалы E/I).
     direct_ei = {11, 12, 19, 28} 
+    
+    # Словарь, определяющий, какие вопросы относятся к каждой шкале MBTI:
+    # EI (Экстраверсия/Интроверсия), SN (Интуиция/Сенсорика), TF (Мышление/Чувства), JP (Суждение/Восприятие).
     scales = { 
         'EI': [11, 12, 14, 19, 28], 
         'SN': [26, 31, 32, 34], 
@@ -99,11 +109,14 @@ def determine_mbti(mbti_scores):
         'JP': [15, 20, 22, 25, 33] 
     } 
 
+    # Собираем баллы для каждой шкалы, инвертируя их, если нужно, для шкалы EI.
     ei = [invert(mbti_scores[f'q{i}']) if i not in direct_ei else mbti_scores[f'q{i}'] for i in scales['EI']] 
     sn = [mbti_scores[f'q{i}'] for i in scales['SN']] 
     tf = [mbti_scores[f'q{i}'] for i in scales['TF']] 
     jp = [mbti_scores[f'q{i}'] for i in scales['JP']] 
 
+    # Формируем код MBTI, выбирая букву на основе среднего балла по шкале:
+    # Средний балл >= 4 указывает на вторую букву в паре (I, N, F, J), иначе первую (E, S, T, P).
     mbti = '' 
     mbti += 'I' if sum(ei) / len(ei) >= 4 else 'E' 
     mbti += 'N' if sum(sn) / len(sn) >= 4 else 'S' 
@@ -115,125 +128,154 @@ def determine_mbti(mbti_scores):
 # ------------------------------------------ 
 # Оценка профессии 
 # ------------------------------------------ 
+# Функция для оценки соответствия профессии студенту на основе его данных.
+# Принимает данные студента и профессии, возвращает нормализованный балл (0-100), 
+# причины соответствия и несоответствия.
 def score_profession_normalized(student, profession): 
-    total_score = 0 
-    reasons, negatives = [], [] 
+    total_score = 0  # Итоговый балл соответствия профессии.
+    reasons, negatives = [], []  # Списки причин соответствия и несоответствия.
 
+    # Получаем баллы студента по предметам ЕГЭ.
     subj_scores = student["subject_scores"] 
+    # Убираем уточнения "(базовый)" или "(профильный)" из названий предметов профессии.
     required_subjects = [s.replace(" (базовый)", "").replace(" (профильный)", "").strip() for s in profession["ege_subjects"]] 
-    max_subj_score = len(required_subjects) * 5 
+    max_subj_score = len(required_subjects) * 5  # Максимальный возможный балл по предметам (5 баллов за каждый).
 
-    # Subjects (35%) 
-    subj_sum = 0 
-    matched_subjects = [] 
+    # Оценка по предметам ЕГЭ (вес 35%).
+    subj_sum = 0  # Сумма баллов по предметам.
+    matched_subjects = []  # Список предметов, которые студент сдавал.
     for subj in required_subjects: 
-        mark = subj_scores.get(subj) 
+        mark = subj_scores.get(subj)  # Получаем балл студента по предмету.
         if mark: 
-            subj_sum += mark 
+            subj_sum += mark  # Добавляем балл, если предмет сдан.
             matched_subjects.append(f"{subj} ({mark})") 
             if mark <= 2: 
-                negatives.append(f"{subj} — низкий балл ({mark})") 
+                negatives.append(f"{subj} — низкий балл ({mark})")  # Низкий балл — причина несоответствия.
         else: 
-            negatives.append(f"{subj} — отсутствует в твоих предметах") 
+            negatives.append(f"{subj} — отсутствует в твоих предметах")  # Предмет не сдан — причина несоответствия.
 
     if matched_subjects: 
-        reasons.append(f"Подходящие предметы и оценки: {', '.join(matched_subjects)}") 
+        reasons.append(f"Подходящие предметы и оценки: {', '.join(matched_subjects)}")  # Записываем подходящие предметы.
 
+    # Нормализуем балл по предметам (0-1) и умножаем на вес (35%).
     subj_score_norm = (subj_sum / max_subj_score) if max_subj_score else 0 
     total_score += subj_score_norm * 35 
 
-    # MBTI (20%) 
+    # Оценка по MBTI (вес 20%).
+    # Проверяем, совпадает ли тип MBTI студента с типами, подходящими для профессии.
     mbti_match = student["mbti_type"]["code"] in profession["mbti_types"].replace(" ", "").split(",") 
     if mbti_match: 
         reasons.append(f"Твой MBTI ({student['mbti_type']['code']}) подходит под эту профессию.") 
-        total_score += 20 
+        total_score += 20  # Полный балл за совпадение MBTI.
     else: 
         negatives.append(f"MBTI {student['mbti_type']['code']} может не совпадать с типичными для этой профессии.") 
 
-    # Interests (15%) 
+    # Оценка по интересам (вес 15%).
+    # Находим пересечение интересов студента и профессии.
     interest_match = set(student["interests"]) & set(profession.get("interests", [])) 
-    interest_score = len(interest_match) / len(profession.get("interests", []) or [1]) 
+    interest_score = len(interest_match) / len(profession.get("interests", []) or [1])  # Нормализуем (0-1).
     if interest_match: 
         reasons.append(f"Интересы совпадают: {', '.join(interest_match)}.") 
-    total_score += interest_score * 15 
+    total_score += interest_score * 15  # Добавляем балл с весом 15%.
 
-    # Values (15%) 
+    # Оценка по ценностям (вес 15%).
+    # Находим пересечение ценностей студента и профессии.
     value_match = set(student["values"]) & set(profession.get("values", [])) 
-    value_score = len(value_match) / len(profession.get("values", []) or [1]) 
+    value_score = len(value_match) / len(profession.get("values", []) or [1])  # Нормализуем (0-1).
     if value_match: 
         reasons.append(f"Ценности совпадают: {', '.join(value_match)}.") 
-    total_score += value_score * 15 
+    total_score += value_score * 15  # Добавляем балл с весом 15%.
 
-    # Preferences (10%) 
+    # Оценка по рабочим предпочтениям (вес 10%).
+    # Проверяем совпадение роли, места и стиля работы.
     pref = student["work_preferences"] 
-    match_count = 0 
+    match_count = 0  # Счётчик совпадений.
     for k in ["role", "place", "style"]: 
         if profession.get(k) == pref.get(k): 
             match_count += 1 
             reasons.append(f"Предпочтение по {k} совпадает: {profession[k]}") 
-    total_score += (match_count / 3) * 10 
+    total_score += (match_count / 3) * 10  # Нормализуем (0-1) и добавляем с весом 10%.
 
-    # Exclusions (-25% per conflict) 
+    # Учёт исключающих факторов (штраф -25% за каждый конфликт).
     exclusions = pref.get("exclude", []) 
     if isinstance(exclusions, str): 
-        exclusions = [exclusions] 
+        exclusions = [exclusions]  # Преобразуем строку в список, если нужно.
     
     for ex in exclusions: 
         if ex in profession.get("interests", []) or ex in profession.get("role", ""): 
-            total_score -= 25 
+            total_score -= 25  # Штраф за каждое несоответствие.
             negatives.append(f"Ты хочешь избежать: {ex}, но профессия это подразумевает!") 
 
+    # Ограничиваем итоговый балл диапазоном 0–100.
     total_score = max(min(total_score, 100), 0) 
-    return round(total_score, 2), reasons, negatives 
+    return round(total_score, 2), reasons, negatives  # Возвращаем балл, причины и несоответствия.
 
 # ------------------------------------------ 
 # Основная точка входа 
 # ------------------------------------------ 
+# Основная функция для обработки данных студента и подбора подходящих профессий.
+# Принимает данные студента и список профессий, возвращает топ-5 подходящих профессий.
 def process_student(student, professions): 
+    # Получаем баллы MBTI студента из его данных.
     mbti_scores = student.get("mbti_scores", {}) 
+    # Определяем тип MBTI студента.
     mbti_type = determine_mbti(mbti_scores) 
+    # Получаем описание MBTI из словаря или используем заглушку, если тип неизвестен.
     description = MBTI_DESCRIPTIONS.get(mbti_type, { 
         "name": "Неизвестный тип", 
         "description": "Описание отсутствует.", 
         "example": "-" 
     }) 
 
+    # Добавляем информацию о MBTI в данные студента.
     student["mbti_type"] = { 
         "code": mbti_type, 
         "name": description["name"], 
         "description": description["description"], 
         "example": description["example"] 
     } 
+    # Удаляем исходные баллы MBTI, чтобы не перегружать данные.
     if "mbti_scores" in student: 
         del student["mbti_scores"] 
 
+    # Список для хранения оценённых профессий.
     scored_professions = [] 
+    # Оцениваем каждую профессию.
     for prof in professions: 
-        score, pos, neg = score_profession_normalized(student, prof) 
+        score, pos, neg = score_profession_normalized(student, prof)  # Получаем балл и причины.
+        # Добавляем профессию с её характеристиками в список.
         scored_professions.append({ 
             "name": prof["name"], 
-            "sphere": prof["sphere"],  # Добавляем поле sphere 
-            "subsphere": prof["subsphere"],  # Добавляем поле subsphere 
-            "score": score, 
-            "positives": pos, 
-            "negatives": neg, 
-            "description": prof["description"] 
+            "sphere": prof["sphere"],  # Сфера профессии.
+            "subsphere": prof["subsphere"],  # Подсфера профессии.
+            "score": score,  # Итоговый балл соответствия.
+            "positives": pos,  # Причины соответствия.
+            "negatives": neg,  # Причины несоответствия.
+            "description": prof["description"]  # Описание профессии.
         }) 
 
+    # Сортируем профессии по убыванию балла.
     scored_professions.sort(key=lambda x: x["score"], reverse=True) 
+    # Возвращаем топ-5 профессий.
     top5 = scored_professions[:5] 
     return top5 
 
 # ------------------------------------------ 
 # Для теста отдельным запуском 
 # ------------------------------------------ 
+# Блок для тестирования скрипта при прямом запуске.
 if __name__ == "__main__": 
+    # Читаем данные студентов из JSON-файла.
     with open("database/dataset_career_test.json", "r", encoding="utf-8") as f: 
         students = json.load(f) 
+    # Читаем данные профессий из JSON-файла.
     with open("database/professions.json", "r", encoding="utf-8") as f: 
         professions = json.load(f) 
-    student = students[0]  # выбери нужного студента 
+    # Выбираем первого студента для теста.
+    student = students[0] 
+    # Обрабатываем данные студента и получаем топ-5 профессий.
     top5 = process_student(student, professions) 
+    # Сохраняем рекомендации в JSON-файл.
     with open("database/profession_recommendations.json", "w", encoding="utf-8") as f: 
         json.dump(top5, f, ensure_ascii=False, indent=2) 
     print("✅ Рекомендации сохранены.")

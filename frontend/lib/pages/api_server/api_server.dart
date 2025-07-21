@@ -448,7 +448,8 @@ class TeacherMeneger {
   /// Loads initial teachers data from app assets
   /// @return Future<String> JSON string of default teachers data
   static Future<String> loadInitialJsonTeachers() async {
-    return await rootBundle.loadString('assets/$fileName');
+    String jsonString = await rootBundle.loadString('assets/$fileName');
+    return jsonString;
   }
 
   static Future<String> UpdateTeachersAndReturn() async {

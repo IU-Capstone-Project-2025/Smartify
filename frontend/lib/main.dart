@@ -16,16 +16,15 @@ final localeNotifier = ValueNotifier<Locale?>(null);
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AuthService.init();
-  // ВРЕМЕННАЯ ОЧИСТКА — удалит все сохранённые токены!
-  /*
-  const storage = FlutterSecureStorage();
-  await storage.deleteAll();
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.clear();
-  */
+
   // Проверка аутентификации
   final isAuthenticated = await AuthService.isAuthenticated();
-  runApp(MyApp(startWidget: isAuthenticated ? const DashboardPage() : const WelcomePage()));
+
+  runApp(
+    MyApp(
+      startWidget: isAuthenticated ? const DashboardPage() : const WelcomePage(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -41,29 +40,32 @@ class MyApp extends StatelessWidget {
           valueListenable: localeNotifier,
           builder: (context, locale, _) {
             return MaterialApp(
-              title: 'Flutter Demo',
+              title: 'Smartify',
               theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.light),
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: Colors.deepPurple,
+                  brightness: Brightness.light,
+                ),
               ),
               darkTheme: ThemeData(
                 brightness: Brightness.dark,
-                scaffoldBackgroundColor: Colors.black,
+                scaffoldBackgroundColor: const Color(0xFF23272F),
                 appBarTheme: const AppBarTheme(
-                  backgroundColor: Colors.black,
+                  backgroundColor: Color(0xFF23272F),
                   foregroundColor: Colors.white,
                 ),
                 colorScheme: ColorScheme.fromSeed(
                   seedColor: Colors.deepPurple,
                   brightness: Brightness.dark,
-                  background: Colors.black,
-                  surface: Colors.black,
+                  background: Color(0xFF23272F),
+                  surface: Color(0xFF23272F),
                   onBackground: Colors.white,
                   onSurface: Colors.white,
                   primary: Colors.white,
                   secondary: Colors.white,
                 ),
-                cardColor: Colors.grey[900],
-                dialogBackgroundColor: Colors.black,
+                cardColor: const Color(0xFF2C313A),
+                dialogBackgroundColor: const Color(0xFF23272F),
                 textTheme: const TextTheme(
                   bodyLarge: TextStyle(color: Colors.white),
                   bodyMedium: TextStyle(color: Colors.white),
@@ -94,6 +96,9 @@ class MyApp extends StatelessWidget {
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
               ],
+              builder: (context, child) {
+                return CenteredWrapper(child: child!);
+              },
               home: startWidget,
             );
           },
@@ -103,6 +108,40 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// Центрирование приложения на широких экранах
+class CenteredWrapper extends StatelessWidget {
+  final Widget child;
+  final double maxWidth;
+
+  const CenteredWrapper({
+    super.key,
+    required this.child,
+    this.maxWidth = 600, // ширина основной части приложения
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF23272F)
+          : Colors.white,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Center(
+            child: Container(
+              width: constraints.maxWidth > maxWidth
+                  ? maxWidth
+                  : constraints.maxWidth,
+              child: child,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// Пример простой страницы
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
@@ -143,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ), 
+      ),
     );
   }
 }

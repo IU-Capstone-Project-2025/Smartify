@@ -84,9 +84,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterPassword => 'Enter password';
 
   @override
-  String get login => 'Create account';
-
-
+  String get login => 'Login';
 
   @override
   String get forgotPassword => 'Forgot password?';
@@ -99,6 +97,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subject => 'Subject';
+
+  @override
+  String get rating => 'Rating';
+
+  @override
+  String get price => 'Price';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get minRating => 'Minimum rating';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get experience => 'Experience';
+
+  @override
+  String get ratingLabel => 'Rating';
+
+  @override
+  String get priceLabel => 'Price';
 
   @override
   String get subjectFilterHere => 'Subject filter will be here';
@@ -131,7 +156,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get choose => 'Choose';
 
   @override
-  String get editTask => 'Edit task';
+  String get editTask => 'Edit Task';
 
   @override
   String get save => 'Save';
@@ -257,17 +282,257 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moreThanHundredTeachers => 'More than a hundred teachers';
 
   @override
-  String get loadDataError => 'Error loading data';
+  String get loadDataError => 'Failed to load data';
 
   @override
-  String get searchProfessionHint => 'Search profession...';
+  String get searchProfessionHint => 'Search for professions...';
 
   @override
-  String get takeQuestionnaire => 'Take questionnaire';
+  String get takeQuestionnaire => 'Take the questionnaire';
+
+  @override
+  String get viewRecommendations => 'View recommendations';
 
   @override
   String get noTitle => 'No title';
 
   @override
   String get createAccount => 'Create account';
+
+  @override
+  String get contactUs => 'Contact us via';
+
+  @override
+  String get faq => 'FAQ';
+
+  @override
+  String get commonQuestions => 'Frequently asked questions';
+
+  @override
+  String get reportProblem => 'Report a problem';
+
+  @override
+  String get describeIssue => 'Describe the issue';
+
+  @override
+  String get filters => 'Filters';
+
+  @override
+  String get region => 'Region';
+
+  @override
+  String get budgetPlaces => 'Budget places';
+
+  @override
+  String get dormitory => 'Dormitory';
+
+  @override
+  String get militaryCenter => 'Military center';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get search => 'Search';
+
+  @override
+  String get calendar => 'Calendar';
+
+  @override
+  String get addTask => 'Add Task';
+
+  @override
+  String get taskTitle => 'Task Title';
+
+  @override
+  String get taskDescription => 'Description';
+
+  @override
+  String get monday => 'Monday';
+
+  @override
+  String get tuesday => 'Tuesday';
+
+  @override
+  String get wednesday => 'Wednesday';
+
+  @override
+  String get thursday => 'Thursday';
+
+  @override
+  String get friday => 'Friday';
+
+  @override
+  String get saturday => 'Saturday';
+
+  @override
+  String get sunday => 'Sunday';
+
+  @override
+  String get noTasksForDate => 'No tasks for the selected date';
+
+  @override
+  String get spheres => 'Spheres';
+
+  @override
+  String get tutors => 'Tutors';
+
+  @override
+  String get signUp => 'Sign up';
+
+  @override
+  String get successRegistration => 'Registration successful!';
+
+  @override
+  String get alreadyRegistered => 'Already registered?';
+
+  @override
+  String get registration => 'Registration';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get previous => 'Previous';
+
+  @override
+  String get question => 'Question';
+
+  @override
+  String get answer => 'Answer';
+
+  @override
+  String get requiredField => 'Required field';
+
+  @override
+  String get questionnaire => 'Questionnaire';
+
+  @override
+  String get loginError => 'Login error';
+
+  @override
+  String get teacherOfferTitle => 'Teacher request';
+
+  @override
+  String get teacherOfferSubtitle => 'Describe your goals and find the perfect teacher';
+
+  @override
+  String get enterSubject => 'Enter subject';
+
+  @override
+  String get goal => 'Goal';
+
+  @override
+  String get enterGoal => 'Describe your goal';
+
+  @override
+  String get availableTime => 'Available time';
+
+  @override
+  String get enterAvailableTime => 'When are you available?';
+
+  @override
+  String get format => 'Format';
+
+  @override
+  String get enterFormat => 'Online, offline or both';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get enterDescription => 'Tell us about yourself or your wishes';
+
+  @override
+  String get sendOffer => 'Send request';
+
+  @override
+  String get offerSentTitle => 'Request sent';
+
+  @override
+  String get offerSentSuccess => 'Your teacher request has been sent successfully!';
+
+  @override
+  String get offerSentContactSoon => 'We will contact you soon.';
+
+  @override
+  String get toMain => 'To main page';
+
+  @override
+  String get phone => 'Phone';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get leaveRequest => 'Leave a request';
+
+  @override
+  String get priceLessThan1000 => 'Less than 1000';
+
+  @override
+  String get price1000to2000 => '1000–2000';
+
+  @override
+  String get price2000to3000 => '2000–3000';
+
+  @override
+  String get priceMoreThan3000 => 'More than 3000';
+
+  @override
+  String get subjectMath => 'Mathematics';
+
+  @override
+  String get subjectPhysics => 'Physics';
+
+  @override
+  String get subjectChemistry => 'Chemistry';
+
+  @override
+  String get subjectBiology => 'Biology';
+
+  @override
+  String get subjectRussianLang => 'Russian Language';
+
+  @override
+  String get subjectLiterature => 'Literature';
+
+  @override
+  String get subjectHistory => 'History';
+
+  @override
+  String get subjectSocialStudies => 'Social Studies';
+
+  @override
+  String get subjectInformatics => 'Informatics';
+
+  @override
+  String get subjectEnglishLang => 'English Language';
+
+  @override
+  String get subjectGeography => 'Geography';
+
+  @override
+  String get subjectGermanLang => 'German Language';
+
+  @override
+  String get subjectFrenchLang => 'French Language';
+
+  @override
+  String get subjectSpanishLang => 'Spanish Language';
+
+  @override
+  String get subjectMusic => 'Music';
+
+  @override
+  String get subjectDrawing => 'Drawing';
+
+  @override
+  String get subjectChineseLang => 'Chinese Language';
+
+  @override
+  String get notCompleted => 'Not completed';
+
+  @override
+  String get delete => 'Delete';
 }
