@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smartify/pages/authorization/authorization_page.dart';
+import 'package:smartify/pages/sign/sign_up_page.dart';
+import 'package:smartify/pages/nav/nav_page.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 void main() {
   runApp(const SmartifyApp());
@@ -23,54 +26,38 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white, // убрано для поддержки темы
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const SizedBox(), 
+              const SizedBox(),
               Column(
                 children: [
                   const Text(
-                    'Welcome to',
+                    'Добро пожаловать в',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'S',
-                          style: TextStyle(
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blueAccent,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'martify',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
+                  const SizedBox(height: 0), // tighter spacing
+                  Image.asset(
+                    'logo.png',
+                    height: 180,
+                    width: 300,
+                    fit: BoxFit.contain,
                   ),
                 ],
               ),
               Column(
                 children: [
-                  const Text(
-                    'Unlock Your Potential, Chart Your Course.',
+                  Text(
+                    AppLocalizations.of(context)!.welcome,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       color: Colors.black87,
                     ),
@@ -88,37 +75,46 @@ class WelcomePage extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.tealAccent.shade400,
+                        backgroundColor: const Color(0xFF54D0C0),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: const Text(
-                        'Create an account',
+                        'Войти',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Already have an account?'),
-                      TextButton(
-                        onPressed: () {
-                          // TODO: переход на логин
-                        },
-                        child: const Text(
-                          'Log in',
-                          style: TextStyle(
-                            color: Colors.blueAccent,
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SignUpPage(),
                           ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF54D0C0),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                    ],
+                      child: const Text(
+                        'Создать аккаунт',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ],

@@ -70,11 +70,16 @@ We use AI not just for buzz — but for real insights:
 
 ---
 
-## Running with Docker
+## Launching the app
 
 Build and start all services:
    ```sh
-   docker-compose up --build
+   docker compose up --build
+   ```
+Starting the app:
+   ```sh
+   cd frontend
+   flutter run
    ```
 
 > Helping students make informed decisions — simply, clearly, and effectively.  
