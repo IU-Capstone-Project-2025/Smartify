@@ -100,11 +100,17 @@ class _UniversityPageState extends State<UniversityPage> {
         // backgroundColor: Colors.white, // убрано для поддержки темы
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF54D0C0) : Colors.black,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
-        title: Text(AppLocalizations.of(context)!.universities, style: const TextStyle(color: Colors.black)),
+        title: Text(
+          AppLocalizations.of(context)!.universities,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -112,7 +118,7 @@ class _UniversityPageState extends State<UniversityPage> {
               backgroundColor: Colors.blue[100],
               child: const Icon(Icons.pets, color: Colors.white),
             ),
-          )
+          ),
         ],
       ),
       body: RefreshIndicator(

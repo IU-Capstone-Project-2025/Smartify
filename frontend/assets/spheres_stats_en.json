@@ -1,0 +1,800 @@
+{
+  "total_professions": 347,
+  "spheres": [
+    {
+      "sphere": "IT and Technology",
+      "subsphere": "Programming",
+      "count": 9,
+      "professions": [
+        "Frontend Developer",
+        "Backend Developer",
+        "Database Developer",
+        "DevOps Engineer",
+        "Embedded Developer",
+        "Blockchain Developer",
+        "Cloud Solutions Developer",
+        "System Administrator",
+        "IoT Developer"
+      ]
+    },
+    {
+      "sphere": "IT and Technology",
+      "subsphere": "Software Development",
+      "count": 7,
+      "professions": [
+        "Full Stack Developer",
+        "Mobile Developer",
+        "Software Architect",
+        "System Programmer",
+        "API Developer",
+        "Scrum Master",
+        "Technical Writer"
+      ]
+    },
+    {
+      "sphere": "IT and Technology",
+      "subsphere": "Information Security",
+      "count": 6,
+      "professions": [
+        "Cybersecurity Specialist",
+        "Ethical Hacker",
+        "SOC Analyst",
+        "Cryptography Specialist",
+        "Information Security Auditor",
+        "Incident Response Specialist"
+      ]
+    },
+    {
+      "sphere": "IT and Technology",
+      "subsphere": "Testing and QA",
+      "count": 6,
+      "professions": [
+        "Software Testing Engineer",
+        "Test Automation Engineer",
+        "Mobile Application Tester",
+        "Load Testing Engineer",
+        "Security Tester",
+        "UX Tester"
+      ]
+    },
+    {
+      "sphere": "IT and Technology",
+      "subsphere": "Artificial Intelligence",
+      "count": 6,
+      "professions": [
+        "Machine Learning Engineer",
+        "Natural Language Processing Specialist",
+        "Computer Vision Specialist",
+        "Robotics Engineer",
+        "AI Ethics Specialist",
+        "Data Processing Specialist"
+      ]
+    },
+    {
+      "sphere": "IT and Technology",
+      "subsphere": "Big Data",
+      "count": 6,
+      "professions": [
+        "Big Data Analyst",
+        "Data Engineer",
+        "Data Visualization Specialist",
+        "Data Warehouse Specialist",
+        "Data Scientist",
+        "Stream Data Processing Specialist"
+      ]
+    },
+    {
+      "sphere": "IT and Technology",
+      "subsphere": "GameDev",
+      "count": 7,
+      "professions": [
+        "Game Designer",
+        "Game Logic Programmer",
+        "Game Artist",
+        "Game Sound Engineer",
+        "Game Producer",
+        "Game Tester",
+        "Game Scriptwriter"
+      ]
+    },
+    {
+      "sphere": "Science and Education",
+      "subsphere": "Scientific Research",
+      "count": 10,
+      "professions": [
+        "Theoretical Physicist",
+        "Research Chemist",
+        "Genetic Biologist",
+        "Astronomer",
+        "Microbiologist",
+        "Environmental Researcher",
+        "Bioinformatician",
+        "Geologist",
+        "Pharmacologist",
+        "Research Mathematician"
+      ]
+    },
+    {
+      "sphere": "Science and Education",
+      "subsphere": "Higher Education",
+      "count": 7,
+      "professions": [
+        "Physics Lecturer",
+        "Mathematics Lecturer",
+        "Biology Lecturer",
+        "Computer Science Lecturer",
+        "Chemistry Lecturer",
+        "Faculty Dean",
+        "Academic Supervisor"
+      ]
+    },
+    {
+      "sphere": "Science and Education",
+      "subsphere": "Schools and Kindergartens",
+      "count": 8,
+      "professions": [
+        "Primary School Teacher",
+        "Mathematics Teacher",
+        "Physics Teacher",
+        "Biology Teacher",
+        "Kindergarten Teacher",
+        "School Psychologist",
+        "Computer Science Teacher",
+        "School Principal"
+      ]
+    },
+    {
+      "sphere": "Science and Education",
+      "subsphere": "Courses and Trainings",
+      "count": 5,
+      "professions": [
+        "Programming Trainer",
+        "Soft Skills Trainer",
+        "Educational Program Methodologist",
+        "Coach",
+        "Foreign Language Trainer"
+      ]
+    },
+    {
+      "sphere": "Engineering and Production",
+      "subsphere": "Mechanics",
+      "count": 5,
+      "professions": [
+        "Mechanical Engineer",
+        "Mechanical Systems Designer",
+        "Manufacturing Process Engineer",
+        "Equipment Maintenance Engineer",
+        "Hydraulics Engineer"
+      ]
+    },
+    {
+      "sphere": "Engineering and Production",
+      "subsphere": "Electronics",
+      "count": 5,
+      "professions": [
+        "Electronics Engineer",
+        "Embedded Systems Engineer",
+        "Electronics Technician",
+        "Electronics Testing Engineer",
+        "Microprocessor Developer"
+      ]
+    },
+    {
+      "sphere": "Engineering and Production",
+      "subsphere": "Automation and Robotics",
+      "count": 5,
+      "professions": [
+        "Robotics Engineer",
+        "Automation Engineer",
+        "Robotics Technician",
+        "Drone Control Engineer",
+        "Control Systems Specialist"
+      ]
+    },
+    {
+      "sphere": "Engineering and Production",
+      "subsphere": "Construction",
+      "count": 5,
+      "professions": [
+        "Civil Engineer",
+        "Architect",
+        "Structural Engineer",
+        "Construction Foreman",
+        "Estimator"
+      ]
+    },
+    {
+      "sphere": "Engineering and Production",
+      "subsphere": "Energy",
+      "count": 5,
+      "professions": [
+        "Power Engineer",
+        "Renewable Energy Engineer",
+        "Power Systems Technician",
+        "Nuclear Power Engineer",
+        "Thermal Systems Engineer"
+      ]
+    },
+    {
+      "sphere": "Engineering and Production",
+      "subsphere": "Aviation and Space",
+      "count": 5,
+      "professions": [
+        "Aviation Engineer",
+        "Space Systems Engineer",
+        "Aviation Systems Technician",
+        "Aerodynamics Engineer",
+        "Satellite Systems Specialist"
+      ]
+    },
+    {
+      "sphere": "Medicine and Pharmaceuticals",
+      "subsphere": "Doctors and Surgeons",
+      "count": 10,
+      "professions": [
+        "General Practitioner",
+        "Surgeon",
+        "Cardiologist",
+        "Neurologist",
+        "Anesthesiologist",
+        "Pediatrician",
+        "Oncologist",
+        "Ophthalmologist",
+        "Endocrinologist",
+        "Radiologist"
+      ]
+    },
+    {
+      "sphere": "Medicine and Pharmaceuticals",
+      "subsphere": "Dentistry",
+      "count": 5,
+      "professions": [
+        "Therapeutic Dentist",
+        "Orthodontist",
+        "Dental Surgeon",
+        "Prosthodontist",
+        "Pediatric Dentist"
+      ]
+    },
+    {
+      "sphere": "Medicine and Pharmaceuticals",
+      "subsphere": "Pharmaceuticals",
+      "count": 5,
+      "professions": [
+        "Pharmacist",
+        "Pharmacologist",
+        "Pharmaceutical Production Technologist",
+        "Pharmaceutical Market Analyst",
+        "Drug Registration Manager"
+      ]
+    },
+    {
+      "sphere": "Medicine and Pharmaceuticals",
+      "subsphere": "Biomedical Science",
+      "count": 5,
+      "professions": [
+        "Biomedical Engineer",
+        "Biomaterials Specialist",
+        "Genetic Engineering Specialist",
+        "Medical Robotics Specialist",
+        "Bioinformatics Specialist"
+      ]
+    },
+    {
+      "sphere": "Medicine and Pharmaceuticals",
+      "subsphere": "Medical Research",
+      "count": 5,
+      "professions": [
+        "Clinical Researcher",
+        "Medical Geneticist",
+        "Epidemiologist",
+        "Immunologist",
+        "Medical Statistician"
+      ]
+    },
+    {
+      "sphere": "Economics and Finance",
+      "subsphere": "Financial Analysis",
+      "count": 5,
+      "professions": [
+        "Financial Analyst",
+        "Risk Manager",
+        "Finance Data Analyst",
+        "Econometrician",
+        "Financial Consultant"
+      ]
+    },
+    {
+      "sphere": "Economics and Finance",
+      "subsphere": "Banking",
+      "count": 5,
+      "professions": [
+        "Credit Analyst",
+        "Bank Client Manager",
+        "Bank Operations Specialist",
+        "Compliance Specialist",
+        "Bank Treasurer"
+      ]
+    },
+    {
+      "sphere": "Economics and Finance",
+      "subsphere": "Audit and Accounting",
+      "count": 5,
+      "professions": [
+        "Accountant",
+        "Chief Accountant",
+        "Auditor",
+        "Tax Consultant",
+        "Financial Controller"
+      ]
+    },
+    {
+      "sphere": "Economics and Finance",
+      "subsphere": "Insurance",
+      "count": 5,
+      "professions": [
+        "Insurance Agent",
+        "Actuary",
+        "Underwriter",
+        "Claims Specialist",
+        "Insurance Product Manager"
+      ]
+    },
+    {
+      "sphere": "Economics and Finance",
+      "subsphere": "Investments",
+      "count": 5,
+      "professions": [
+        "Investment Analyst",
+        "Portfolio Manager",
+        "Trader",
+        "Venture Investor",
+        "Venture Market Analyst"
+      ]
+    },
+    {
+      "sphere": "Business and Management",
+      "subsphere": "Entrepreneurship",
+      "count": 5,
+      "professions": [
+        "Entrepreneur",
+        "Startup Manager",
+        "Startup Business Analyst",
+        "Social Entrepreneur",
+        "Business Scaling Consultant"
+      ]
+    },
+    {
+      "sphere": "Business and Management",
+      "subsphere": "Project Management",
+      "count": 5,
+      "professions": [
+        "Project Manager",
+        "Scrum Master",
+        "Product Manager",
+        "Project Analyst",
+        "Project Coordinator"
+      ]
+    },
+    {
+      "sphere": "Business and Management",
+      "subsphere": "HR and Personnel Management",
+      "count": 5,
+      "professions": [
+        "HR Manager",
+        "Recruiter",
+        "Training and Development Specialist",
+        "Compensation and Benefits Specialist",
+        "HR Analyst"
+      ]
+    },
+    {
+      "sphere": "Business and Management",
+      "subsphere": "Administrative Activities",
+      "count": 5,
+      "professions": [
+        "Office Manager",
+        "Secretary",
+        "Database Administrator",
+        "Document Management Specialist",
+        "Logistics Specialist"
+      ]
+    },
+    {
+      "sphere": "Marketing and PR",
+      "subsphere": "Advertising",
+      "count": 5,
+      "professions": [
+        "Advertising Manager",
+        "Copywriter",
+        "Media Planner",
+        "Creative Director",
+        "Contextual Advertising Specialist"
+      ]
+    },
+    {
+      "sphere": "Marketing and PR",
+      "subsphere": "Marketing Analysis",
+      "count": 5,
+      "professions": [
+        "Marketing Analyst",
+        "Marketing Data Analyst",
+        "Market Research Specialist",
+        "Competitive Analysis Specialist",
+        "CRM Analyst"
+      ]
+    },
+    {
+      "sphere": "Marketing and PR",
+      "subsphere": "PR and Public Relations",
+      "count": 5,
+      "professions": [
+        "PR Manager",
+        "Public Relations Specialist",
+        "Crisis Manager",
+        "Blogger Relations Specialist",
+        "Press Secretary"
+      ]
+    },
+    {
+      "sphere": "Marketing and PR",
+      "subsphere": "Branding",
+      "count": 5,
+      "professions": [
+        "Brand Manager",
+        "Visual Branding Specialist",
+        "Brand Positioning Specialist",
+        "Storyteller",
+        "Rebranding Specialist"
+      ]
+    },
+    {
+      "sphere": "Design and Creativity",
+      "subsphere": "Graphic Design",
+      "count": 5,
+      "professions": [
+        "Graphic Designer",
+        "Art Director",
+        "Packaging Designer",
+        "Motion Designer",
+        "Font Designer"
+      ]
+    },
+    {
+      "sphere": "Design and Creativity",
+      "subsphere": "Web Design",
+      "count": 5,
+      "professions": [
+        "Web Designer",
+        "UI/UX Designer",
+        "Mobile App Interface Designer",
+        "Prototype Designer",
+        "Web Animator"
+      ]
+    },
+    {
+      "sphere": "Design and Creativity",
+      "subsphere": "Industrial Design",
+      "count": 5,
+      "professions": [
+        "Industrial Designer",
+        "Furniture Designer",
+        "Product Designer",
+        "Automotive Designer",
+        "Ergonomics Designer"
+      ]
+    },
+    {
+      "sphere": "Design and Creativity",
+      "subsphere": "Fashion",
+      "count": 5,
+      "professions": [
+        "Fashion Designer",
+        "Fashion Buyer",
+        "Stylist",
+        "Accessories Designer",
+        "Fashion Production Technologist"
+      ]
+    },
+    {
+      "sphere": "Design and Creativity",
+      "subsphere": "Illustration and Animation",
+      "count": 5,
+      "professions": [
+        "Illustrator",
+        "2D Animator",
+        "3D Animator",
+        "Concept Artist",
+        "Storyboard Artist"
+      ]
+    },
+    {
+      "sphere": "Art and Culture",
+      "subsphere": "Theater and Cinema",
+      "count": 5,
+      "professions": [
+        "Theater Director",
+        "Film Director",
+        "Actor",
+        "Screenwriter",
+        "Cinematographer"
+      ]
+    },
+    {
+      "sphere": "Art and Culture",
+      "subsphere": "Music",
+      "count": 5,
+      "professions": [
+        "Composer",
+        "Musician",
+        "Sound Engineer",
+        "Music Producer",
+        "Conductor"
+      ]
+    },
+    {
+      "sphere": "Art and Culture",
+      "subsphere": "Literature and Publishing",
+      "count": 5,
+      "professions": [
+        "Writer",
+        "Editor",
+        "Literary Agent",
+        "Publisher",
+        "Literary Translator"
+      ]
+    },
+    {
+      "sphere": "Art and Culture",
+      "subsphere": "Museums and Galleries",
+      "count": 5,
+      "professions": [
+        "Museum Curator",
+        "Restorer",
+        "Art Historian",
+        "Gallerist",
+        "Tour Guide"
+      ]
+    },
+    {
+      "sphere": "Social Sphere",
+      "subsphere": "Psychology and Coaching",
+      "count": 5,
+      "professions": [
+        "Clinical Psychologist",
+        "Coach",
+        "School Psychologist",
+        "Organizational Psychologist",
+        "Sports Psychologist"
+      ]
+    },
+    {
+      "sphere": "Social Sphere",
+      "subsphere": "Social Work",
+      "count": 5,
+      "professions": [
+        "Social Worker",
+        "Social Rehabilitation Specialist",
+        "Social Educator",
+        "Family Support Specialist",
+        "Social Programs Coordinator"
+      ]
+    },
+    {
+      "sphere": "Social Sphere",
+      "subsphere": "Charity",
+      "count": 5,
+      "professions": [
+        "Fundraiser",
+        "Charity Program Manager",
+        "Grant Specialist",
+        "Charity Event Coordinator",
+        "NGO Partnership Specialist"
+      ]
+    },
+    {
+      "sphere": "Social Sphere",
+      "subsphere": "Volunteering",
+      "count": 5,
+      "professions": [
+        "Volunteer Coordinator",
+        "Volunteer Trainer",
+        "Environmental Volunteer",
+        "Animal Shelter Volunteer",
+        "Volunteer Mission Organizer"
+      ]
+    },
+    {
+      "sphere": "Government Service",
+      "subsphere": "Public Administration",
+      "count": 5,
+      "professions": [
+        "Civil Servant",
+        "Department Head",
+        "Public Policy Analyst",
+        "Public Relations Specialist in Government",
+        "International Relations Specialist"
+      ]
+    },
+    {
+      "sphere": "Government Service",
+      "subsphere": "Law Enforcement",
+      "count": 5,
+      "professions": [
+        "Police Officer",
+        "Investigator",
+        "Criminalist",
+        "Special Services Officer",
+        "Justice Officer"
+      ]
+    },
+    {
+      "sphere": "Government Service",
+      "subsphere": "Army",
+      "count": 5,
+      "professions": [
+        "Armed Forces Officer",
+        "Military Engineer",
+        "Military Doctor",
+        "Army Cybersecurity Specialist",
+        "Army Logistician"
+      ]
+    },
+    {
+      "sphere": "Government Service",
+      "subsphere": "Judicial System",
+      "count": 5,
+      "professions": [
+        "Judge",
+        "Prosecutor",
+        "Lawyer",
+        "Bailiff",
+        "Legal Advisor in Government"
+      ]
+    },
+    {
+      "sphere": "Logistics and Transport",
+      "subsphere": "Aviation",
+      "count": 5,
+      "professions": [
+        "Civil Aviation Pilot",
+        "Air Traffic Controller",
+        "Aviation Engineer",
+        "Flight Attendant",
+        "Aviation Logistics Manager"
+      ]
+    },
+    {
+      "sphere": "Logistics and Transport",
+      "subsphere": "Railways",
+      "count": 5,
+      "professions": [
+        "Train Driver",
+        "Railway Transport Engineer",
+        "Railway Dispatcher",
+        "Track Maintenance Technician",
+        "Railway Logistics Specialist"
+      ]
+    },
+    {
+      "sphere": "Logistics and Transport",
+      "subsphere": "Maritime Transport",
+      "count": 5,
+      "professions": [
+        "Ship Captain",
+        "Marine Engineer",
+        "Navigator",
+        "Maritime Logistics Specialist",
+        "Port Operations Specialist"
+      ]
+    },
+    {
+      "sphere": "Logistics and Transport",
+      "subsphere": "Warehouse Logistics",
+      "count": 5,
+      "professions": [
+        "Warehouse Manager",
+        "Storekeeper",
+        "Warehouse Automation Specialist",
+        "Warehouse Logistics Analyst",
+        "Warehouse Equipment Operator"
+      ]
+    },
+    {
+      "sphere": "Agriculture and Ecology",
+      "subsphere": "Agro-industry",
+      "count": 5,
+      "professions": [
+        "Agronomist",
+        "Zootechnician",
+        "Agricultural Machinery Engineer",
+        "Farmer",
+        "Food Production Technologist"
+      ]
+    },
+    {
+      "sphere": "Agriculture and Ecology",
+      "subsphere": "Forestry",
+      "count": 5,
+      "professions": [
+        "Forester",
+        "Forest Pathologist Engineer",
+        "Forest Engineer",
+        "Forest Restoration Specialist",
+        "Forest Firefighter"
+      ]
+    },
+    {
+      "sphere": "Agriculture and Ecology",
+      "subsphere": "Nature Protection",
+      "count": 5,
+      "professions": [
+        "Ecologist",
+        "Nature Reserve Specialist",
+        "Biologist-Ecologist",
+        "Nature Protection Inspector",
+        "Environmental Monitoring Specialist"
+      ]
+    },
+    {
+      "sphere": "Agriculture and Ecology",
+      "subsphere": "Environmental Consulting",
+      "count": 5,
+      "professions": [
+        "Environmental Consultant",
+        "Environmental Risk Analyst",
+        "Sustainable Development Specialist",
+        "Environmental Project Manager",
+        "Environmental Standards Certification Specialist"
+      ]
+    },
+    {
+      "sphere": "Tourism and Hospitality",
+      "subsphere": "Hotel Business",
+      "count": 5,
+      "professions": [
+        "Hotel Manager",
+        "Reception Administrator",
+        "Hotel Revenue Management Specialist",
+        "Concierge",
+        "Hotel Marketing Specialist"
+      ]
+    },
+    {
+      "sphere": "Tourism and Hospitality",
+      "subsphere": "Restaurants",
+      "count": 5,
+      "professions": [
+        "Chef",
+        "Waiter",
+        "Restaurant Manager",
+        "Bartender",
+        "Sommelier"
+      ]
+    },
+    {
+      "sphere": "Tourism and Hospitality",
+      "subsphere": "Tour Operators",
+      "count": 5,
+      "professions": [
+        "Tour Operator Manager",
+        "Tour Sales Specialist",
+        "Tour Program Coordinator",
+        "Tour Marketing Specialist",
+        "Tourism Market Analyst"
+      ]
+    },
+    {
+      "sphere": "Tourism and Hospitality",
+      "subsphere": "Guides",
+      "count": 5,
+      "professions": [
+        "Tour Guide",
+        "Interpreter Guide",
+        "Adventure Tourism Instructor",
+        "Eco Guide",
+        "Cultural Guide"
+      ]
+    }
+  ]
+} 

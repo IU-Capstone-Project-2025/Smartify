@@ -50,9 +50,14 @@ class _UniversityDetailPageState extends State<UniversityDetailPage> {
                 top: 40,
                 left: 16,
                 child: CircleAvatar(
-                  backgroundColor: Colors.white70,
+                  backgroundColor: Theme.of(context).cardColor.withOpacity(0.7),
                   child: IconButton(
-                    icon: const Icon(Icons.arrow_back),
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Color(0xFF54D0C0)
+                          : Colors.black,
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'subspheres_page.dart';
 import 'package:smartify/pages/tests/prof_test_page.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 class SpheresPage extends StatefulWidget {
   const SpheresPage({super.key});
@@ -13,16 +14,28 @@ class SpheresPage extends StatefulWidget {
 
 class _SpheresPageState extends State<SpheresPage> {
   Map<String, List<String>> sphereMap = {}; // sphere → list of subspheres
+  Locale? _lastLocale;
 
   @override
   void initState() {
     super.initState();
+    // ничего, что зависит от context, здесь не делаем
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final locale = Localizations.localeOf(context);
     loadSphereData();
   }
 
   Future<void> loadSphereData() async {
-    final String jsonStr =
-        await rootBundle.loadString('assets/spheres_stats.json');
+    final locale = Localizations.localeOf(context).languageCode;
+    String file = 'assets/spheres_stats.json';
+    if (locale == 'en') {
+      file = 'assets/spheres_stats_en.json';
+    }
+    final String jsonStr = await rootBundle.loadString(file);
     final List<dynamic> data = json.decode(jsonStr)['spheres'];
 
     final map = <String, List<String>>{};
@@ -44,16 +57,25 @@ class _SpheresPageState extends State<SpheresPage> {
   Widget build(BuildContext context) {
     const highlightColor = Color(0xFF54D0C0);
     final spheres = sphereMap.keys.toList();
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text("Сферы"),
-        backgroundColor: Colors.white,
+        title: Text(
+          AppLocalizations.of(context)!.spheres,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Color(0xFF54D0C0)
+                : Colors.black,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -93,6 +115,7 @@ class _SpheresPageState extends State<SpheresPage> {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: Card(
+                    color: Theme.of(context).cardColor,
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -102,12 +125,12 @@ class _SpheresPageState extends State<SpheresPage> {
                           horizontal: 16, vertical: 12),
                       title: Text(
                         sphere,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: Theme.of(context).textTheme.bodyLarge,
                       ),
-                      trailing: const Icon(Icons.arrow_forward_ios),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
                       onTap: () {
                         Navigator.push(
                           context,

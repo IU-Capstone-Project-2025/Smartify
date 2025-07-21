@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 import 'teacher_offer_sent_page.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 class TeacherOfferPage extends StatefulWidget {
   final Map<String, dynamic> teacher;
@@ -39,24 +41,25 @@ class _TeacherOfferPageState extends State<TeacherOfferPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        title: Text(
+          AppLocalizations.of(context)!.teacherOfferTitle,
+          style: theme.textTheme.titleLarge,
+        ),
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black54),
-          onPressed: () => Navigator.of(context).maybePop(),
-        ),
-        title: const Text(
-          'Заявка на репетитора',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
-        ),
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: isDark ? Color(0xFF54D0C0) : Colors.black,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -64,45 +67,45 @@ class _TeacherOfferPageState extends State<TeacherOfferPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 8),
-            const Text(
-              'Опишите свои цели и найдите идеального преподавателя',
-              style: TextStyle(color: Colors.black54, fontSize: 14),
+            Text(
+              AppLocalizations.of(context)!.teacherOfferSubtitle,
+              style: const TextStyle(color: Colors.black54, fontSize: 14),
               textAlign: TextAlign.left,
             ),
             const SizedBox(height: 12),
             _OfferTile(
-              title: 'Предмет',
+              title: AppLocalizations.of(context)!.subject,
               controller: _subjectController,
               focusNode: _subjectFocus,
-              hint: 'Введите предмет',
+              hint: AppLocalizations.of(context)!.enterSubject,
             ),
             const SizedBox(height: 10),
             _OfferTile(
-              title: 'Цель',
+              title: AppLocalizations.of(context)!.goal,
               controller: _goalController,
               focusNode: _goalFocus,
-              hint: 'Опишите вашу цель',
+              hint: AppLocalizations.of(context)!.enterGoal,
             ),
             const SizedBox(height: 10),
             _OfferTile(
-              title: 'Доступное время',
+              title: AppLocalizations.of(context)!.availableTime,
               controller: _timeController,
               focusNode: _timeFocus,
-              hint: 'Когда вам удобно заниматься?',
+              hint: AppLocalizations.of(context)!.enterAvailableTime,
             ),
             const SizedBox(height: 10),
             _OfferTile(
-              title: 'Формат',
+              title: AppLocalizations.of(context)!.format,
               controller: _formatController,
               focusNode: _formatFocus,
-              hint: 'Онлайн, офлайн или оба варианта',
+              hint: AppLocalizations.of(context)!.enterFormat,
             ),
             const SizedBox(height: 10),
             _OfferTile(
-              title: 'Описание',
+              title: AppLocalizations.of(context)!.description,
               controller: _descriptionController,
               focusNode: _descriptionFocus,
-              hint: 'Расскажите о себе или пожеланиях',
+              hint: AppLocalizations.of(context)!.enterDescription,
               maxLines: 2,
             ),
             const Spacer(),
@@ -127,7 +130,7 @@ class _TeacherOfferPageState extends State<TeacherOfferPage> {
                     ),
                   );
                 },
-                child: const Text('Отправить заявку', style: TextStyle(fontSize: 16)),
+                child: Text(AppLocalizations.of(context)!.sendOffer, style: const TextStyle(fontSize: 16)),
               ),
             ),
             const SizedBox(height: 18),

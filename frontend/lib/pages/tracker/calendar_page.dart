@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:smartify/pages/tracker/tracker_classes.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:smartify/l10n/app_localizations.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -63,6 +64,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).toString();
     return FutureBuilder(
       future: _localeFuture,
       builder: (context, snapshot) {
@@ -80,17 +82,21 @@ class _CalendarPageState extends State<CalendarPage> {
                     children: [
                       GestureDetector(
                         onTap: () => Navigator.pop(context),
-                        child: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                        child: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: 20,
+                          color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF54D0C0) : Colors.black,
+                        ),
                       ),
                       const SizedBox(width: 8),
-                      const Text('Календарь', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+                      Text(AppLocalizations.of(context)!.calendar, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
                       const Spacer(),
                       CupertinoButton(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         color: const Color(0xFF26977F),
                         minSize: 28,
                         borderRadius: BorderRadius.circular(8),
-                        child: const Text('+ Добавить', style: TextStyle(fontSize: 15, color: Colors.white)),
+                        child: Text('+ ${AppLocalizations.of(context)!.addTask}', style: TextStyle(fontSize: 15, color: Colors.white)),
                         onPressed: () => _showAddTaskDialog(context),
                       ),
                     ],
@@ -104,11 +110,11 @@ class _CalendarPageState extends State<CalendarPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            DateFormat('d', 'ru').format(_selectedDate),
+                            DateFormat('d', locale).format(_selectedDate),
                             style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            '${DateFormat('EEEE', 'ru').format(_selectedDate)}, ${DateFormat('LLLL y', 'ru').format(_selectedDate)}',
+                            '${DateFormat('EEEE', locale).format(_selectedDate)}, ${DateFormat('LLLL y', locale).format(_selectedDate)}',
                             style: const TextStyle(fontSize: 14, color: Colors.grey),
                           ),
                         ],
@@ -154,7 +160,7 @@ class _CalendarPageState extends State<CalendarPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                DateFormat('E', 'ru').format(date),
+                                DateFormat('E', locale).format(date),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: isSelected ? Colors.white : Colors.grey,
@@ -176,19 +182,19 @@ class _CalendarPageState extends State<CalendarPage> {
                     },
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   child: Row(
                     children: [
-                      Text("Время", style: TextStyle(fontWeight: FontWeight.w600)),
+                      Text(AppLocalizations.of(context)!.duration, style: TextStyle(fontWeight: FontWeight.w600)),
                       SizedBox(width: 32),
-                      Text("Предмет", style: TextStyle(fontWeight: FontWeight.w600)),
+                      Text(AppLocalizations.of(context)!.subject, style: TextStyle(fontWeight: FontWeight.w600)),
                     ],
                   ),
                 ),
                 Expanded(
                   child: tasks.isEmpty
-                      ? const Center(child: Text('Нет заданий на выбранную дату'))
+                      ? Center(child: Text(AppLocalizations.of(context)!.noTasksForDate))
                       : ListView.builder(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           itemCount: tasks.length,
@@ -247,7 +253,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                                   },
                                                 ),
                                                 Text(
-                                                  task.isCompleted ? "Выполнено" : "Не выполнено",
+                                                  task.isCompleted ? AppLocalizations.of(context)!.completed : AppLocalizations.of(context)!.notCompleted,
                                                   style: TextStyle(
                                                     color: task.isCompleted ? Colors.green : Colors.redAccent,
                                                     fontWeight: FontWeight.w500,
@@ -286,7 +292,7 @@ class _CalendarPageState extends State<CalendarPage> {
         return StatefulBuilder(
           builder: (context, setStateDialog) {
             return CupertinoAlertDialog(
-              title: const Text('Новое задание'),
+              title: Text(AppLocalizations.of(context)!.addTask),
               content: Column(
                 children: [
                   const SizedBox(height: 8),
@@ -296,7 +302,7 @@ class _CalendarPageState extends State<CalendarPage> {
                         context: context,
                         builder: (BuildContext context) {
                           return CupertinoActionSheet(
-                            title: const Text('Выберите предмет'),
+                            title: Text(AppLocalizations.of(context)!.subject),
                             actions: SubjectsManager().subjects.map((s) => CupertinoActionSheetAction(
                               onPressed: () {
                                 Navigator.of(context).pop(s.title);
@@ -305,7 +311,7 @@ class _CalendarPageState extends State<CalendarPage> {
                             )).toList(),
                             cancelButton: CupertinoActionSheetAction(
                               onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('Отмена'),
+                              child: Text(AppLocalizations.of(context)!.cancel),
                             ),
                           );
                         },
@@ -325,7 +331,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(selectedSubjectTitle ?? 'Выберите предмет', style: const TextStyle(color: Colors.black)),
+                          Text(selectedSubjectTitle ?? AppLocalizations.of(context)!.subject, style: const TextStyle(color: Colors.black)),
                           const Icon(CupertinoIcons.chevron_down, size: 18),
                         ],
                       ),
@@ -333,7 +339,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   ),
                   const SizedBox(height: 8),
                   CupertinoTextField(
-                    placeholder: 'Название задания',
+                    placeholder: AppLocalizations.of(context)!.taskTitle,
                     onChanged: (val) {
                       taskTitle = val;
                       if (showError && val.trim().isNotEmpty) {
@@ -371,11 +377,11 @@ class _CalendarPageState extends State<CalendarPage> {
               ),
               actions: [
                 CupertinoDialogAction(
-                  child: const Text('Отмена'),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                   onPressed: () => Navigator.of(ctx).pop(),
                 ),
                 CupertinoDialogAction(
-                  child: const Text('Сохранить'),
+                  child: Text(AppLocalizations.of(context)!.save),
                   onPressed: () {
                     if (selectedSubjectTitle != null && taskTitle.trim().isNotEmpty) {
                       final subject = SubjectsManager().subjects.firstWhere((s) => s.title == selectedSubjectTitle);
@@ -415,12 +421,12 @@ class _CalendarPageState extends State<CalendarPage> {
         return StatefulBuilder(
           builder: (context, setStateDialog) {
             return CupertinoAlertDialog(
-              title: const Text('Редактировать задание'),
+              title: Text(AppLocalizations.of(context)!.editTask),
               content: Column(
                 children: [
                   const SizedBox(height: 8),
                   CupertinoTextField(
-                    placeholder: 'Название задания',
+                    placeholder: AppLocalizations.of(context)!.taskTitle,
                     controller: TextEditingController(text: taskTitle),
                     onChanged: (val) => taskTitle = val,
                     decoration: const BoxDecoration(
@@ -447,7 +453,7 @@ class _CalendarPageState extends State<CalendarPage> {
               ),
               actions: [
                 CupertinoDialogAction(
-                  child: const Text('Удалить'),
+                  child: Text(AppLocalizations.of(context)!.delete),
                   isDestructiveAction: true,
                   onPressed: () {
                     subject.tasks.remove(task);
@@ -457,7 +463,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   },
                 ),
                 CupertinoDialogAction(
-                  child: const Text('Сохранить'),
+                  child: Text(AppLocalizations.of(context)!.save),
                   onPressed: () {
                     task.title = taskTitle;
                     task.deadline = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
@@ -468,7 +474,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   },
                 ),
                 CupertinoDialogAction(
-                  child: const Text('Отмена'),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                   onPressed: () => Navigator.of(ctx).pop(),
                 ),
               ],
