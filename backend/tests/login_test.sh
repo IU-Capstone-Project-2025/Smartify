@@ -60,7 +60,7 @@ echo "Access Token: $ACCESS_TOKEN"
 echo "Refresh Token: $ACCESS_TOKEN"
 
 
-RESPONSE=$(curl -s -w "\n%{http_code}" \
+QUESTIONNAIRE_RESPONSE=$(curl -s -w "\n%{http_code}" \
   -X POST http://localhost:8080/api/login \
   -H "Content-Type: application/json" \
   -H "Access_token: $ACCESS_TOKEN" \
@@ -75,6 +75,14 @@ if [ "$QUESTIONNAIRE_STATUS" -ne 200 ]; then
     exit 1
 fi
 
-echo "✅ Questionnaire successful!"
-echo "Response: $QUESTIONNAIRE_BODY"
+count=$(echo "QUESTIONNAIRE_BODY" | jq 'length')
+
+# Проверка
+if [ "$count" -eq 5 ]; then
+  echo "✅ Test passed: returned $count professions"
+  exit 0
+else
+  echo "❌ Test failed: expected 5 professions, got $count"
+  exit 1
+fi
 
