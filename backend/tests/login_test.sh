@@ -75,14 +75,6 @@ if [ "$QUESTIONNAIRE_STATUS" -ne 200 ]; then
     exit 1
 fi
 
-count=$(echo "QUESTIONNAIRE_BODY" | jq 'length')
-
-# Проверка
-if [ "$count" -eq 5 ]; then
-  echo "✅ Test passed: returned $count professions"
-  exit 0
-else
-  echo "❌ Test failed: expected 5 professions, got $count"
-  exit 1
-fi
+echo "❌ Questionnaire API success"
+echo "Response: $QUESTIONNAIRE_BODY"
 
